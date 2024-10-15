@@ -8,7 +8,8 @@ export const theme = {
     darkLight:'#E1E1E1',
     gray:'#e3e3e3',
 
-    text:'#494949',
+    textTitles: '#18191F', // Color para los titulos 
+    text:'#474A57', // color del texto, aunque sea del welcomen
     texLight:'#7C7C7C',
     texDark:'#1D1D1D',
 
