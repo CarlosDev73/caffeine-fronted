@@ -31,7 +31,6 @@ export default Button
 const styles = StyleSheet.create({
   button:{
     height: heightPercentage(7,7),
-    width: widthPercentage(40),
     justifyContent: 'center',
     alignItems: 'center',
     borderCurve: 'continuous',

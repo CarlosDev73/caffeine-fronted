@@ -4,7 +4,7 @@ import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import { widthPercentage, heightPercentage } from '../helpers/common.js'
 import { theme } from '../constants/theme.js'
-import Button from '../components/Button.jsx'
+import ButtonMain from '../components/ButtonMain.jsx'
 import { useRouter } from 'expo-router'
 
 const welcome = () => {
@@ -17,26 +17,19 @@ const welcome = () => {
       <View style={styles.container}>
         {/*Imagen de bienvenida con fondo circular*/}
         <View style={styles.circle}>
-          <Image style={styles.welcomeImage} resizeMode='contain' source={require('../assets/images/designer-working.png')}/>
+          <Image style={styles.welcomeImage} resizeMode='contain' source={require('../assets/images/moon.png')}/>
         </View>
 
         {/*titulo y escrito*/}
         <View style={{gap:20}}>
-          <Text style={styles.title}>¡Bienvenido a Caffeine!</Text>
-          <Text style={styles.punchline}>Amamos la tecnología y el café por partes iguales.</Text>
+          <Text style={styles.punchline}>Gamificación incorporada</Text>
+          <Text style={styles.title}>Gana Puntos y Sube niveles</Text> 
         </View>
 
       {/*Footer*/}
         <View style={styles.footer}>
-          <Button
-            title='Saltar'
-            buttonStyle={{marginHorizontal:widthPercentage(3)}}
-            onPress={()=>{}}
-            backgroundColor={'white'}
-            textColor='black'
-          />  
-          <Button
-            title='Siguiente'
+          <ButtonMain
+            title='Empieza Ahora >'
             buttonStyle={{marginHorizontal:widthPercentage(3)}}
             onPress={()=>{router.push('welcome2')}}
             backgroundColor={theme.colors.textTitles}
@@ -67,7 +60,7 @@ const styles = StyleSheet.create({
       width: 300, 
       height: 300,
       borderRadius: 200, 
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.LemonChiffon,
       alignItems: 'center',
       justifyContent: 'center'
     },
@@ -84,8 +77,8 @@ const styles = StyleSheet.create({
       color: theme.colors.text
     },
     footer:{
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      gap: 30,
+      width: '100%'
     }
 
 })

@@ -2,19 +2,13 @@
 
 export const theme = {
   colors:{
-    primary: '#00C26F',
-    primaryDark: '#00AC62',
-    dark:'#3E3E3E',
-    darkLight:'#E1E1E1',
-    gray:'#e3e3e3',
+    primary: '#FFBD12', //Amarillo 
+    secondary: '#F95A2C', // Naranja
+    dark:'#18191F', // Negro
+    LemonChiffon: '#FFF4CC', //parecido a un blanco 
 
-    textTitles: '#18191F', // Color para los titulos 
-    text:'#474A57', // color del texto, aunque sea del welcomen
-    texLight:'#7C7C7C',
-    texDark:'#1D1D1D',
-
-    rose:'#ef4444',
-    roseLight:'#f87171'
+    textTitles: '#18191F', // Color para los titulos aunque es el mismo dark xD
+    text:'#474A57', // color del texto punchline, un gris tenue 
   },
 
   fonts:{
