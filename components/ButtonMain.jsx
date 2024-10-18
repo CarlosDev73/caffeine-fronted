@@ -14,9 +14,13 @@ const Button = ({
   textColor,
 }) => {
 
-  const shadowStyle={
-
-  }
+  const shadowStyle = hasShadow ? {
+    shadowColor: 'black', // Color de la sombra
+    shadowOffset: { width: 0, height: 4 }, // Sombra en la parte inferior
+    shadowOpacity: 4, // Opacidad de la sombra
+    shadowRadius: 3, // Difusión de la sombra
+    elevation: 8, // Sombra en Android (con una pequeña elevación)
+  } : {};
 
   return (
     <Pressable onPress={onPress} style={[styles.button, buttonStyle,

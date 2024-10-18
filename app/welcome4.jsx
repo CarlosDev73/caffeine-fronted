@@ -31,7 +31,7 @@ const welcome = () => {
           <ButtonMain
             title='Empieza Ahora >'
             buttonStyle={{marginHorizontal:widthPercentage(3)}}
-            onPress={()=>{router.push('welcome2')}}
+            onPress={()=>{router.push('login')}}
             backgroundColor={theme.colors.textTitles}
             textColor='white'
           /> 
