@@ -6,9 +6,9 @@ import ButtonCancel from '../components/ButtonCancel';
 import { widthPercentage, heightPercentage } from '../helpers/common.js'
 import { theme } from '../constants/theme.js'
 import { useRouter } from 'expo-router'
-import Input from '../components/Input.jsx';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Feather from '@expo/vector-icons/Feather';
+import Input from '../components/Input.jsx'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain.jsx'
 
 const login = () => {
