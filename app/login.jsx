@@ -56,7 +56,7 @@ const login = () => {
           <ButtonMain
             title='Iniciar sesión'
             buttonStyle={{marginHorizontal:widthPercentage(0)}}
-            onPress={()=>{router.push('login')}}
+            onPress={()=>{router.push('feed')}}
             backgroundColor={theme.colors.primary}
             textColor= {theme.colors.dark}
           /> 
