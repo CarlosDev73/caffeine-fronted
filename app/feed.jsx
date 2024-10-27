@@ -1,54 +1,41 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, Pressable} from 'react-native'
 import React from 'react'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import { widthPercentage, heightPercentage } from '../helpers/common.js'
 import { theme } from '../constants/theme.js'
-import Button from '../components/Button.jsx'
 import { useRouter } from 'expo-router'
+import MainPanel from '../components/MainPanel.jsx'
+import FeedPost from '../components/FeedPost.jsx'
+import AbsoluteButton from '../components/AbsoluteButton.jsx'
 
-const Welcome = () => {
+import Feather from '@expo/vector-icons/Feather';
+
+const feed = () => {
 
   const router = useRouter();
 
   return (
     <ScreenWrapper>
       <StatusBar style='dark'/>
+      <View>
+        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5), marginHorizontal: 16,}}>Posts</Text>
+      </View>
       <View style={styles.container}>
-        {/*Imagen de bienvenida con fondo circular*/}
-        <View style={styles.circle}>
-          <Image style={styles.welcomeImage} resizeMode='contain' source={require('../assets/images/designer-working.png')}/>
+        <ScrollView>
+            <FeedPost />
+            <FeedPost />
+        </ScrollView>
+        <View style={{width: widthPercentage(100), flexDirection: 'row', justifyContent: 'flex-end',}}>
+          <AbsoluteButton child={<Feather name="plus" size={35} color="black" />} color={theme.colors.primary} buttonStyle={{bottom: 5, right: -5}}/>
         </View>
-
-        {/*titulo y escrito*/}
-        <View style={{gap:20}}>
-          <Text style={styles.title}>¡Bienvenido a Caffeine!</Text>
-          <Text style={styles.punchline}>Amamos la tecnología y el café por partes iguales.</Text>
-        </View>
-
-      {/*Footer*/}
-        <View style={styles.footer}>
-          <Button
-            title='Saltar'
-            buttonStyle={{marginHorizontal:widthPercentage(3)}}
-            onPress={()=>{router.push('login')}}
-            backgroundColor={'white'}
-            textColor='black'
-          />  
-          <Button
-            title='Siguiente'
-            buttonStyle={{marginHorizontal:widthPercentage(3)}}
-            onPress={()=>{router.push('welcome2')}}
-            backgroundColor={theme.colors.textTitles}
-            textColor='white'
-          /> 
-        </View>
+        <MainPanel />
       </View>
     </ScreenWrapper>
   )
 }
 
-export default Welcome
+export default feed;
 
 const styles = StyleSheet.create({
     container:{
