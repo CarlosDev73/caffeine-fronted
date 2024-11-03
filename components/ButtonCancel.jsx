@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, TouchableOpacity} from 'react-native'
 import React from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { theme } from '../constants/theme'
@@ -20,9 +20,9 @@ const ButtonCancel = ({
   } : {};
 
   return (
-    <Pressable onPress={onPress} style={[styles.button, buttonStyle, { backgroundColor }, hasShadow && shadowStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.button, buttonStyle, { backgroundColor }, hasShadow && shadowStyle]}>
       <Ionicons name="close" size={30} color="black" />
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
@@ -38,6 +38,6 @@ const styles = StyleSheet.create({
     borderRadius: heightPercentage(7, 7) / 2, // La mitad de la altura para hacer un círculo
     borderWidth: 2,
     borderColor: 'black',
-
+    borderBottomWidth: 4
   },
 });

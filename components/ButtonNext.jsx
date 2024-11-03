@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View,TouchableOpacity} from 'react-native';
 import React from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { theme } from '../constants/theme';
@@ -20,9 +20,9 @@ const Button = ({
   } : {};
 
   return (
-    <Pressable onPress={onPress} style={[styles.button, buttonStyle, { backgroundColor }, hasShadow && shadowStyle]}>
+    <TouchableOpacity  onPress={onPress} style={[styles.button, buttonStyle, { backgroundColor }, hasShadow && shadowStyle]}>
       <AntDesign name="arrowright" size={30} color="black" />
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     borderRadius: heightPercentage(8, 8) / 2, // La mitad de la altura para hacer un círculo
     borderWidth: 2,
     borderColor: 'black',
-
+    borderBottomWidth: 5
   },
 });
