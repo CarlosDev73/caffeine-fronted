@@ -11,20 +11,13 @@ const SimpleFeedPost = () => {
 
   return (
     <View style={styles.container}>
-      {/* Main content layout */}
       <View style={styles.content}>
-        {/* Post Image Placeholder */}
         <View style={styles.imagePlaceholder}>
           <MaterialCommunityIcons name="image-outline" size={40} color="white" />
         </View>
-
-        {/* Post Text and Reactions */}
         <View style={styles.textAndReactions}>
-          {/* Post Text */}
           <Text style={styles.dateText}>12 Marzo, 20</Text>
           <Text style={styles.titleText}>I'm post title, Please 2 line only...</Text>
-
-          {/* Reaction Icons */}
           <View style={styles.reactions}>
             <Pressable style={styles.reactionButton} onPress={() => setComments(comments + 1)}>
               <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
@@ -58,8 +51,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagePlaceholder: {
-    width: 90, // Adjusted to be wider and taller
-    height: '100%', // Take the full height of the container
+    width: 90,
+    height: 90, // Ensure consistent height
     backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.sm,
     justifyContent: 'center',

@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
-import SimpleFeedPost from '../components/SimpleFeedPost'; // Importing the new component
+import FeedPost from '../components/FeedPost';
+import SimpleFeedPost from '../components/SimpleFeedPost';
 import MainPanel from '../components/MainPanel';
 
 const Profile = () => {
@@ -20,7 +21,7 @@ const Profile = () => {
 
   return (
     <ScreenWrapper style={styles.screenWrapper}>
-      <ScrollView style={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} style={styles.scrollView}>
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
@@ -48,9 +49,9 @@ const Profile = () => {
 
         {/* Last Post Section */}
         <View style={styles.lastPostSection}>
-  <Text style={styles.sectionTitle}>Último post</Text>
-  <SimpleFeedPost /> {/* Updated to use the new SimpleFeedPost component */}
-</View>
+          <Text style={styles.sectionTitle}>Último post</Text>
+          <SimpleFeedPost onPress={() => router.push('/postDetails')} />
+        </View>
 
         {/* Tags Section */}
         <View style={styles.tagsSection}>
@@ -70,18 +71,19 @@ export default Profile;
 const styles = StyleSheet.create({
   screenWrapper: {
     flex: 1,
-    paddingTop: 0,
-    marginTop: 0,
+  },
+  scrollView: {
+    marginTop: -30, 
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: 0,
     paddingBottom: 20,
-    marginTop: -30,
+    paddingTop: 0,
   },
   header: {
     alignItems: 'center',
     paddingVertical: 20,
+    paddingTop: 30, 
     backgroundColor: theme.colors.primary,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
@@ -103,16 +105,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 10,
-  },
-  followButton: {
-    backgroundColor: theme.colors.secondary,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-  },
-  followButtonText: {
-    color: 'white',
-    fontSize: 14,
   },
   bioSection: {
     padding: 20,
