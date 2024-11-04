@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
-import FeedPost from '../components/FeedPost';
+import SimpleFeedPost from '../components/SimpleFeedPost'; // Importing the new component
 import MainPanel from '../components/MainPanel';
 
 const Profile = () => {
@@ -20,7 +20,7 @@ const Profile = () => {
 
   return (
     <ScreenWrapper style={styles.screenWrapper}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scrollContent}>
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
@@ -32,7 +32,7 @@ const Profile = () => {
           {/* Level Bar */}
           <ProfileComponents.LevelBar levelName="Capuchino" progress={2500} maxProgress={3000} />
 
-          {/* Stats Section with Follow Button */}
+          {/* Stats Section */}
           <View style={styles.statsContainer}>
             <ProfileComponents.Stats posts={276} followers="62k" following={23} />
           </View>
@@ -48,9 +48,9 @@ const Profile = () => {
 
         {/* Last Post Section */}
         <View style={styles.lastPostSection}>
-          <Text style={styles.sectionTitle}>Último post</Text>
-          <FeedPost onPress={() => router.push('/postDetails')} />
-        </View>
+  <Text style={styles.sectionTitle}>Último post</Text>
+  <SimpleFeedPost /> {/* Updated to use the new SimpleFeedPost component */}
+</View>
 
         {/* Tags Section */}
         <View style={styles.tagsSection}>
@@ -68,21 +68,16 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
-    screenWrapper: {
-        flex: 1,
-        paddingTop: 0, // Overrides any default padding
-        marginTop: 0, // Ensures no margin at the top
-      },
-      scrollContent: {
-        flexGrow: 1,
-        paddingTop: 0,
-        paddingBottom: 20,
-        marginTop: 0,
-      },
+  screenWrapper: {
+    flex: 1,
+    paddingTop: 0,
+    marginTop: 0,
+  },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 20,
     paddingTop: 0,
+    paddingBottom: 20,
+    marginTop: -30,
   },
   header: {
     alignItems: 'center',
@@ -96,7 +91,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 36,
-    fontWeight: 800,
+    fontWeight: '800',
     color: theme.colors.dark,
   },
   username: {
@@ -124,7 +119,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 21,
-    fontWeight: 800,
+    fontWeight: '800',
     color: theme.colors.dark,
   },
   bioText: {

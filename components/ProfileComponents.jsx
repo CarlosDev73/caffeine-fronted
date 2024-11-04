@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 27,
-    fontWeight: 800,
+    fontWeight: '800',
     color: theme.colors.dark,
   },
   statLabel: {
