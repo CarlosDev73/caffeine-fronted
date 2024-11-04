@@ -1,16 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
 import FeedPost from '../components/FeedPost';
-import MainPanel from '../components/MainPanel';  // Importing the menu component
+import MainPanel from '../components/MainPanel';
 
 const Profile = () => {
   const router = useRouter();
 
-  // Sample tags data with dynamic colors for each tag
   const tagsData = [
     { text: 'C++', color: '#E0E0E0' },
     { text: 'JavaScript', color: '#FFD700' },
@@ -20,13 +19,12 @@ const Profile = () => {
   ];
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper style={styles.screenWrapper}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <Image source={{ uri: 'profile-image-url' }} style={styles.avatar} />
-            <ProfileComponents.StarIcon style={styles.starIcon} />
+            <ProfileComponents.StarAvatar avatarSource={require('../assets/images/pic.png')} size={100} />
           </View>
           <Text style={styles.name}>Katrisa Feona</Text>
           <Text style={styles.username}>@katiness</Text>
@@ -37,9 +35,6 @@ const Profile = () => {
           {/* Stats Section with Follow Button */}
           <View style={styles.statsContainer}>
             <ProfileComponents.Stats posts={276} followers="62k" following={23} />
-            <TouchableOpacity style={styles.followButton}>
-              <Text style={styles.followButtonText}>Seguir</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -54,7 +49,7 @@ const Profile = () => {
         {/* Last Post Section */}
         <View style={styles.lastPostSection}>
           <Text style={styles.sectionTitle}>Último post</Text>
-          <FeedPost onPress={() => router.push('/postDetails')} /* Pass other props as needed */ />
+          <FeedPost onPress={() => router.push('/postDetails')} />
         </View>
 
         {/* Tags Section */}
@@ -73,33 +68,35 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
+    screenWrapper: {
+        flex: 1,
+        paddingTop: 0, // Overrides any default padding
+        marginTop: 0, // Ensures no margin at the top
+      },
+      scrollContent: {
+        flexGrow: 1,
+        paddingTop: 0,
+        paddingBottom: 20,
+        marginTop: 0,
+      },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 20,
+    paddingTop: 0,
   },
   header: {
     alignItems: 'center',
     paddingVertical: 20,
-    backgroundColor: theme.colors.primary,  // Only the header has yellow background
+    backgroundColor: theme.colors.primary,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
   avatarContainer: {
     position: 'relative',
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  starIcon: {
-    position: 'absolute',
-    bottom: -10,
-    right: -10,
-  },
   name: {
-    fontSize: 24,
-    fontWeight: theme.fonts.extraBold,
+    fontSize: 36,
+    fontWeight: 800,
     color: theme.colors.dark,
   },
   username: {
@@ -107,10 +104,9 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   statsContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '80%',
+    width: '100%',
     marginTop: 10,
   },
   followButton: {
@@ -127,8 +123,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: theme.fonts.bold,
+    fontSize: 21,
+    fontWeight: 800,
     color: theme.colors.dark,
   },
   bioText: {

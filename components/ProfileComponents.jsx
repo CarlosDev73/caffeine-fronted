@@ -1,84 +1,137 @@
 // components/ProfileComponents.jsx
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import Svg, { ClipPath, Defs, Image as SvgImage, Polygon, Rect } from 'react-native-svg';
+import Feather from '@expo/vector-icons/Feather';
 import { theme } from '../constants/theme';
 import { widthPercentage } from '../helpers/common';
-import Feather from '@expo/vector-icons/Feather';
 
-const ProfileComponents = {
-  // Star Icon Component
-  StarIcon: ({ style }) => (
-    <View style={[styles.starContainer, style]}>
-      <Image source={require('../assets/images/star.png')} style={styles.starIcon} />
+// StarAvatar Component
+export const StarAvatar = ({ avatarSource, size = 150 }) => {
+    const starSize = size * 1.5;
+    const starPoints = `
+    ${starSize * 0.5},0 
+    ${starSize * 0.62},${starSize * 0.35} 
+    ${starSize},${starSize * 0.38} 
+    ${starSize * 0.7},${starSize * 0.6} 
+    ${starSize * 0.82},${starSize} 
+    ${starSize * 0.5},${starSize * 0.75} 
+    ${starSize * 0.18},${starSize} 
+    ${starSize * 0.3},${starSize * 0.6} 
+    0,${starSize * 0.38} 
+    ${starSize * 0.38},${starSize * 0.35}
+  `;
+
+
+  return (
+    <View style={[styles.starContainer, { width: starSize, height: starSize }]}>
+      <Svg width={starSize} height={starSize} viewBox={`0 0 ${starSize} ${starSize}`}>
+        <Defs>
+          {/* Define the star clip path */}
+          <ClipPath id="starClip">
+            <Polygon points={starPoints} />
+          </ClipPath>
+        </Defs>
+
+        {/* Orange filled star with black border */}
+        <Polygon points={starPoints} fill="#F95A2C" stroke="black" strokeWidth="2" />
+
+        {/* Clipped profile image inside the star */}
+        <SvgImage
+          href={avatarSource}
+          width={starSize * 0.6} // Keep the image at 60% of the new star size
+          height={starSize * 0.6}
+          x={(starSize - starSize * 0.6) / 2} // Center the image horizontally
+          y={(starSize - starSize * 0.6) / 2} // Center the image vertically
+          preserveAspectRatio="xMidYMid slice"
+          clipPath="url(#starClip)"
+        />
+      </Svg>
     </View>
-  ),
-
-  // Follow Button Component
-  FollowButton: ({ onPress }) => (
-    <TouchableOpacity style={styles.followButton} onPress={onPress}>
-      <Feather name="plus" size={24} color="black" />
-    </TouchableOpacity>
-  ),
-
-  // Updated LevelBar Component with Follow Button Alignment
-  LevelBar: ({ levelName, progress, maxProgress }) => {
-    const progressPercentage = (progress / maxProgress) * 100;
-
-    return (
-      <View style={styles.levelBarWrapper}>
-        <View style={styles.levelContainer}>
-          {/* Header: Level Name and Points */}
-          <View style={styles.header}>
-            <Text style={styles.levelName}>{levelName}</Text>
-            <Text style={styles.pointsText}>{progress}/{maxProgress}</Text>
-          </View>
-
-          {/* Progress Bar with Star Icon */}
-          <View style={styles.progressBarBackground}>
-            <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
-            <View style={styles.starAtEnd}>
-              <ProfileComponents.StarIcon />
-            </View>
-          </View>
-        </View>
-
-        {/* Follow Button aligned next to LevelBar */}
-        <ProfileComponents.FollowButton onPress={() => console.log("Follow button pressed")} />
-      </View>
-    );
-  },
-
-  // Stats Component
-  Stats: ({ posts, followers, following }) => (
-    <View style={styles.stats}>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{posts}</Text>
-        <Text style={styles.statLabel}>Posts</Text>
-      </View>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{followers}</Text>
-        <Text style={styles.statLabel}>Followers</Text>
-      </View>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{following}</Text>
-        <Text style={styles.statLabel}>Following</Text>
-      </View>
-    </View>
-  ),
-
-  // Tags Component with Dynamic Background Color
-  Tags: ({ tags }) => (
-    <View style={styles.tags}>
-      {tags.map(tag => (
-        <View key={tag.text} style={[styles.tag, { backgroundColor: tag.color || theme.colors.background }]}>
-          <Text style={styles.tagText}>{tag.text}</Text>
-        </View>
-      ))}
-    </View>
-  ),
+  );
 };
 
+// Follow Button Component
+export const FollowButton = ({ onPress }) => (
+  <TouchableOpacity style={styles.followButton} onPress={onPress}>
+    <Feather name="plus" size={24} color="black" />
+  </TouchableOpacity>
+);
+
+// LevelBar Component with Follow Button Alignment
+export const LevelBar = ({ levelName, progress, maxProgress }) => {
+  const progressPercentage = (progress / maxProgress) * 100;
+
+  return (
+    <View style={styles.levelBarWrapper}>
+      <View style={styles.levelContainer}>
+        {/* Header: Level Name and Points */}
+        <View style={styles.header}>
+          <Text style={styles.levelName}>{levelName}</Text>
+          <Text style={styles.pointsText}>{progress}/{maxProgress}</Text>
+        </View>
+
+        {/* Progress Bar */}
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
+        </View>
+      </View>
+
+      {/* Follow Button aligned next to LevelBar */}
+      <FollowButton onPress={() => console.log("Follow button pressed")} />
+    </View>
+  );
+};
+
+// Stats Component
+export const Stats = ({ posts, followers, following }) => (
+  <View style={styles.stats}>
+    <View style={styles.statItem}>
+      <Text style={styles.statValue}>{posts}</Text>
+      <Text style={styles.statLabel}>Posts</Text>
+    </View>
+    <View style={styles.statItem}>
+      <Text style={styles.statValue}>{followers}</Text>
+      <Text style={styles.statLabel}>Followers</Text>
+    </View>
+    <View style={styles.statItem}>
+      <Text style={styles.statValue}>{following}</Text>
+      <Text style={styles.statLabel}>Following</Text>
+    </View>
+  </View>
+);
+
+// Tags Component with Dynamic Background Color
+export const Tags = ({ tags }) => (
+  <View style={styles.tags}>
+    {tags.map(tag => (
+      <View key={tag.text} style={[styles.tag, { backgroundColor: tag.color || theme.colors.background }]}>
+        <Text style={styles.tagText}>{tag.text}</Text>
+      </View>
+    ))}
+  </View>
+);
+
 const styles = StyleSheet.create({
+  starContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  // Follow Button Styles
+  followButton: {
+    backgroundColor: 'white',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderBottomWidth: 4,
+    borderColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+  },
+
   // LevelBar Wrapper to position FollowButton next to it
   levelBarWrapper: {
     flexDirection: 'row',
@@ -88,15 +141,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  // LevelBar Styles with Double Border Effect
   levelContainer: {
     backgroundColor: 'white',
     padding: 10,
     borderRadius: theme.radius.xl,
-    borderWidth: 2,         // Outer border width
-    borderBottomWidth: 5,   // Increased bottom border width for double border effect
-    borderColor: 'black',   // Border color
-    flex: 1,                // Allows LevelBar to take up available space
+    borderWidth: 2,
+    borderBottomWidth: 5,
+    borderColor: 'black',
+    flex: 1,
     alignItems: 'center',
   },
   header: {
@@ -131,44 +183,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
   },
-  starAtEnd: {
-    position: 'absolute',
-    right: -12,
-    top: -6,
-    backgroundColor: 'white',
-    padding: 2,
-    borderRadius: 20,
-    borderColor: '#333',
-    borderWidth: 1,
-  },
-  
-  // Follow Button Styles
-  followButton: {
-    backgroundColor: 'white',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 2,
-    borderBottomWidth: 4, // Adds a double border effect at the bottom
-    borderColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  
-  // StarIcon Styles
-  starContainer: {
-    backgroundColor: 'white',
-    padding: 5,
-    borderRadius: 15,
-    borderColor: 'black',
-    borderWidth: 1,
-  },
-  starIcon: {
-    width: 20,
-    height: 20,
-  },
-  
+
   // Stats Component Styles
   stats: {
     flexDirection: 'row',
@@ -179,15 +194,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: 20,
-    fontWeight: theme.fonts.bold,
+    fontSize: 27,
+    fontWeight: 800,
     color: theme.colors.dark,
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: 18,
     color: theme.colors.text,
   },
-  
+
   // Tags Component Styles
   tags: {
     flexDirection: 'row',
@@ -211,4 +226,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileComponents;
+export default {
+  StarAvatar,
+  FollowButton,
+  LevelBar,
+  Stats,
+  Tags,
+};
