@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router'
 import AbsoluteButton from '../components/AbsoluteButton.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx';
+import CommentModal from '../components/CommentModal'  // Importa el CommentModal
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
@@ -20,6 +21,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 const Post = () => {
 
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const [user, setUser] = useState({});
   const [post, setPost] = useState({});
@@ -36,10 +39,12 @@ const Post = () => {
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
-
+  const sampleComments = [
+    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema...' },
+    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: '¡Tengo el mismo problema!...' },
+  ];
   return (
     <View style={styles.container}>
-      {/* <StatusBar style='dark' /> */}
       <ScreenWrapper>
         <View style={styles.exitBtn}>
           <AbsoluteButton 
@@ -56,8 +61,8 @@ const Post = () => {
                 <View style={{ marginLeft: 7 }}>
                   <Text style={[{ fontWeight: theme.fonts.bold }]}>Lamborci Mona</Text>
                   <View style={{backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24)}}>
-                  <AntDesign name="star" size={20} color="green" />
-                  <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Expresso</Text>
+                    <AntDesign name="star" size={20} color="green" />
+                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Expresso</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -73,50 +78,36 @@ const Post = () => {
                 <Feather name="more-vertical" size={20} color="black" />
               </Pressable>
             </View>
-            <View style={{flex:1, }}>
+            <View style={{flex:1}}>
               <ScrollView>
-                <View>
-                  <Text style={{fontSize: heightPercentage(5), fontWeight: theme.fonts.bold}}>
-                    Importancia del Modelo OSI en la Actualidad
-                  </Text>
-                </View>
+                <Text style={{fontSize: heightPercentage(5), fontWeight: theme.fonts.bold}}>Importancia del Modelo OSI en la Actualidad</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Text>21 Marzo, 2024</Text>
                   <Text>Redes, Modelo OSI</Text>
                 </View>
                 <View style={{ paddingVertical: heightPercentage(2)}}>
-                  <Image source={require('../assets/images/example/post1.png')} style={{ borderRadius: 17, borderWidth: 10 }}/>
-                  <Text>A rather unusual situation perhaps, but I want to specify a private SSH-key to use when executing a shell (git) command from the local computer.
-                  Basically like this:
-                  A rather unusual situation perhaps, but I want to specify a private SSH-key to use when executing a shell (git) command from the local computer.
-                  Basically like this:
-                  A rather unusual situation perhaps, but I want to specify a private SSH-key to use when executing a shell (git) command from the local computer.
-                  Basically like this:
-                  A rather unusual situation perhaps, but I want to specify a private SSH-key to use when executing a shell (git) command from the local computer.
-                  Basically like this:
-                  A rather unusual situation perhaps, but I want to specify a private SSH-key to use when executing a shell (git) command from the local computer.
-                  Basically like this:
-                  </Text>
+                  <Image source={require('../assets/images/example/post1.png')} style={{ borderRadius: 17, borderWidth: 1 }}/>
+                  <Text>Actualmente el avance en la infraestructura de redes hace necesario la contemplación de teorías antiguas como la del modelo OSI para realizar un análisis exhaustivo de la misma. Actualmente el avance en la infraestructura de redes hace necesario la contemplación de teorías antiguas como la del modelo OSI para realizar un análisis exhaustivo de la misma.</Text>
                 </View>
               </ScrollView>
             </View>
             <View style={{ height: heightPercentage(25) }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10}}>
-                <Pressable style={[styles.reactions]}>
-                    <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-                    <Text style={[styles.reactions.textStyle]}>{comments}</Text>
+                <Pressable style={[styles.reactions]} onPress={() => setModalVisible(true)}>
+                  <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
+                  <Text style={[styles.reactions.textStyle]}>{comments}</Text>
                 </Pressable>
-                <Pressable style={[styles.reactions]} onPress={ () => { setLikes(likes+1) }}>
-                    <Octicons name="heart" size={19} color="black" />
-                    <Text style={[styles.reactions.textStyle]}>{likes}</Text>
+                <Pressable style={[styles.reactions]} onPress={() => setLikes(likes + 1)}>
+                  <Octicons name="heart" size={19} color="black" />
+                  <Text style={[styles.reactions.textStyle]}>{likes}</Text>
                 </Pressable>
                 <Pressable style={[styles.reactions]}>
                   <Feather name="share" size={20} color="black" />
                   <Text style={[styles.reactions.textStyle]}>{points}</Text>
                 </Pressable>
-                <Pressable style={[styles.reactions]} onPress={ () => { setPoints(points+1) }}>
-                    <Feather name="star" size={20} color="black" />
-                    <Text style={[styles.reactions.textStyle]}>{points}</Text>
+                <Pressable style={[styles.reactions]} onPress={() => setPoints(points + 1)}>
+                  <Feather name="star" size={20} color="black" />
+                  <Text style={[styles.reactions.textStyle]}>{points}</Text>
                 </Pressable>
               </View>
               <View>
@@ -124,7 +115,7 @@ const Post = () => {
                   icon={<FontAwesome5 name="comment" size={24} color="black" />}
                   placeholder='Escribe un comentario...'
                   onChangeText={() => {}}
-                  inputStyle= {{ fontSize: heightPercentage(1.5) }}
+                  inputStyle={{ fontSize: heightPercentage(1.5) }}
                   containerStyles={{flexDirection: 'row-reverse'}} 
                 />
               </View>
@@ -132,6 +123,7 @@ const Post = () => {
           </View>
         </Animated.View>
       </ScreenWrapper>
+      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} comments={sampleComments} />
     </View>
   )
 }
