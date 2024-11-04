@@ -11,31 +11,31 @@ const SimpleFeedPost = () => {
 
   return (
     <View style={styles.container}>
+      {/* Main content layout */}
       <View style={styles.content}>
         {/* Post Image Placeholder */}
-        <View style={styles.imageContainer}>
-          <View style={styles.imagePlaceholder}>
-            <MaterialCommunityIcons name="image-outline" size={24} color="white" />
-          </View>
+        <View style={styles.imagePlaceholder}>
+          <MaterialCommunityIcons name="image-outline" size={40} color="white" />
         </View>
 
-        {/* Post Text */}
-        <View style={styles.textContainer}>
+        {/* Post Text and Reactions */}
+        <View style={styles.textAndReactions}>
+          {/* Post Text */}
           <Text style={styles.dateText}>12 Marzo, 20</Text>
           <Text style={styles.titleText}>I'm post title, Please 2 line only...</Text>
-        </View>
-      </View>
 
-      {/* Reaction Icons */}
-      <View style={styles.reactions}>
-        <Pressable style={styles.reactionButton} onPress={() => setComments(comments + 1)}>
-          <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-          <Text style={styles.reactionText}>Comment</Text>
-        </Pressable>
-        <Pressable style={styles.reactionButton} onPress={() => setLikes(likes + 1)}>
-          <Octicons name="heart" size={20} color="black" />
-          <Text style={styles.reactionText}>Like</Text>
-        </Pressable>
+          {/* Reaction Icons */}
+          <View style={styles.reactions}>
+            <Pressable style={styles.reactionButton} onPress={() => setComments(comments + 1)}>
+              <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
+              <Text style={styles.reactionText}>Comment</Text>
+            </Pressable>
+            <Pressable style={[styles.reactionButton, styles.likeButton]} onPress={() => setLikes(likes + 1)}>
+              <Octicons name="heart" size={20} color="black" />
+              <Text style={styles.reactionText}>Like</Text>
+            </Pressable>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -50,29 +50,25 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     backgroundColor: 'white',
     borderRadius: theme.radius.md,
-    borderColor: theme.colors.dark,
-    borderWidth: 2,
     width: widthPercentage(90),
     alignSelf: 'center',
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-  },
-  imageContainer: {
-    marginRight: 16,
   },
   imagePlaceholder: {
-    width: 60,
-    height: 60,
+    width: 90, // Adjusted to be wider and taller
+    height: '100%', // Take the full height of the container
     backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.sm,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 16,
   },
-  textContainer: {
+  textAndReactions: {
     flex: 1,
+    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: heightPercentage(1.5),
@@ -83,17 +79,19 @@ const styles = StyleSheet.create({
     fontSize: heightPercentage(2.5),
     fontWeight: theme.fonts.bold,
     color: theme.colors.dark,
+    marginBottom: 10,
   },
   reactions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    alignItems: 'center',
   },
   reactionButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 16,
+  },
+  likeButton: {
+    marginRight: 0,
   },
   reactionText: {
     marginLeft: 4,
