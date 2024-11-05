@@ -6,13 +6,15 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar';
 import SearchBar from '../components/SearchBar';
 import MainPanel from '../components/MainPanel';
+import SearchPopUp from '../components/SearchPopUp'
 
 const searchProfile = () => {
   return (
     <ScreenWrapper>
       <StatusBar style='dark'/>
-      <View>
-        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5), marginHorizontal: 16,}}>Buscar</Text>
+      <View style={styles.header}>
+        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5)}}>Buscar</Text>
+        <SearchPopUp backgroundColor={theme.colors.primary}/>
       </View>
       <View style={styles.container}>
         <SearchBar 
@@ -109,6 +111,12 @@ const searchProfile = () => {
 export default searchProfile
 
 const styles = StyleSheet.create({
+  header:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: widthPercentage(4)
+  },
   container:{
     flex:1,
     justifyContent: 'space-around',

@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
   button: {
     alignSelf:'flex-start',
     height: heightPercentage(7, 7),
-    width: heightPercentage(7, 7), // Asegúrate de que el ancho sea igual a la altura
+    width: heightPercentage(7, 7), 
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: heightPercentage(7, 7) / 2, // La mitad de la altura para hacer un círculo
+    borderRadius: heightPercentage(7, 7) / 2, 
     borderWidth: 2,
     borderColor: 'black',
     borderBottomWidth: 4
