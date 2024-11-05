@@ -28,16 +28,14 @@ const CommentModal = ({ visible, onClose, comments }) => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={styles.commentWrapper}>
-                {/* Avatar and Date outside the comment box */}
+                {/* Avatar, Date, and Check icon in a single row */}
                 <View style={styles.commentHeader}>
                   <Image source={{ uri: item.avatar }} style={styles.avatar} />
-                  <Text style={styles.dateText}>{item.date}</Text>
-                  <MaterialCommunityIcons name="check-circle" size={32} color="green" style={styles.checkIcon} />
-                </View>
-
-                {/* Comment Box */}
-                <View style={styles.commentContainer}>
-                  <Text style={styles.commentText}>{item.text}</Text>
+                  <View style={styles.commentContent}>
+                    <Text style={styles.dateText}>{item.date}</Text>
+                    <Text style={styles.commentText}>{item.text}</Text>
+                  </View>
+                  <MaterialCommunityIcons name="check-circle" size={24} color="green" style={styles.checkIcon} />
                 </View>
 
                 {/* Action Buttons outside the comment box */}
@@ -58,6 +56,7 @@ const CommentModal = ({ visible, onClose, comments }) => {
                 <TextInput
                   style={styles.commentInput}
                   placeholder="Escribe un comentario..."
+                  placeholderTextColor="gray"
                 />
                 <Pressable style={styles.sendButton}>
                   <MaterialCommunityIcons name="send" size={24} color="white" />
@@ -85,7 +84,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopWidth: 5,
     borderColor: 'black',
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     maxHeight: '80%',
   },
   modalHeader: {
@@ -115,39 +115,38 @@ const styles = StyleSheet.create({
   commentHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     marginRight: 10,
   },
-  dateText: {
-    fontSize: 14,
-    color: 'gray',
-    marginRight: 5,
-  },
-  checkIcon: {
-    marginLeft: 'auto',
-  },
-  commentContainer: {
+  commentContent: {
+    flex: 1,
     backgroundColor: 'white',
     borderRadius: 12,
-    padding: 15,
+    padding: 10,
     borderColor: theme.colors.dark,
     borderWidth: 1,
-    marginHorizontal: 50, // Adds space to align with avatar and icons outside
+  },
+  dateText: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 3,
   },
   commentText: {
     fontSize: 16,
     color: theme.colors.dark,
   },
+  checkIcon: {
+    marginLeft: 10,
+  },
   commentActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginTop: 10,
-    marginLeft: 50, // Aligns actions with avatar position
+    marginLeft: 46, // Aligns actions with avatar position
   },
   actionButton: {
     flexDirection: 'row',
@@ -156,16 +155,19 @@ const styles = StyleSheet.create({
   },
   actionText: {
     marginLeft: 5,
-    fontSize: 16,
+    fontSize: 14,
     color: theme.colors.dark,
   },
   commentInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
-    backgroundColor: 'white',
-    paddingHorizontal: 10,
-    marginTop: 10,
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginVertical: 10,
+    borderColor: theme.colors.dark,
+    borderWidth: 1,
   },
   commentInput: {
     flex: 1,
@@ -176,5 +178,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     borderRadius: 20,
     padding: 10,
+    marginLeft: 10,
   },
 });
