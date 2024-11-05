@@ -12,60 +12,60 @@ const CommentModal = ({ visible, onClose, comments }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
         <View style={styles.modalContainer}>
-          {/* Modal Header */}
-          <View style={styles.modalHeader}>
-            <View style={styles.modalHandle}></View>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeText}>Cerrar</Text>
-            </Pressable>
-          </View>
+          <Pressable onPress={() => {}} style={{ flex: 1 }}>
+            {/* Modal Header */}
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHandle}></View>
+            </View>
 
-          {/* Comments List */}
-          <FlatList
-            data={comments}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.commentWrapper}>
-                {/* Avatar, Date, and Check icon in a single row */}
-                <View style={styles.commentHeader}>
-                  <Image source={{ uri: item.avatar }} style={styles.avatar} />
-                  <View style={styles.commentContent}>
-                    <Text style={styles.dateText}>{item.date}</Text>
-                    <Text style={styles.commentText}>{item.text}</Text>
+            {/* Comments List */}
+            <FlatList
+              data={comments}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.commentWrapper}>
+                  {/* Avatar, Date, and Check icon in a single row */}
+                  <View style={styles.commentHeader}>
+                    <Image source={{ uri: item.avatar }} style={styles.avatar} />
+                    <View style={styles.commentContent}>
+                      <Text style={styles.dateText}>{item.date}</Text>
+                      <Text style={styles.commentText}>{item.text}</Text>
+                    </View>
+                    <MaterialCommunityIcons name="check-circle" size={24} color="green" style={styles.checkIcon} />
                   </View>
-                  <MaterialCommunityIcons name="check-circle" size={24} color="green" style={styles.checkIcon} />
-                </View>
 
-                {/* Action Buttons outside the comment box */}
-                <View style={styles.commentActions}>
-                  <Pressable style={styles.actionButton}>
-                    <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
-                    <Text style={styles.actionText}>Comentar</Text>
-                  </Pressable>
-                  <Pressable style={styles.actionButton}>
-                    <Octicons name="heart" size={16} color="black" />
-                    <Text style={styles.actionText}>Me gusta</Text>
+                  {/* Action Buttons outside the comment box */}
+                  <View style={styles.commentActions}>
+                    <Pressable style={styles.actionButton}>
+                      <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
+                      <Text style={styles.actionText}>Comentar</Text>
+                    </Pressable>
+                    <Pressable style={styles.actionButton}>
+                      <Octicons name="heart" size={16} color="black" />
+                      <Text style={styles.actionText}>Me gusta</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+              ListFooterComponent={
+                <View style={styles.commentInputContainer}>
+                  <TextInput
+                    style={styles.commentInput}
+                    placeholder="Escribe un comentario..."
+                    placeholderTextColor="gray"
+                    multiline={true}
+                  />
+                  <Pressable style={styles.sendButton}>
+                    <MaterialCommunityIcons name="message-text" size={24} color="white" />
                   </Pressable>
                 </View>
-              </View>
-            )}
-            ListFooterComponent={
-              <View style={styles.commentInputContainer}>
-                <TextInput
-                  style={styles.commentInput}
-                  placeholder="Escribe un comentario..."
-                  placeholderTextColor="gray"
-                />
-                <Pressable style={styles.sendButton}>
-                  <MaterialCommunityIcons name="send" size={24} color="white" />
-                </Pressable>
-              </View>
-            }
-          />
+              }
+            />
+          </Pressable>
         </View>
-      </View>
+      </Pressable>
     </Modal>
   );
 };
@@ -89,8 +89,6 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -100,14 +98,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: 'black',
     marginBottom: 15,
-  },
-  closeButton: {
-    position: 'absolute',
-    right: 20,
-  },
-  closeText: {
-    fontSize: 16,
-    color: theme.colors.dark,
   },
   commentWrapper: {
     marginBottom: 20,
