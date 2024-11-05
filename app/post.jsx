@@ -30,7 +30,7 @@ const Post = () => {
   const translateY = useSharedValue(300);
 
   useEffect(() => {
-    translateY.value = withTiming(0, { duration: 600 }); // Se desliza hacia arriba en 500ms
+    translateY.value = withTiming(0, { duration: 600 });
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
