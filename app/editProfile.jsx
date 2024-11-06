@@ -12,9 +12,9 @@ import OptionsButtons from '../components/OptionsButtons.jsx';
 
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import SliderButton from '../components/SliderButton.jsx'
 
 const EditProfile = () => {
 
@@ -79,13 +79,14 @@ const EditProfile = () => {
                                 </View>
                                 <View style={{ paddingVertical: heightPercentage(1) }}>
                                     <Input
-                                        placeholder='Usuario'
+                                        placeholder='@ Usuario'
                                         onChangeText={() => { }}
                                         inputStyle={{ fontSize: heightPercentage(2) }}
                                         containerStyles={{ marginBottom: heightPercentage(2) }}
                                     />
                                     <Input
                                         placeholder='Biografía'
+                                        icon={<Ionicons name="document-text-outline" size={24} color="black" />}
                                         onChangeText={() => { }}
                                         inputStyle={{ fontSize: heightPercentage(2) }}
                                         containerStyles={{ height: 'fit-content', }}
