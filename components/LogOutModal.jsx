@@ -4,8 +4,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import Button from './Button';
+import { router } from 'expo-router';
 
-const ModalComponent = ({ visible, onClose}) => {
+const LogOutModal = ({ visible, onClose}) => {
+
   const scale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -32,8 +34,8 @@ const ModalComponent = ({ visible, onClose}) => {
         <Animated.View style={[styles.popup, { transform: [{ scale }] }]}>
 
         <View style={{gap:5}}>
-          <Text style={styles.title}>¿Estás seguro de eliminar?</Text>
-          <Text style={styles.punchline}>Una vez elimines el post no lo podrás recuperar</Text>
+          <Text style={styles.title}>¿Estás seguro de que desea cerrar sesion?</Text>
+          <Text style={styles.punchline}>¡No te vayas! Prometemos no enviar más notificaciones de assembler... por hoy...</Text>
         </View>
 
       {/*Footer*/}
@@ -47,9 +49,9 @@ const ModalComponent = ({ visible, onClose}) => {
             textStyle={{ fontSize: heightPercentage(2)}}
           />  
           <Button
-            title='Borrar'
+            title='Cerrar sesión'
             buttonStyle={styles.btnDelete}
-            onPress={() => onClose()}
+            onPress={() => router.push('login')}
             backgroundColor={theme.colors.textTitles}
             textColor='white'
             textStyle={{ fontSize: heightPercentage(2)}}
@@ -59,8 +61,10 @@ const ModalComponent = ({ visible, onClose}) => {
         </Animated.View>
       </TouchableOpacity>
     </Modal>
-  );
+  )
 };
+
+export default LogOutModal; 
 
 const styles = StyleSheet.create({
   overlay: {
@@ -103,6 +107,4 @@ const styles = StyleSheet.create({
     marginHorizontal:widthPercentage(3),
     marginVertical: widthPercentage(3),
   }
-});
-
-export default ModalComponent;
+})

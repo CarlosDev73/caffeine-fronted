@@ -24,6 +24,7 @@ const Post = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false); // Estado para ActionModal
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal status to confirm delete
 
   const [user, setUser] = useState({});
   const [post, setPost] = useState({});
@@ -48,7 +49,7 @@ const Post = () => {
   ];
 
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+ 
 
   // Acciones para el ActionModal de opciones
   const optionsActions = [

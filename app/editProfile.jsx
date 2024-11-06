@@ -57,12 +57,12 @@ const EditProfile = () => {
                     <View style={styles.content}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
                             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image source={require('../assets/images/avatar.png')} style={{ borderRadius: 100, borderWidth: 10 }} />
+                                <Image source={require('../assets/images/pic.png')} style={{    borderRadius: 100, borderWidth: 10, width:30 , height:30 }} />
                                 <View style={{ marginLeft: 7 }}>
-                                    <Text style={[{ fontWeight: theme.fonts.bold }]}>Lamborci Mona</Text>
+                                    <Text style={[{ fontWeight: theme.fonts.bold }]}>Katrisa Feona</Text>
                                     <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
                                         <AntDesign name="star" size={20} color="green" />
-                                        <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Expresso</Text>
+                                        <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Capuchino</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>

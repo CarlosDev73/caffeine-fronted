@@ -7,12 +7,14 @@ import ProfileComponents from '../components/ProfileComponents';
 import SimpleFeedPost from '../components/SimpleFeedPost';
 import MainPanel from '../components/MainPanel';
 import ActionModal from '../components/ActionModal'; // Importar ActionModal
+import LogOutModal from '../components/LogOutModal'; // import LogOutModal
 
 import Feather from '@expo/vector-icons/Feather'; // Importar íconos necesarios
 
 const Profile = () => {
   const router = useRouter();
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+  const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);// Status modal Log out confirmation
 
   // Acciones para el ActionModal en el perfil
   const profileActions = [
@@ -39,8 +41,7 @@ const Profile = () => {
       icon: <Feather name="log-out" size={24} color="black" />,
       onPress: () => {
         setOptionsModalVisible(false);
-        console.log('Cerrar sesión seleccionado');
-        router.push('login');
+        setIsModaLogOutlVisible(true);
       },
     },
   ];
@@ -102,6 +103,7 @@ const Profile = () => {
       {/* Bottom Menu */}
       <MainPanel />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={profileActions} />
+      <LogOutModal visible={isModalLogOutVisible} onClose={() => setIsModaLogOutlVisible(false)} />
     </ScreenWrapper>
   );
 };

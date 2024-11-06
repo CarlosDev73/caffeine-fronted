@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     maxHeight: '100%',
+    borderWidth: 2,
   },
   modalHeader: {
     alignItems: 'center',
