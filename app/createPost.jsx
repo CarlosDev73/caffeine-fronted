@@ -66,9 +66,6 @@ const CreatePost = () => {
                                     </View>
                                 </View>
                             </TouchableOpacity>
-                            <Pressable>
-                                <Feather name="more-vertical" size={20} color="black" />
-                            </Pressable>
                         </View>
                         <View style={{ flex: 1 }}>
                             <ScrollView>
