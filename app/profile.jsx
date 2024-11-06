@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView,TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
@@ -50,7 +50,9 @@ const Profile = () => {
         {/* Last Post Section */}
         <View style={styles.lastPostSection}>
           <Text style={styles.sectionTitle}>Último post</Text>
-          <SimpleFeedPost onPress={() => router.push('/postDetails')} />
+          <TouchableOpacity onPress={() => router.push('myPost')}>
+          <SimpleFeedPost />
+          </TouchableOpacity>
         </View>
 
         {/* Tags Section */}

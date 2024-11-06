@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     maxHeight: '40%',
+    borderWidth: 2,
   },
   modalHeader: {
     alignItems: 'center',
