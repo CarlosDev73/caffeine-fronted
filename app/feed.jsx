@@ -10,6 +10,7 @@ import FeedPost from '../components/FeedPost.jsx'
 import AbsoluteButton from '../components/AbsoluteButton.jsx'
 
 import Feather from '@expo/vector-icons/Feather';
+import OptionsMenu from '../components/OptionsMenu.jsx'
 
 const feed = () => {
 
@@ -27,9 +28,15 @@ const feed = () => {
             <FeedPost />
         </ScrollView>
         <View style={{width: widthPercentage(100), flexDirection: 'row', justifyContent: 'flex-end',}}>
-          <AbsoluteButton child={<Feather name="plus" size={35} color="black" />} color={theme.colors.primary} buttonStyle={{bottom: 5, right: -5}}/>
+          <AbsoluteButton 
+            child={<Feather name="plus" size={35} color="black" />} 
+            color={theme.colors.primary} 
+            buttonStyle={{bottom: 5, right: -5}}
+            onPress={()=>{router.push('createPost')}}
+          />
         </View>
         <MainPanel />
+        <OptionsMenu />
       </View>
     </ScreenWrapper>
   )
