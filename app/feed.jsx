@@ -10,7 +10,6 @@ import FeedPost from '../components/FeedPost.jsx'
 import AbsoluteButton from '../components/AbsoluteButton.jsx'
 
 import Feather from '@expo/vector-icons/Feather';
-import OptionsMenu from '../components/OptionsMenu.jsx'
 
 const feed = () => {
 
@@ -36,7 +35,6 @@ const feed = () => {
           />
         </View>
         <MainPanel />
-        <OptionsMenu />
       </View>
     </ScreenWrapper>
   )
