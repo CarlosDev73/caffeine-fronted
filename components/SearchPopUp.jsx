@@ -49,8 +49,10 @@ const SearchPopUp = ({
       <SafeAreaView 
         style={{flex:1}} 
         onTouchStart={ ()=> resizeBox(0)}>
-
           <Animated.View style={[styles.popup, {transform:[{scale}]}]}>
+          <View style={styles.circle}>
+
+          </View>
             {options.map((option, index)=>(
               <TouchableOpacity style={styles.option} key={index} onPress={ () => option.action()}>
                 <MaterialCommunityIcons name={option.icon} size={26} color="black" />
@@ -99,6 +101,14 @@ const styles = StyleSheet.create({
     marginLeft: widthPercentage(4),
     gap: heightPercentage(1),
     paddingVertical: heightPercentage(1),
-  }
+  },
+  circle: {
+    width: heightPercentage(6.14), 
+    height: heightPercentage(0.5),
+    borderRadius: 5, 
+    backgroundColor: theme.colors.dark,
+    left:widthPercentage(17),
+    marginTop: heightPercentage(0.7)
+  },
 })
 

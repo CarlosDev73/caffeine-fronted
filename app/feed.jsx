@@ -8,7 +8,6 @@ import { useRouter } from 'expo-router'
 import MainPanel from '../components/MainPanel.jsx'
 import FeedPost from '../components/FeedPost.jsx'
 import AbsoluteButton from '../components/AbsoluteButton.jsx'
-
 import Feather from '@expo/vector-icons/Feather';
 
 const feed = () => {

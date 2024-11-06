@@ -22,12 +22,12 @@ export default AbsoluteButton
 const styles = StyleSheet.create({
   button:{
     margin: 20,
-    height: heightPercentage(7),
-    width: widthPercentage(15),
+    height: heightPercentage(8, 8),
+    width:  heightPercentage(8, 8),
     alignItems: 'center',
     justifyContent: 'center',
     borderCurve: 'continuous',
-    borderRadius: 100,
+    borderRadius: heightPercentage(8, 8)/2,
     borderWidth: 2,       
     borderColor: 'black', 
     borderBottomWidth: 5,
