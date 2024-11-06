@@ -40,7 +40,7 @@ const Profile = () => {
       onPress: () => {
         setOptionsModalVisible(false);
         console.log('Cerrar sesión seleccionado');
-        // Agregar lógica de cierre de sesión aquí
+        router.push('login');
       },
     },
   ];

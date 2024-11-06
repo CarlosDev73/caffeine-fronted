@@ -78,7 +78,7 @@ const signUp = () => {
 
         <ButtonNext
             buttonStyle={{marginHorizontal:widthPercentage(3)}}
-            onPress={()=>{router.push('welcome')}}
+            onPress={()=>{router.push('signUpStepTwo')}}
             backgroundColor={theme.colors.primary}
             textColor='white'
           /> 
