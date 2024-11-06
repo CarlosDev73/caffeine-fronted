@@ -40,8 +40,9 @@ const Post = () => {
     transform: [{ translateY: translateY.value }],
   }));
   const sampleComments = [
-    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema...' },
-    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: '¡Tengo el mismo problema!...' },
+    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema en mi equipo y resultó ser un error de la terminal de windows' },
+    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: '¡Tengo el mismo problema! Si encuentras una solución por favor compartela' },
+    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema en mi equipo y resultó ser un error de la terminal de windows' },
   ];
   return (
     <View style={styles.container}>

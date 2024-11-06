@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, Pressable, FlatList, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, FlatList, TextInput, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
@@ -12,60 +12,76 @@ const CommentModal = ({ visible, onClose, comments }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <View style={styles.modalContainer}>
-          <Pressable onPress={() => {}} style={{ flex: 1 }}>
-            {/* Modal Header */}
-            <View style={styles.modalHeader}>
-              <View style={styles.modalHandle}></View>
-            </View>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.keyboardAvoidingView}
+          >
+            <TouchableWithoutFeedback>
+              <View style={styles.modalContainer}>
+                {/* Modal Header */}
+                <View style={styles.modalHeader}>
+                  <View style={styles.modalHandle}></View>
+                </View>
 
-            {/* Comments List */}
-            <FlatList
-              data={comments}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.commentWrapper}>
-                  {/* Avatar, Date, and Check icon in a single row */}
-                  <View style={styles.commentHeader}>
-                    <Image source={{ uri: item.avatar }} style={styles.avatar} />
-                    <View style={styles.commentContent}>
-                      <Text style={styles.dateText}>{item.date}</Text>
-                      <Text style={styles.commentText}>{item.text}</Text>
+                {/* Comments List */}
+                <FlatList
+                  data={comments}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.commentWrapper}>
+                      {/* Avatar, Date, and Check icon in a single row */}
+                      <View style={styles.commentHeader}>
+                        <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
+                        <View style={styles.commentContent}>
+                          <Text style={styles.dateText}>{item.date}</Text>
+                          <Text style={styles.commentText}>{item.text}</Text>
+                        </View>
+                        {/* Custom Check Icon with Green Background and Black Border */}
+                        <View style={styles.checkIconContainer}>
+                          <MaterialCommunityIcons name="check" size={20} color="black" />
+                        </View>
+                      </View>
+
+                      {/* Action Buttons outside the comment box */}
+                      <View style={styles.commentActions}>
+                        <TouchableWithoutFeedback>
+                          <View style={styles.actionButton}>
+                            <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
+                            <Text style={styles.actionText}>Comentar</Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback>
+                          <View style={styles.actionButton}>
+                            <Octicons name="heart" size={16} color="black" />
+                            <Text style={styles.actionText}>Me gusta</Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </View>
                     </View>
-                    <MaterialCommunityIcons name="check-circle" size={24} color="green" style={styles.checkIcon} />
-                  </View>
-
-                  {/* Action Buttons outside the comment box */}
-                  <View style={styles.commentActions}>
-                    <Pressable style={styles.actionButton}>
-                      <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
-                      <Text style={styles.actionText}>Comentar</Text>
-                    </Pressable>
-                    <Pressable style={styles.actionButton}>
-                      <Octicons name="heart" size={16} color="black" />
-                      <Text style={styles.actionText}>Me gusta</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              )}
-              ListFooterComponent={
-                <View style={styles.commentInputContainer}>
-                  <TextInput
-                    style={styles.commentInput}
-                    placeholder="Escribe un comentario..."
-                    placeholderTextColor="gray"
-                    multiline={true}
-                  />
-                  <Pressable style={styles.sendButton}>
-                    <MaterialCommunityIcons name="message-text" size={24} color="white" />
-                  </Pressable>
-                </View>
-              }
-            />
-          </Pressable>
+                  )}
+                  ListFooterComponent={
+                    <View style={styles.commentInputContainer}>
+                      <TextInput
+                        style={styles.commentInput}
+                        placeholder="Escribe un comentario..."
+                        placeholderTextColor="gray"
+                        multiline={true}
+                      />
+                      <TouchableWithoutFeedback>
+                        <View style={styles.sendButton}>
+                          <MaterialCommunityIcons name="comment-outline" size={24} color="black" />
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </View>
+                  }
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </View>
-      </Pressable>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -78,6 +94,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   modalContainer: {
     backgroundColor: '#FFF6E5',
     borderTopLeftRadius: 20,
@@ -86,7 +106,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     paddingVertical: 20,
     paddingHorizontal: 10,
-    maxHeight: '80%',
+    maxHeight: '100%',
   },
   modalHeader: {
     alignItems: 'center',
@@ -111,6 +131,8 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     marginRight: 10,
+    borderColor: theme.colors.dark,
+    borderWidth: 1,
   },
   commentContent: {
     flex: 1,
@@ -118,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 10,
     borderColor: theme.colors.dark,
-    borderWidth: 1,
+    borderWidth: 2,
   },
   dateText: {
     fontSize: 12,
@@ -129,8 +151,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theme.colors.dark,
   },
-  checkIcon: {
+  checkIconContainer: {
     marginLeft: 10,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: 'black', // Borde negro alrededor
+    backgroundColor: '#00C6AE', // Fondo verde
+    padding: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   commentActions: {
     flexDirection: 'row',
@@ -142,11 +171,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 15,
+    fontWeight: theme.fonts.ext,
   },
   actionText: {
     marginLeft: 5,
     fontSize: 14,
     color: theme.colors.dark,
+    fontWeight: theme.fonts.extraBold,
   },
   commentInputContainer: {
     flexDirection: 'row',
@@ -157,7 +188,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginVertical: 10,
     borderColor: theme.colors.dark,
-    borderWidth: 1,
+    borderWidth: 2,
+    borderBottomWidth: 4,
   },
   commentInput: {
     flex: 1,
@@ -166,8 +198,11 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: theme.colors.primary,
-    borderRadius: 20,
+    borderRadius: 50,
     padding: 10,
     marginLeft: 10,
+    borderColor: theme.colors.dark,
+    borderWidth: 2,
+    borderBottomWidth: 5,
   },
 });
