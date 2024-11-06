@@ -1,15 +1,49 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView,TouchableOpacity } from 'react-native';
+import React, { useState } from 'react'; // Asegúrate de importar useState
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
-import FeedPost from '../components/FeedPost';
 import SimpleFeedPost from '../components/SimpleFeedPost';
 import MainPanel from '../components/MainPanel';
+import ActionModal from '../components/ActionModal'; // Importar ActionModal
+
+import Feather from '@expo/vector-icons/Feather'; // Importar íconos necesarios
 
 const Profile = () => {
   const router = useRouter();
+  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+
+  // Acciones para el ActionModal en el perfil
+  const profileActions = [
+    {
+      text: 'Editar perfil',
+      icon: <Feather name="edit" size={24} color="black" />,
+      onPress: () => {
+        setOptionsModalVisible(false);
+        console.log('Editar perfil seleccionado');
+        router.push('editProfile');
+      },
+    },
+    {
+      text: 'Cambiar contraseña',
+      icon: <Feather name="lock" size={24} color="black" />,
+      onPress: () => {
+        setOptionsModalVisible(false);
+        console.log('Cambiar contraseña seleccionado');
+        router.push('updatePassword');
+      },
+    },
+    {
+      text: 'Cerrar sesión',
+      icon: <Feather name="log-out" size={24} color="black" />,
+      onPress: () => {
+        setOptionsModalVisible(false);
+        console.log('Cerrar sesión seleccionado');
+        // Agregar lógica de cierre de sesión aquí
+      },
+    },
+  ];
 
   const tagsData = [
     { text: 'C++', color: '#E0E0E0' },
@@ -27,6 +61,9 @@ const Profile = () => {
           <View style={styles.avatarContainer}>
             <ProfileComponents.StarAvatar avatarSource={require('../assets/images/pic.png')} size={100} />
           </View>
+          <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>
+            <Feather name="more-vertical" size={24} color="black" />
+          </Pressable>
           <Text style={styles.name}>Katrisa Feona</Text>
           <Text style={styles.username}>@katiness</Text>
 
@@ -51,7 +88,7 @@ const Profile = () => {
         <View style={styles.lastPostSection}>
           <Text style={styles.sectionTitle}>Último post</Text>
           <TouchableOpacity onPress={() => router.push('myPost')}>
-          <SimpleFeedPost />
+            <SimpleFeedPost />
           </TouchableOpacity>
         </View>
 
@@ -64,6 +101,7 @@ const Profile = () => {
 
       {/* Bottom Menu */}
       <MainPanel />
+      <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={profileActions} />
     </ScreenWrapper>
   );
 };
@@ -75,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    marginTop: -30, 
+    marginTop: -30,
   },
   scrollContent: {
     flexGrow: 1,
@@ -85,13 +123,19 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     paddingVertical: 20,
-    paddingTop: 30, 
+    paddingTop: 30,
     backgroundColor: theme.colors.primary,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+    position: 'relative', // Para el posicionamiento del botón de opciones
   },
   avatarContainer: {
     position: 'relative',
+  },
+  optionsButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
   name: {
     fontSize: 36,
