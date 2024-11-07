@@ -59,7 +59,7 @@ const updatePassword = () => {
             <ButtonMain
               title='Enviar'
               buttonStyle={{marginHorizontal:widthPercentage(0)}}
-              onPress={()=>{router.push('welcome')}}
+              onPress={()=>{router.push('profile')}}
               backgroundColor={theme.colors.primary}
               textColor= {theme.colors.dark}
             /> 
