@@ -108,7 +108,7 @@ const EditProfile = () => {
                                 <Button
                                     title='Guardar'
                                     buttonStyle={styles.publicBtn}
-                                    onPress={() => { }}
+                                    onPress={() => { router.push('profile')}}
                                     backgroundColor={theme.colors.primary}
                                     textColor='black'
                                     textStyle={{ fontWeight: theme.fonts.extraBold }}

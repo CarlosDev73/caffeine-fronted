@@ -68,6 +68,7 @@ const Post = () => {
       onPress: () => {
         setOptionsModalVisible(false);
         setIsModalVisible(true);
+        router.push('feed');
         // Agregar lógica de eliminación aquí
       },
     },

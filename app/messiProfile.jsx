@@ -63,9 +63,6 @@ const messiProfile = () => {
           <View style={styles.avatarContainer}>
             <ProfileComponents.StarAvatar  size={100} />
           </View>
-          <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>
-            <Feather name="more-vertical" size={24} color="black" />
-          </Pressable>
           <Text style={styles.name}>Lionel Messi</Text>
           <Text style={styles.username}>@Thegoat</Text>
 

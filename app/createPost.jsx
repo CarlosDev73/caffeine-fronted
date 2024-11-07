@@ -112,7 +112,7 @@ const CreatePost = () => {
                                 <Button
                                     title='Publicar'
                                     buttonStyle={styles.publicBtn}
-                                    onPress={() => { }}
+                                    onPress={() => {router.push('myPost') }}
                                     backgroundColor={theme.colors.primary}
                                     textColor='black'
                                     textStyle={{ fontWeight: theme.fonts.extraBold }}
