@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     width: '100%',
-    paddingVertical: heightPercentage(1.5),
+    paddingVertical: heightPercentage(1),
     borderRadius: theme.radius.md,
     borderBottomWidth: 5,
   },
