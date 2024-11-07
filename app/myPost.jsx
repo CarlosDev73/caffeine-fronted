@@ -58,7 +58,7 @@ const Post = () => {
       icon: <Feather name="edit" size={24} color="black" />,
       onPress: () => {
         setOptionsModalVisible(false);
-        console.log('Editar opción seleccionada');
+        router.push('editMyPost');
         // Agregar lógica de edición aquí
       },
     },

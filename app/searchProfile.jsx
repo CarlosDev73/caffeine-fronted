@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Pressable} from 'react-native';
 import React from 'react';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
@@ -7,8 +7,12 @@ import { StatusBar } from 'expo-status-bar';
 import SearchBar from '../components/SearchBar';
 import MainPanel from '../components/MainPanel';
 import SearchPopUp from '../components/SearchPopUp'
+import { useRouter } from 'expo-router';
 
 const searchProfile = () => {
+
+  const router = useRouter();
+  
   return (
     <ScreenWrapper>
       <StatusBar style='dark'/>
@@ -21,6 +25,21 @@ const searchProfile = () => {
         placeholder="Buscar Perfil"
         />
         <ScrollView>
+
+        <Pressable onPress={()=> router.push('messiProfile')}>
+          <View style={styles.itemContainer}>
+            
+            <Image
+              source={require('../assets/images/messi.png')}
+              style={styles.imageProfile}
+            />
+            
+            <View>
+              <Text style={styles.textName}>Lionel Messi</Text>
+              <Text style={styles.userName}>@TheGoat</Text>
+            </View>
+          </View>
+          </Pressable>
           <View style={styles.itemContainer}>
             <Image
               source={require('../assets/images/charlie.jpg')}
@@ -62,17 +81,6 @@ const searchProfile = () => {
             <View>
               <Text style={styles.textName}>Leonard Hofstadter</Text>
               <Text style={styles.userName}>@Leo</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/messi.png')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Lionel Messi</Text>
-              <Text style={styles.userName}>@TheGoat</Text>
             </View>
           </View>
 

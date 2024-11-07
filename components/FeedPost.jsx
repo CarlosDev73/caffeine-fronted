@@ -57,10 +57,10 @@ const FeedPost = () => {
           <Text style={styles.text}>Lamborci Mona</Text>
           <Text style={styles.minText}>12 Mar</Text>
         </TouchableOpacity>
-        {/* Botón de opciones */}
+        {/* Botón de opciones 
         <Pressable onPress={() => setOptionsModalVisible(true)}>
           <Feather name="more-vertical" size={20} color="black" />
-        </Pressable>
+        </Pressable>*/}
       </View>
 
       {/* Contenido del Post */}

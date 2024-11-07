@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, Image} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Pressable} from 'react-native';
 import React from 'react';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
@@ -9,8 +9,12 @@ import MainPanel from '../components/MainPanel';
 import SearchPopUp from '../components/SearchPopUp';
 import SimpleFeedPost from '../components/SimpleFeedPost';
 import FeedPost from '../components/FeedPost.jsx';
+import { useRouter } from 'expo-router';
 
 const searchProfile = () => {
+
+  const router = useRouter();
+
   return (
     <ScreenWrapper>
       <StatusBar style='dark'/>
@@ -24,9 +28,13 @@ const searchProfile = () => {
         />
         <ScrollView>
 
+        
           <View style={styles.itemContainer}>
+          <Pressable onPress={()=> router.push('post')}>
             <SimpleFeedPost/>
+          </Pressable>
           </View>
+        
 
           <View style={styles.itemContainer}>
             <SimpleFeedPost/>

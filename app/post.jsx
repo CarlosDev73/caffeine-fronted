@@ -94,15 +94,15 @@ const Post = () => {
               <Button
                 title='Seguir'
                 buttonStyle={styles.followBtn}
-                onPress={() => { router.push('welcome2') }}
+                onPress={() => { console.log('seguido')}}
                 backgroundColor={theme.colors.primary}
                 textColor='black'
                 textStyle={{ fontSize: heightPercentage(1.5) }}
               />
-              {/* Botón de opciones (tres puntos) */}
+              {/* Botón de opciones (tres puntos) 
               <Pressable onPress={() => setOptionsModalVisible(true)}>
                 <Feather name="more-vertical" size={20} color="black" />
-              </Pressable>
+              </Pressable>*/}
             </View>
             <View style={{flex:1}}>
               <ScrollView>
