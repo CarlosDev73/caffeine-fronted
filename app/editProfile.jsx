@@ -53,68 +53,68 @@ const EditProfile = () => {
                         onPress={() => { router.push('feed') }}
                     />
                 </View>
-                <Animated.View style={[animatedStyle]}>
-                    <View style={styles.content}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image source={require('../assets/images/pic.png')} style={{    borderRadius: 100, borderWidth: 10, width:30 , height:30 }} />
-                                <View style={{ marginLeft: 7 }}>
-                                    <Text style={[{ fontWeight: theme.fonts.bold }]}>Katrisa Feona</Text>
-                                    <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
-                                        <AntDesign name="star" size={20} color="green" />
-                                        <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Capuchino</Text>
-                                    </View>
+                <Animated.View style={[animatedStyle, styles.content]}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image source={require('../assets/images/pic.png')} style={{ borderRadius: 100, borderWidth: 10, width: 30, height: 30 }} />
+                            <View style={{ marginLeft: 7 }}>
+                                <Text style={[{ fontWeight: theme.fonts.bold }]}>Katrisa Feona</Text>
+                                <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
+                                    <AntDesign name="star" size={20} color="green" />
+                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Capuchino</Text>
                                 </View>
-                            </TouchableOpacity>
-                            <Pressable>
-                                <Feather name="more-vertical" size={20} color="black" />
-                            </Pressable>
-                        </View>
-                        <View style={{ flex: 1, }}>
-                            <ScrollView>
-                                <View style={{ marginBottom: heightPercentage(1), flexDirection: 'row', width: widthPercentage(87), justifyContent: 'space-between' }}>
-                                    <Text style={{ fontSize: heightPercentage(3.5), fontWeight: theme.fonts.bold }}>
-                                        Editar Perfil
-                                    </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <Pressable>
+                            <Feather name="more-vertical" size={20} color="black" />
+                        </Pressable>
+                    </View>
+                    <View style={{ flex: 1, }}>
+                        <ScrollView>
+                            <View style={{ marginBottom: heightPercentage(1), flexDirection: 'row', width: widthPercentage(87), justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: heightPercentage(3.5), fontWeight: theme.fonts.bold }}>
+                                    Editar Perfil
+                                </Text>
+                            </View>
+                            <View style={{ paddingVertical: heightPercentage(1) }}>
+                                <Input
+                                    placeholder='@ Usuario'
+                                    onChangeText={() => { }}
+                                    inputStyle={{ fontSize: heightPercentage(2) }}
+                                    containerStyles={{ marginBottom: heightPercentage(2) }}
+                                />
+                                <Input
+                                    placeholder='Biografía'
+                                    icon={<Ionicons name="document-text-outline" size={24} color="black" />}
+                                    onChangeText={() => { }}
+                                    inputStyle={{ fontSize: heightPercentage(2) }}
+                                    containerStyles={{ height: 'fit-content', }}
+                                    multiline={true}
+                                    numberOfLines={7}
+                                />
+                            </View>
+                            <View style={{ marginVertical: heightPercentage(2) }}>
+                                <Text style={{ fontSize: heightPercentage(2.5) }}>Intereses</Text>
+                                <OptionsButtons tags={tags} onSelectTag={handleTag} />
+                            </View>
+                            <View>
+                                <Text style={{ fontSize: heightPercentage(2.5) }}>Foto de Perfil</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: heightPercentage(1) }}>
+                                    <Image source={require('../assets/images/addImage.png')} style={{ borderRadius: 10, borderWidth: 2, borderColor: '#000' }} />
+                                    <Text style={{ marginHorizontal: 10, fontSize: heightPercentage(2) }}>Adjuntar Imágenes</Text>
                                 </View>
-                                <View style={{ paddingVertical: heightPercentage(1) }}>
-                                    <Input
-                                        placeholder='@ Usuario'
-                                        onChangeText={() => { }}
-                                        inputStyle={{ fontSize: heightPercentage(2) }}
-                                        containerStyles={{ marginBottom: heightPercentage(2) }}
-                                    />
-                                    <Input
-                                        placeholder='Biografía'
-                                        icon={<Ionicons name="document-text-outline" size={24} color="black" />}
-                                        onChangeText={() => { }}
-                                        inputStyle={{ fontSize: heightPercentage(2) }}
-                                        containerStyles={{ height: 'fit-content', }}
-                                        multiline={true}
-                                        numberOfLines={7}
-                                    />
-                                    <View style={{ marginVertical: heightPercentage(2) }}>
-                                        <Text style={{ fontSize: heightPercentage(2.5) }}>Intereses</Text>
-                                        <OptionsButtons tags={tags} onSelectTag={handleTag} />
-                                    </View>
-                                    <View>
-                                        <Text style={{ fontSize: heightPercentage(2.5) }}>Foto de Perfil</Text>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: heightPercentage(1) }}>
-                                            <Image source={require('../assets/images/addImage.png')} style={{ borderRadius: 10, borderWidth: 2, borderColor: '#000' }} />
-                                            <Text style={{ marginHorizontal: 10, fontSize: heightPercentage(2) }}>Adjuntar Imágenes</Text>
-                                        </View>
-                                    </View>
-                                    <Button
-                                        title='Publicar'
-                                        buttonStyle={styles.publicBtn}
-                                        onPress={() => { }}
-                                        backgroundColor={theme.colors.primary}
-                                        textColor='black'
-                                        textStyle={{ fontWeight: theme.fonts.extraBold }}
-                                    />
-                                </View>
-                            </ScrollView>
-                        </View>
+                            </View>
+                            <View style={{ marginVertical: heightPercentage(3) }}>
+                                <Button
+                                    title='Guardar'
+                                    buttonStyle={styles.publicBtn}
+                                    onPress={() => { }}
+                                    backgroundColor={theme.colors.primary}
+                                    textColor='black'
+                                    textStyle={{ fontWeight: theme.fonts.extraBold }}
+                                />
+                            </View>
+                        </ScrollView>
                     </View>
                 </Animated.View>
             </ScreenWrapper>
