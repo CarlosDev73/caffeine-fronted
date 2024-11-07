@@ -1,10 +1,11 @@
 // components/ProfileComponents.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Svg, { ClipPath, Defs, Image as SvgImage, Polygon, Rect } from 'react-native-svg';
 import Feather from '@expo/vector-icons/Feather';
 import { theme } from '../constants/theme';
 import { widthPercentage } from '../helpers/common';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 // StarAvatar Component
 export const StarAvatar = ({ avatarSource, size = 150 }) => {
@@ -52,15 +53,20 @@ export const StarAvatar = ({ avatarSource, size = 150 }) => {
 };
 
 // Follow Button Component
-export const FollowButton = ({ onPress }) => (
+export const FollowButton = ({ following, onPress }) => (
   <TouchableOpacity style={styles.followButton} onPress={onPress}>
-    <Feather name="plus" size={24} color="black" />
+    {following ? (
+      <FontAwesome5 name="user-friends" size={24} color="black" />
+    ) :(
+      <Feather name="plus" size={24} color="black" />
+    )} 
   </TouchableOpacity>
 );
 
 // LevelBar Component with Follow Button Alignment
 export const LevelBar = ({ levelName, progress, maxProgress }) => {
   const progressPercentage = (progress / maxProgress) * 100;
+  const [following, setFollowing] = useState(false);
 
   return (
     <View style={styles.levelBarWrapper}>
@@ -78,7 +84,7 @@ export const LevelBar = ({ levelName, progress, maxProgress }) => {
       </View>
 
       {/* Follow Button aligned next to LevelBar */}
-      <FollowButton onPress={() => console.log("Follow button pressed")} />
+      <FollowButton following={following} onPress={() => setFollowing(!following)} />
     </View>
   );
 };
