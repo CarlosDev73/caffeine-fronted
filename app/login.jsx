@@ -10,6 +10,9 @@ import Input from '../components/Input.jsx'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain.jsx'
+import { loginProccess } from '../api/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Alert } from 'react-native';
 
 const login = () => {
 
@@ -17,6 +20,22 @@ const login = () => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [loading,setLoading] = useState(false);
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const data = await loginProccess(emailRef.current, passwordRef.current);
+      console.log('Login successful:', data);
+      // Navigate to the feed page
+      router.push('feed');
+      
+      // Store the token
+      await AsyncStorage.setItem('token', data.token);
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScreenWrapper >
@@ -56,9 +75,10 @@ const login = () => {
           <ButtonMain
             title='Iniciar sesión'
             buttonStyle={{marginHorizontal:widthPercentage(0)}}
-            onPress={()=>{router.push('feed')}}
+            onPress={handleLogin}
             backgroundColor={theme.colors.primary}
             textColor= {theme.colors.dark}
+            disabled={loading}
           /> 
         </View>
         {/*Footer*/}
