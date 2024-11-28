@@ -1,40 +1,90 @@
-import { StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, Pressable, Alert } from 'react-native';
+import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar';
 import ButtonBack from '../components/ButtonBack';
 import { widthPercentage, heightPercentage } from '../helpers/common.js';
 import { theme } from '../constants/theme.js';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
 import OptionsButtons from '../components/OptionsButtons.jsx';
-
-import Feather from '@expo/vector-icons/Feather';
+import axios from 'axios';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { registerUser } from '../api/register'; 
 
 const SignUpStepTwo = () => {
   const router = useRouter();
-  const tags = [
-    'Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'
-  ];
+  const params = useLocalSearchParams(); // Use data from the first step
+  const [biography, setBiography] = useState('');
+  const [skills, setSkills] = useState([]);
+  const [profileImg, setProfileImg] = useState(null);
 
-  const handleTag = (tag) => {};
+  const tags = ['Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'];
+
+  const handleTag = (tag) => {
+    setSkills((prevSkills) =>
+      prevSkills.includes(tag) ? prevSkills.filter((t) => t !== tag) : [...prevSkills, tag]
+    );
+  };
+
+  const handleImagePicker = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setProfileImg(result.assets[0]);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!biography || skills.length === 0 || !profileImg) {
+      Alert.alert('Error', 'Por favor completa todos los campos y selecciona una imagen de perfil.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('userName', params.userName);
+    formData.append('displayName', params.displayName);
+    formData.append('email', params.email);
+    formData.append('password', params.password);
+    formData.append('biography', biography);
+    formData.append('skills', skills.join(','));
+
+    if (profileImg) {
+      formData.append('profileImg', {
+        uri: profileImg.uri,
+        name: 'profile.jpg',
+        type: 'image/jpeg',
+      });
+    }
+    console.log('FormData being sent:', formData);
+    try {
+      const response = await registerUser(formData);
+      Alert.alert('Éxito', 'Cuenta creada exitosamente');
+      router.push('/login'); // Redirige al usuario a la página de inicio de sesión
+    } catch (error) {
+      Alert.alert('Error', error); // Muestra el mensaje de error enviado por el backend
+    }
+  };
 
   return (
     <View style={styles.container}>
-        
-      <StatusBar style='dark' />
+      <StatusBar style="dark" />
       <ScreenWrapper>
         <ScrollView contentContainerStyle={styles.scrollContent} style={styles.scrollView}>
-          {/* Back Button */}
           <ButtonBack
-          buttonStyle={{marginHorizontal:widthPercentage(2)}}
-          router = {router}
-          backgroundColor={'white'}
-          textColor='white'
-        />
-          
+            buttonStyle={{ marginHorizontal: widthPercentage(2) }}
+            router={router}
+            backgroundColor="white"
+            textColor="white"
+          />
+
           {/* Title and Subtitle */}
           <View style={styles.header}>
             <Text style={styles.title}>Crear cuenta</Text>
@@ -45,42 +95,52 @@ const SignUpStepTwo = () => {
           <View style={styles.formContainer}>
             <Input
               icon={<MaterialCommunityIcons name="file-document-outline" size={24} color="black" />}
-              placeholder='Biografía'
-              multiline={true}
+              placeholder="Biografía"
+              multiline
               inputStyle={{ fontSize: heightPercentage(2.5) }}
-              containerStyles={{ marginBottom: heightPercentage(2), minHeight: heightPercentage(10) }}
+              containerStyles={{
+                marginBottom: heightPercentage(2),
+                minHeight: heightPercentage(10),
+              }}
               numberOfLines={4}
+              onChangeText={(text) => setBiography(text)}
+              value={biography}
             />
             <Text style={styles.interestsTitle}>Intereses</Text>
-            <OptionsButtons tags={tags} onSelectTag={handleTag} />
+            <OptionsButtons tags={tags} onSelectTag={handleTag} selectedTags={skills} />
 
             {/* Profile Picture Upload Section */}
-            <Text style={styles.interestsTitle}>Foto de perfil</Text>
-            <View style={styles.profilePicContainer}>
-              <Image source={require('../assets/images/addImage.png')} style={styles.profilePic} />
-              <Text style={styles.profilePicText}>Seleccionar imagen</Text>
-            </View>
-          </View>
-
-          
-        </ScrollView>
-        {/* Submit Button */}
-        <Button
-            title='Crear cuenta'
-            buttonStyle={styles.submitButton}
-            onPress={() => router.push('feed')} 
-            backgroundColor={theme.colors.primary}
-            textColor='black'
-            textStyle={{ fontWeight: theme.fonts.extraBold }}
-          />
-
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>¿Ya tienes cuenta?</Text>
-            <Pressable onPress={() => router.push('login')}>
-              <Text style={[styles.footerText, styles.footerLink]}> Ingresa aquí</Text>
+            <Pressable onPress={handleImagePicker}>
+              <Text style={styles.interestsTitle}>Foto de perfil</Text>
+              <View style={styles.profilePicContainer}>
+                {profileImg ? (
+                  <Image source={{ uri: profileImg.uri }} style={styles.profilePic} />
+                ) : (
+                  <Image source={require('../assets/images/addImage.png')} style={styles.profilePic} />
+                )}
+                <Text style={styles.profilePicText}>Seleccionar imagen</Text>
+              </View>
             </Pressable>
           </View>
+        </ScrollView>
+
+        {/* Submit Button */}
+        <Button
+          title="Crear cuenta"
+          buttonStyle={styles.submitButton}
+          onPress={handleRegister}
+          backgroundColor={theme.colors.primary}
+          textColor="black"
+          textStyle={{ fontWeight: theme.fonts.extraBold }}
+        />
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>¿Ya tienes cuenta?</Text>
+          <Pressable onPress={() => router.push('login')}>
+            <Text style={[styles.footerText, styles.footerLink]}> Ingresa aquí</Text>
+          </Pressable>
+        </View>
       </ScreenWrapper>
     </View>
   );
