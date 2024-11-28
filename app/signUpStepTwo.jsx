@@ -12,6 +12,7 @@ import Button from '../components/Button.jsx';
 import OptionsButtons from '../components/OptionsButtons.jsx';
 import axios from 'axios';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { registerUser } from '../api/register'; 
 
 const SignUpStepTwo = () => {
   const router = useRouter();
@@ -43,7 +44,7 @@ const SignUpStepTwo = () => {
 
   const handleRegister = async () => {
     if (!biography || skills.length === 0 || !profileImg) {
-      Alert.alert('Error', 'Please fill all fields and select a profile image.');
+      Alert.alert('Error', 'Por favor completa todos los campos y selecciona una imagen de perfil.');
       return;
     }
 
@@ -64,17 +65,11 @@ const SignUpStepTwo = () => {
     }
     console.log('FormData being sent:', formData);
     try {
-      const response = await axios.post('http://192.168.50.78:3000/api/v1/register', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        
-      });
-      Alert.alert('Success', 'Account created successfully');
-      router.push('/login');
+      const response = await registerUser(formData);
+      Alert.alert('Éxito', 'Cuenta creada exitosamente');
+      router.push('/login'); // Redirige al usuario a la página de inicio de sesión
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to create account');
+      Alert.alert('Error', error); // Muestra el mensaje de error enviado por el backend
     }
   };
 
