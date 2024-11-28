@@ -19,11 +19,15 @@ const login = () => {
   const router = useRouter();
   const emailRef = useRef("");
   const passwordRef = useRef("");
-  const [loading,setLoading] = useState(false);
-  const saveToken = async (tokenData) => {
+  const [loading, setLoading] = useState(false);
+  const saveToken = async (token) => {
     try {
-      await SecureStore.setItemAsync(token);
-      console.log('Token saved successfully');
+      if (typeof token !== 'string') {
+        token = JSON.stringify(token); // Ensure it's a string
+      }
+      await SecureStore.setItemAsync('token', token);
+      const storedToken = await SecureStore.getItemAsync('token');
+      console.log('Stored Token:', storedToken);
     } catch (error) {
       console.error('Error saving token:', error);
     }
@@ -32,10 +36,19 @@ const login = () => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const data = await loginProccess(emailRef.current, passwordRef.current);
-      console.log('Login successful:', data);
 
-      //await SecureStore.setItemAsync('token', JSON.stringify(data.token));
+      const data = await loginProccess(emailRef.current, passwordRef.current);
+      console.log('Login response:', data); // Log the data
+
+      // Extract token from the correct structure
+      const token = data.data?.token; // Correctly access the token
+      if (!token) {
+        throw new Error('Login failed: Token not provided');
+      }
+
+      // Save token securely
+      await saveToken(token);
+
       // Navigate to the feed page
       router.push('feed');
 
@@ -48,17 +61,17 @@ const login = () => {
 
   return (
     <ScreenWrapper >
-      <StatusBar style='dark'/>
+      <StatusBar style='dark' />
       <View style={styles.container}>
         <ButtonCancel
-            buttonStyle={{marginHorizontal:widthPercentage(2)}}
-            onPress={()=>{router.push('welcome')}}
-            backgroundColor={'white'}
-            textColor='white'
-          />
+          buttonStyle={{ marginHorizontal: widthPercentage(2) }}
+          onPress={() => { router.push('welcome') }}
+          backgroundColor={'white'}
+          textColor='white'
+        />
 
-          {/*titulo y escrito del inicio de sesion */}
-        <View style={{gap:20}}>
+        {/*titulo y escrito del inicio de sesion */}
+        <View style={{ gap: 20 }}>
           <Text style={styles.title}>Inicio de sesión</Text>
           <Text style={styles.punchline}>Ingresa la dirección de correo y contraseña de tu cuenta en Caffeine</Text>
         </View>
@@ -68,33 +81,33 @@ const login = () => {
           <Input
             icon={<MaterialIcons name="person-outline" size={26} color="black" />}
             placeholder='Correo electrónico'
-            onChangeText={value=>{emailRef.current = value}}
-            inputStyle = {{ fontSize: heightPercentage(2.5) }}
+            onChangeText={value => { emailRef.current = value }}
+            inputStyle={{ fontSize: heightPercentage(2.5) }}
           />
           <Input
             icon={<Feather name="lock" size={24} color="black" />}
             placeholder='●●●●●●●'
-            onChangeText={value=>{passwordRef.current = value}}
+            onChangeText={value => { passwordRef.current = value }}
             secureTextEntry
-            inputStyle = {{ fontSize: heightPercentage(2.5) }}
+            inputStyle={{ fontSize: heightPercentage(2.5) }}
           />
           <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
 
           {/*Boton Iniciar sesion*/}
           <ButtonMain
             title='Iniciar sesión'
-            buttonStyle={{marginHorizontal:widthPercentage(0)}}
+            buttonStyle={{ marginHorizontal: widthPercentage(0) }}
             onPress={handleLogin}
             backgroundColor={theme.colors.primary}
-            textColor= {theme.colors.dark}
+            textColor={theme.colors.dark}
             disabled={loading}
-          /> 
+          />
         </View>
         {/*Footer*/}
         <View style={styles.footer}>
           <Text style={styles.footerText}>¿No tienes cuenta?</Text>
-          <Pressable onPress={()=>{router.push('signUp')}}>
-          <Text style={[styles.footerText, {color:theme.colors.secondary}]}>Crea una</Text>
+          <Pressable onPress={() => { router.push('signUp') }}>
+            <Text style={[styles.footerText, { color: theme.colors.secondary }]}>Crea una</Text>
           </Pressable>
         </View>
       </View>
@@ -106,37 +119,37 @@ export default login
 
 const styles = StyleSheet.create({
 
-  container:{
-    flex:1,
-    gap:45,
+  container: {
+    flex: 1,
+    gap: 45,
     paddingHorizontal: widthPercentage(6)
   },
-  title:{
+  title: {
     color: theme.colors.textTitles, //esto viene de nuestra carpeta constants
     fontSize: heightPercentage(4),
     textAlign: 'left',
     fontWeight: theme.fonts.extraBold
   },
-  punchline:{
+  punchline: {
     textAlign: 'left',
     fontSize: heightPercentage(2.5),
     color: theme.colors.text
   },
-  form:{
-    gap:25
+  form: {
+    gap: 25
   },
-  forgotPassword:{
-    textAlign:'right',
+  forgotPassword: {
+    textAlign: 'right',
     fontWeight: theme.fonts.semiBold,
     fontSize: heightPercentage(1.6)
   },
-  footer:{
+  footer: {
     flexDirection: 'row',
     justifyContent: 'left',
     alignItems: 'center',
     gap: 5,
   },
-  footerText:{
+  footerText: {
     textAlign: 'center',
     color: theme.colors.dark,
     fontSize: heightPercentage(1.6)
