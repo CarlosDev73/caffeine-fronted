@@ -28,16 +28,36 @@ const signUp = () => {
       [name]: value,
     }));
   };
-
+  const validateInputs = (userData) => {
+    const errors = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    if (!userData.userName || userData.userName.length < 3 || userData.userName.length > 20) {
+      errors.push('El nombre de usuario debe tener entre 3 y 20 caracteres.');
+    }
+    if (!userData.email || !emailRegex.test(userData.email)) {
+      errors.push('El correo electrónico no tiene un formato válido.');
+    }
+    if (!userData.password || userData.password.length < 6) {
+      errors.push('La contraseña debe tener al menos 6 caracteres.');
+    }
+    if (userData.password !== userData.confirmPassword) {
+      errors.push('Las contraseñas no coinciden.');
+    }
+  
+    return errors;
+  };
   const handleNext = () => {
     if (!userData.displayName || !userData.userName || !userData.email || !userData.password || !userData.confirmPassword) {
       alert('All fields are required!');
       return;
     }
 
-    if (userData.password !== userData.confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+    const errors = validateInputs(userData);
+
+    if (errors.length > 0) {
+     alert('Errores en el formulario', errors.join('\n'));
+     return;
     }
 
     router.push({
