@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL de tu API
-const API_URL = 'http://192.168.50.78:3000/api/v1';
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const registerUser = async (formData) => {
   try {

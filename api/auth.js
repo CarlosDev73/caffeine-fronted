@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "http://192.168.50.78:3000/api/v1/";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const loginProccess = async (email, password) => {
   try {
