@@ -11,7 +11,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain.jsx'
 import { loginProccess } from '../api/auth'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SecureStore from 'expo-secure-store'
 import { Alert } from 'react-native';
 
 const login = () => {
@@ -20,16 +20,25 @@ const login = () => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [loading,setLoading] = useState(false);
+  const saveToken = async (tokenData) => {
+    try {
+      await SecureStore.setItemAsync(token);
+      console.log('Token saved successfully');
+    } catch (error) {
+      console.error('Error saving token:', error);
+    }
+  };
+
   const handleLogin = async () => {
     setLoading(true);
     try {
       const data = await loginProccess(emailRef.current, passwordRef.current);
       console.log('Login successful:', data);
+
+      //await SecureStore.setItemAsync('token', JSON.stringify(data.token));
       // Navigate to the feed page
       router.push('feed');
-      
-      // Store the token
-      await AsyncStorage.setItem('token', data.token);
+
     } catch (error) {
       Alert.alert('Error', error.message || 'Login failed');
     } finally {
