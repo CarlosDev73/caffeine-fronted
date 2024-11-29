@@ -45,26 +45,22 @@ export const fetchPostById = async (postId) => {
 };
 
 
-export const createPost = async (postData, imageFile = null) => {
+export const createPost = async (formData) => {
   try {
-    const token = await getToken();
-    const formData = new FormData();
-    Object.keys(postData).forEach((key) => formData.append(key, postData[key]));
+    const token = await SecureStore.getItemAsync('token');
 
-    if (imageFile) {
-      formData.append("postImg", {
-        uri: imageFile.uri,
-        name: imageFile.name,
-        type: "image/jpeg",
-      });
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
     }
-
+    
     const response = await axios.post(`${API_URL}/post`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log("Respuesta de la API:", response.data);
+
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to create post" };
