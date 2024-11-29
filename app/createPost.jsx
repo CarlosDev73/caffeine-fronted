@@ -31,7 +31,7 @@ const CreatePost = () => {
     const [tags, setTags] = useState([]);
     const [postImg, setPostImg] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [type, setType] = useState('post');
     const handleTagSelection = (tag) => {
         setTags((prevTags) =>
             prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
@@ -60,7 +60,7 @@ const CreatePost = () => {
             const formData = new FormData();
             formData.append('title', postTitle);
             formData.append('content', postContent);
-            formData.append('type', 'post'); // Asegúrate de incluir el tipo correcto
+            formData.append('type', type); // Asegúrate de incluir el tipo correcto
             formData.append('tags', tags.join(',')); // Convierte el array a un string separado por comas
 
             if (postImg) {
@@ -129,7 +129,7 @@ const CreatePost = () => {
                                 </Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                                     <Text>Issue</Text>
-                                    <SliderButton />
+                                    <SliderButton onToggle={(isToggled) => setType(isToggled ? 'issue' : 'post')} />
                                 </View>
                             </View>
                             <View style={{ paddingVertical: heightPercentage(1) }}>

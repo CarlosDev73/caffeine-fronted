@@ -9,23 +9,21 @@ import { theme } from '../constants/theme';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { widthPercentage } from '../helpers/common';
 
-const SliderButton = ({ onSlideComplete }) => {
+const SliderButton = ({ onToggle }) => {
 
     const width = 40;
-    const [isToggled, setIsToggled] = useState(false);
+    let isToggled = false;
     const translateX = useSharedValue(0);
     const SLIDE_WIDTH = width * 0.8;
     const BUTTON_WIDTH = 23;
 
     const handlePress = () => {
-        if (!isToggled) {
-            translateX.value = withSpring(SLIDE_WIDTH - BUTTON_WIDTH, {}, () => {
-                onSlideComplete && onSlideComplete();
-            });
-        } else {
-            translateX.value = withSpring(0);
+        isToggled = !isToggled; // Toggle the internal variable
+        translateX.value = withSpring(isToggled ? SLIDE_WIDTH - BUTTON_WIDTH : 0);
+
+        if (typeof onToggle === 'function') {
+            onToggle(isToggled); // Notify the parent of the new state
         }
-        setIsToggled(!isToggled);
     };
 
     const animatedButtonStyle = useAnimatedStyle(() => ({
