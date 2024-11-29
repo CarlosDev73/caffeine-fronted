@@ -52,7 +52,7 @@ const FeedPost = ({ post }) => {
       <View style={styles.header}>
         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
-            source={{ uri: post.author?.avatarUrl || 'https://via.placeholder.com/100' }}
+            source={{ uri: post._userId.profileImg?.secure_url || 'https://via.placeholder.com/100' }}
             style={styles.avatar}
           />
           <View style={{ marginLeft: 7 }}>
