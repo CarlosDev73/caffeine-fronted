@@ -8,19 +8,17 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
 
-import ActionModal from './ActionModal'; // Asegúrate de que el componente ActionModal esté en la misma ruta o ajusta el import
+import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
 
-const FeedPost = () => {
+const FeedPost = ({ post }) => {
   const router = useRouter();
 
-  const [comments, setComments] = useState(0);
-  const [points, setPoints] = useState(0);
-  const [likes, setLikes] = useState(0);
+  const [comments, setComments] = useState(post.comments?.length || 0);
+  const [points, setPoints] = useState(post.stars?.length || 0);
+  const [likes, setLikes] = useState(post.likes?.length || 0);
 
-  // Estado para controlar la visibilidad del modal de opciones
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
-  // Definir acciones para el botón de opciones (tres puntos)
   const optionsActions = [
     {
       text: 'Editar',
@@ -53,25 +51,35 @@ const FeedPost = () => {
       {/* Header del Post */}
       <View style={styles.header}>
         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
-          <Text style={styles.text}>Lamborci Mona</Text>
-          <Text style={styles.minText}>12 Mar</Text>
+          <Image
+            source={{ uri: post.author?.avatarUrl || 'https://via.placeholder.com/100' }}
+            style={styles.avatar}
+          />
+          <View style={{ marginLeft: 7 }}>
+            <Text style={styles.text}>{post.author?.name || 'Usuario desconocido'}</Text>
+            <Text style={styles.minText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
+          </View>
         </TouchableOpacity>
-        {/* Botón de opciones 
         <Pressable onPress={() => setOptionsModalVisible(true)}>
           <Feather name="more-vertical" size={20} color="black" />
-        </Pressable>*/}
+        </Pressable>
       </View>
 
       {/* Contenido del Post */}
-      <Pressable onPress={() => router.push('post')}>
+      <Pressable
+        onPress={() => {
+          router.push({ pathname: '/post', params: { id: post._id } });
+        }}
+      >
         <View>
-          <Text style={styles.title}>I'm post title, Please 2 line only...</Text>
-          <Text style={styles.description}>I have seen examples of connecting to a remote server with Net::SSH</Text>
+          <Text style={styles.title}>{post.title}</Text>
+          <Text style={styles.description}>{post.content}</Text>
         </View>
-        <View style={styles.imageContainer}>
-          <Image source={require('../assets/images/example/post1.png')} style={styles.postImage} />
-        </View>
+        {post.media?.[0]?.secure_url && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+          </View>
+        )}
       </Pressable>
 
       {/* Reacciones */}
@@ -124,22 +132,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   avatar: {
-    borderRadius: 100,
-    borderWidth: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   text: {
     fontSize: heightPercentage(2),
     fontWeight: theme.fonts.bold,
-    marginLeft: 7,
   },
   minText: {
     fontSize: heightPercentage(1.4),
     fontWeight: theme.fonts.bold,
     color: 'gray',
-    marginLeft: 12,
   },
   title: {
     fontSize: heightPercentage(3.4),
+    fontWeight: theme.fonts.bold,
   },
   description: {
     fontSize: heightPercentage(2.5),
@@ -149,8 +157,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   postImage: {
-    borderRadius: 17,
-    borderWidth: 10,
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
   },
   reactionsContainer: {
     flexDirection: 'row',

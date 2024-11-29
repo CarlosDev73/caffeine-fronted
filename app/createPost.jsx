@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import * as ImagePicker from 'expo-image-picker'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import { widthPercentage, heightPercentage } from '../helpers/common.js'
@@ -9,6 +10,8 @@ import AbsoluteButton from '../components/AbsoluteButton.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx';
 import OptionsButtons from '../components/OptionsButtons.jsx';
+import { createPost } from '../api/posts';
+import * as SecureStore from 'expo-secure-store'
 
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -20,17 +23,68 @@ const CreatePost = () => {
 
     const router = useRouter();
 
-    const tags = [
-        'Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'
-    ];
+    const availableTags = ['Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'];
 
-    const handleTag = (tag) => { };
 
-    const [user, setUser] = useState({});
-    const [post, setPost] = useState({});
-    const [comments, setComments] = useState(0);
-    const [points, setPoints] = useState(0);
-    const [likes, setLikes] = useState(0);
+    const [postTitle, setPostTitle] = useState('');
+    const [postContent, setPostContent] = useState('');
+    const [tags, setTags] = useState([]);
+    const [postImg, setPostImg] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleTagSelection = (tag) => {
+        setTags((prevTags) =>
+            prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
+        );
+    };
+    const handleImagePicker = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setPostImg(result.assets[0]);
+        }
+    };
+
+    const handleCreatePost = async () => {
+        if (!postTitle || !postContent || tags.length === 0 || !postImg) {
+            Alert.alert('Error', 'Por favor completa todos los campos y selecciona una imagen.');
+            return;
+        }
+
+
+            const formData = new FormData();
+            formData.append('title', postTitle);
+            formData.append('content', postContent);
+            formData.append('type', 'post'); // Asegúrate de incluir el tipo correcto
+            formData.append('tags', tags.join(',')); // Convierte el array a un string separado por comas
+
+            if (postImg) {
+                formData.append('postImg', {
+                  uri: postImg.uri,
+                  name: 'postImg.jpg',
+                  type: 'image/jpeg',
+                });
+              }
+
+            console.log('FormData being sent:', formData);
+            try {
+            const response = await createPost(formData);
+            Alert.alert('Éxito', 'Post creado exitosamente');
+            router.push('/feed'); // Redirige al feed
+        } catch (error) {
+            console.error('Error al crear el post:', error);
+            Alert.alert('Error', error.message || 'Error al crear el post.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
 
     const translateY = useSharedValue(300);
 
@@ -41,6 +95,7 @@ const CreatePost = () => {
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: translateY.value }],
     }));
+
 
     return (
         <View style={styles.container}>
@@ -80,7 +135,8 @@ const CreatePost = () => {
                             <View style={{ paddingVertical: heightPercentage(1) }}>
                                 <Input
                                     placeholder='Titulo de tu post'
-                                    onChangeText={() => { }}
+                                    onChangeText={(text) => setPostTitle(text)}
+                                    value={postTitle}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ flexDirection: 'row-reverse' }}
                                 />
@@ -94,7 +150,8 @@ const CreatePost = () => {
                                 />
                                 <Input
                                     placeholder='Contenido'
-                                    onChangeText={() => { }}
+                                    onChangeText={(text) => setPostContent(text)}
+                                    value={postContent}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ height: 'fit-content', }}
                                     multiline={true}
@@ -102,17 +159,24 @@ const CreatePost = () => {
                                 />
                             </View>
                             <View>
-                                <OptionsButtons tags={tags} onSelectTag={handleTag} />
+                                <OptionsButtons tags={availableTags} onSelectTag={handleTagSelection} selectedTags={tags} />
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: heightPercentage(1) }}>
-                                <Image source={require('../assets/images/addImage.png')} style={{ borderRadius: 10, borderWidth: 2, borderColor: '#000' }} />
-                                <Text style={{ marginHorizontal: 10, fontSize: heightPercentage(2) }}>Adjuntar Imágenes</Text>
-                            </View>
+                            <Pressable onPress={handleImagePicker}>
+                            <View style={styles.postPicContainer}>
+                                    {postImg ? (
+                                        <Image source={{ uri: postImg.uri }} style={styles.postPic} />
+                                    ) : (
+                                        <Image source={require('../assets/images/addImage.png')} style={styles.postPic} />
+                                    )}
+                                    <Text style={styles.postPicText}>Adjuntar Imágenes</Text>
+                                </View>
+                        
+                            </Pressable>
                             <View style={{ marginVertical: heightPercentage(3) }}>
                                 <Button
                                     title='Publicar'
                                     buttonStyle={styles.publicBtn}
-                                    onPress={() => {router.push('myPost') }}
+                                    onPress={handleCreatePost}
                                     backgroundColor={theme.colors.primary}
                                     textColor='black'
                                     textStyle={{ fontWeight: theme.fonts.extraBold }}
@@ -162,6 +226,23 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.md,
         borderBottomWidth: 5
     },
+    postPicContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: heightPercentage(2),
+        marginBottom: heightPercentage(2),
+      },
+      postPic: {
+        width: widthPercentage(20),
+        height: widthPercentage(20),
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#000',
+      },
+      postPicText: {
+        marginLeft: widthPercentage(4),
+        fontSize: heightPercentage(2),
+      },
     text: {
 
     },
