@@ -66,7 +66,11 @@ const FeedPost = ({ post }) => {
       </View>
 
       {/* Contenido del Post */}
-      <Pressable onPress={() => router.push({ pathname: 'post', params: { id: post._id } })}>
+      <Pressable
+        onPress={() => {
+          router.push({ pathname: '/post', params: { id: post._id } });
+        }}
+      >
         <View>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.description}>{post.content}</Text>

@@ -20,7 +20,7 @@ const feed = () => {
     const loadPosts = async () => {
       try {
         const fetchedPosts = await fetchPosts();
-        console.log('API Response:', fetchedPosts);
+        //console.log('API Response:', fetchedPosts);
         setPosts(fetchedPosts.posts || []); // Assuming `data` contains posts
       } catch (error) {
         Alert.alert('Error', 'Failed to fetch posts.');

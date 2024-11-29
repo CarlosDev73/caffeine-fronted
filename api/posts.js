@@ -27,15 +27,23 @@ export const fetchPosts = async (page = 1, limit = 10) => {
 };
 export const fetchPostById = async (postId) => {
   try {
-    const token = await getToken();
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
     const response = await axios.get(`${API_URL}/post/${postId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Failed to fetch post" };
+    console.error('Error in fetchPostById:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to fetch post' };
   }
 };
+
 
 export const createPost = async (postData, imageFile = null) => {
   try {
