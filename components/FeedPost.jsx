@@ -56,7 +56,7 @@ const FeedPost = ({ post }) => {
             style={styles.avatar}
           />
           <View style={{ marginLeft: 7 }}>
-            <Text style={styles.text}>{post.author?.name || 'Usuario desconocido'}</Text>
+            <Text style={styles.text}>{post._userId.userName || 'Usuario desconocido'}</Text>
             <Text style={styles.minText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
           </View>
         </TouchableOpacity>
