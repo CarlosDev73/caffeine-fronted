@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   reactionsSection: {
-    height: heightPercentage(25)
+    height: heightPercentage(15)
   },
   reactionsContainer: {
     flexDirection: 'row',
