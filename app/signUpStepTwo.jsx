@@ -69,7 +69,13 @@ const SignUpStepTwo = () => {
       Alert.alert('Éxito', 'Cuenta creada exitosamente');
       router.push('/login'); // Redirige al usuario a la página de inicio de sesión
     } catch (error) {
-      Alert.alert('Error', error); // Muestra el mensaje de error enviado por el backend
+      // Manejo de errores específicos
+      if (error.response?.status === 409) {
+        Alert.alert('Error', 'Ya existe un usuario registrado con esos datos.');
+      } else {
+        Alert.alert('Error', 'Hubo un problema al registrar el usuario.');
+      }
+      console.error('Error en el registro:', error);
     }
   };
 
