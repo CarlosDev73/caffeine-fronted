@@ -32,8 +32,8 @@ const signUp = () => {
     const errors = [];
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!userData.userName || userData.userName.length < 3 || userData.userName.length > 20) {
-      errors.push('El nombre de usuario debe tener entre 3 y 20 caracteres.');
+    if (!userData.userName || userData.userName.length < 3 || userData.userName.length > 60) {
+      errors.push('El nombre de usuario debe tener entre 3 y 60 caracteres.');
     }
     if (!userData.email || !emailRegex.test(userData.email)) {
       errors.push('El correo electrónico no tiene un formato válido.');
