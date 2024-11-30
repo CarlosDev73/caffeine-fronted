@@ -29,6 +29,7 @@ const FeedPost = ({ post }) => {
             icon: <Feather name="edit" size={24} color="black" />,
             onPress: () => {
               setOptionsModalVisible(false);
+              router.push({ pathname: '/editMyPost', params: { id: post._id } });
               console.log('Editar opción seleccionada');
             },
           },

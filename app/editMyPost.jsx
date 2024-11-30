@@ -4,7 +4,7 @@ import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import { widthPercentage, heightPercentage } from '../helpers/common.js'
 import { theme } from '../constants/theme.js'
-import { useRouter } from 'expo-router'
+import { useRouter, useLocalSearchParams } from 'expo-router'
 import AbsoluteButton from '../components/AbsoluteButton.jsx'
 import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx';
@@ -16,9 +16,12 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import SliderButton from '../components/SliderButton.jsx'
 
+import { fetchPostById } from '../api/posts';
+
+
 const editMyPost = () => {
   const router = useRouter();
-
+  const { id } = useLocalSearchParams();
     const tags = [
         'Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'
     ];
@@ -35,7 +38,22 @@ const editMyPost = () => {
 
     useEffect(() => {
         translateY.value = withTiming(0, { duration: 600 });
-    }, []);
+        const loadPost = async () => {
+            try {
+              if (!id) throw new Error('Post ID is missing');
+              //  console.log('Fetching post by ID:', id);
+              const fetchedPost = await fetchPostById(id); // Fetching the post by ID
+              //  console.log('Fetched Post:', fetchedPost);
+              setPost(fetchedPost); // Set the fetched post data
+            } catch (error) {
+              Alert.alert('Error', error.message || 'Failed to fetch post data.');
+            } finally {
+              setLoading(false);
+            }
+          };
+      
+          loadPost();
+        }, [id]);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: translateY.value }],
@@ -78,7 +96,7 @@ const editMyPost = () => {
                             </View>
                             <View style={{ paddingVertical: heightPercentage(1) }}>
                                 <Input
-                                    placeholder='Importancia del Modelo OSI en la Actualidad'
+                                    placeholder={post.title}
                                     onChangeText={() => { }}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ flexDirection: 'row-reverse' }}
@@ -92,7 +110,7 @@ const editMyPost = () => {
                                     numberOfLines={4}
                                 />
                                 <Input
-                                    placeholder='Actualmente el avance en la infraestructura de redes hace necesario la contemplación de teorías antiguas como la del modelo OSI para realizar un análisis exhaustivo de la misma.'
+                                    placeholder={post.content}
                                     onChangeText={() => { }}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ height: 'fit-content', }}
