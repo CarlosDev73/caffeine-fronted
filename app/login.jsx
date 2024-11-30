@@ -32,6 +32,18 @@ const login = () => {
       console.error('Error saving token:', error);
     }
   };
+  const saveUserId = async (userId) => {
+    try {
+      if (typeof userId !== 'string') {
+        userId = JSON.stringify(userId); // Ensure it's a string
+      }
+      await SecureStore.setItemAsync('userId', userId);
+      const storedUserId = await SecureStore.getItemAsync('userId');
+      console.log('Stored UserId:', storedUserId);
+    } catch (error) {
+      console.error('Error saving token:', error);
+    }
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -49,8 +61,16 @@ const login = () => {
       // Save token securely
       await saveToken(token);
 
+      const userId = data.data?.id; // Correctly access the token
+      if (!userId) {
+        throw new Error('Login failed: UserId not provided');
+      }
+
+      // Save token securely
+      await saveUserId(userId);
+
       // Navigate to the feed page
-      router.push('feed');
+      router.push({ pathname: '/feed' });
 
     } catch (error) {
       Alert.alert('Error', error.message || 'Login failed');
