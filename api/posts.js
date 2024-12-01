@@ -103,12 +103,18 @@ export const updatePost = async (postId, updateData) => {
 
 export const deletePost = async (postId) => {
   try {
-    const token = await getToken();
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token no encontrado. Por favor, inicia sesión nuevamente.');
+    }
+
     const response = await axios.delete(`${API_URL}/post/${postId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log('Respuesta del servidor:', response.data);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Failed to delete post" };
+    console.error('Error en deletePost:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Fallo al eliminar el post' };
   }
 };

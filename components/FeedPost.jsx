@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity, Image, Alert, ToastAndroid } from 'react-native';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import { useRouter } from 'expo-router';
@@ -7,7 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
-
+import { deletePost } from '../api/posts'
 import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
 
 const FeedPost = ({ post }) => {
@@ -36,11 +36,36 @@ const FeedPost = ({ post }) => {
           {
             text: 'Eliminar',
             icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-            onPress: () => {
-              setOptionsModalVisible(false);
-              console.log('Eliminar opción seleccionada');
+            onPress: async () => {
+              console.log('Opción eliminar tocada');
+              try {
+                Alert.alert(
+                  'Confirmar eliminación',
+                  '¿Estás seguro de que deseas eliminar este post?',
+                  [
+                    {
+                      text: 'Cancelar',
+                      onPress: () => console.log('Eliminación cancelada'),
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Eliminar',
+                      onPress: async () => {
+                        const response = await deletePost(post._id);
+                        ToastAndroid.show('Post eliminado exitosamente', ToastAndroid.SHORT);
+                        router.push('/feed');
+                      },
+                    },
+                  ]
+                );
+              } catch (error) {
+                console.error('Error en la eliminación del post:', error);
+                Alert.alert('Error', error.message || 'Hubo un problema al eliminar el post.');
+              }
             },
           },
+          
+          
         ]
       : []),
     {
