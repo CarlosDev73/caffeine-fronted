@@ -137,3 +137,24 @@ export const fetchComments = async (postId) => {
     throw error.response?.data || { message: 'Error al obtener los comentarios.' };
   }
 };
+export const createComment = async (postId, data) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
+    const response = await axios.post(`${API_URL}/post/${postId}/comment`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data; // Return created comment
+  } catch (error) {
+    console.error('Error in createComment:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to create comment' };
+  }
+};

@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, FlatList, Text
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
-import { fetchComments } from '../api/posts';
+import { fetchComments, createComment } from '../api/posts';
 
 const CommentModal = ({ visible, onClose, postId }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+  const [newComment, setNewComment] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
   useEffect(() => {
     if (visible && postId) {
       const loadComments = async () => {
@@ -23,7 +25,24 @@ const CommentModal = ({ visible, onClose, postId }) => {
       };
       loadComments();
     }
-  }, [visible, postId]);
+  }, [visible, postId, refreshKey]);
+  const handleCreateComment = async () => {
+    if (!newComment.trim()) {
+      Alert.alert('Error', 'El comentario no puede estar vacío.');
+      return;
+    }
+
+    try {
+      const createdComment = await createComment(postId, { content: newComment });
+      console.log('Nuevo comentario creado:', createdComment);
+      setNewComment(''); // Clear the input field
+      setRefreshKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      console.error('Error al crear comentario:', error);
+      Alert.alert('Error', 'No se pudo crear el comentario.');
+    }
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -47,27 +66,34 @@ const CommentModal = ({ visible, onClose, postId }) => {
                 {/* Comments List */}
                 <FlatList
                   data={comments}
-                  keyExtractor={(item) => item._id} 
+                  keyExtractor={(item, index) => item._id || `${index}-${Date.now()}`}
                   renderItem={({ item }) => (
                     <View style={styles.commentWrapper}>
                       {/* Avatar, Date, and Check icon in a single row */}
                       <View style={styles.commentHeader}>
-                      <Image
-                            source={{ uri: item._userId.profileImg?.secure_url || 'https://via.placeholder.com/150' }}
-                            style={styles.avatar}
-                          />
+                        <Image
+                          source={{ uri: item._userId?.profileImg?.secure_url || 'https://via.placeholder.com/150' }}
+                          style={styles.avatar}
+                        />
                         <View style={styles.commentContent}>
-                        <Text style={styles.dateText}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                          <Text style={styles.commentMeta}>
+                            {item._userId?.userName || 'Usuario desconocido'}
+                          </Text>
                           <Text style={styles.commentText}>{item.content}</Text>
+
                         </View>
                         {/* Custom Check Icon with Green Background and Black Border */}
                         <View style={styles.checkIconContainer}>
                           <MaterialCommunityIcons name="check" size={20} color="black" />
                         </View>
                       </View>
+                      <Text style={styles.dateText}>
+                        {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Fecha no disponible'}
+                      </Text>
 
                       {/* Action Buttons outside the comment box */}
                       <View style={styles.commentActions}>
+
                         <TouchableWithoutFeedback>
                           <View style={styles.actionButton}>
                             <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
@@ -90,22 +116,23 @@ const CommentModal = ({ visible, onClose, postId }) => {
                       </View>
                     )
                   }
-                  ListFooterComponent={
-                    <View style={styles.commentInputContainer}>
-                      <TextInput
-                        style={styles.commentInput}
-                        placeholder="Escribe un comentario..."
-                        placeholderTextColor="gray"
-                        multiline={true}
-                      />
-                      <TouchableWithoutFeedback>
-                        <View style={styles.sendButton}>
-                          <MaterialCommunityIcons name="comment-outline" size={24} color="black" />
-                        </View>
-                      </TouchableWithoutFeedback>
-                    </View>
-                  }
                 />
+                  <View style={styles.commentInputContainer}>
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Escribe un comentario..."
+                      placeholderTextColor="gray"
+                      multiline={true}
+                      value={newComment}
+                      onChangeText={setNewComment}
+                    />
+                    <TouchableWithoutFeedback onPress={handleCreateComment}>
+                      <View style={styles.sendButton}>
+                        <MaterialCommunityIcons name="comment-outline" size={24} color="black" />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+
               </View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
@@ -135,7 +162,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     paddingVertical: 20,
     paddingHorizontal: 10,
-    maxHeight: '100%',
+    maxHeight: '65%',
     borderWidth: 2,
   },
   modalHeader: {
@@ -172,10 +199,15 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.dark,
     borderWidth: 2,
   },
+  commentMeta: {
+    fontSize: 12,
+    color: 'black',
+    marginBottom: 3,
+  },
   dateText: {
     fontSize: 12,
     color: 'gray',
-    marginBottom: 3,
+    marginLeft: 50,
   },
   commentText: {
     fontSize: 16,
@@ -194,7 +226,6 @@ const styles = StyleSheet.create({
   commentActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
     marginLeft: 46, // Aligns actions with avatar position
   },
   actionButton: {
