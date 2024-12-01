@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity, Image, Alert, ToastAndroid } from 'react-native';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import { useRouter } from 'expo-router';
-
+import * as SecureStore from 'expo-secure-store';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
-
+import { deletePost } from '../api/posts'
 import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
 
 const FeedPost = ({ post }) => {
@@ -16,26 +16,58 @@ const FeedPost = ({ post }) => {
   const [comments, setComments] = useState(post.comments?.length || 0);
   const [points, setPoints] = useState(post.stars?.length || 0);
   const [likes, setLikes] = useState(post.likes?.length || 0);
-
+  const [userId, setUserId] = useState(null);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+  
+  const isOwner = post._userId._id?.toString() === userId?.toString();
 
   const optionsActions = [
-    {
-      text: 'Editar',
-      icon: <Feather name="edit" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Editar opción seleccionada');
-      },
-    },
-    {
-      text: 'Eliminar',
-      icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Eliminar opción seleccionada');
-      },
-    },
+    ...(isOwner
+      ? [
+          {
+            text: 'Editar',
+            icon: <Feather name="edit" size={24} color="black" />,
+            onPress: () => {
+              setOptionsModalVisible(false);
+              router.push({ pathname: '/editMyPost', params: { id: post._id } });
+              console.log('Editar opción seleccionada');
+            },
+          },
+          {
+            text: 'Eliminar',
+            icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
+            onPress: async () => {
+              console.log('Opción eliminar tocada');
+              try {
+                Alert.alert(
+                  'Confirmar eliminación',
+                  '¿Estás seguro de que deseas eliminar este post?',
+                  [
+                    {
+                      text: 'Cancelar',
+                      onPress: () => console.log('Eliminación cancelada'),
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Eliminar',
+                      onPress: async () => {
+                        const response = await deletePost(post._id);
+                        ToastAndroid.show('Post eliminado exitosamente', ToastAndroid.SHORT);
+                        router.push('/feed');
+                      },
+                    },
+                  ]
+                );
+              } catch (error) {
+                console.error('Error en la eliminación del post:', error);
+                Alert.alert('Error', error.message || 'Hubo un problema al eliminar el post.');
+              }
+            },
+          },
+          
+          
+        ]
+      : []),
     {
       text: 'Compartir',
       icon: <Feather name="share" size={24} color="black" />,
@@ -45,7 +77,15 @@ const FeedPost = ({ post }) => {
       },
     },
   ];
-
+  useEffect(() => {
+    const loadUserId = async () => {
+      const storedUserId = await SecureStore.getItemAsync('userId');
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    };
+    loadUserId();
+  }, []);
   return (
     <View style={styles.container}>
       {/* Header del Post */}

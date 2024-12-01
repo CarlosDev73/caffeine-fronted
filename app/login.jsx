@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, Alert, ToastAndroid } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
@@ -12,7 +12,6 @@ import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain.jsx'
 import { loginProccess } from '../api/auth'
 import * as SecureStore from 'expo-secure-store'
-import { Alert } from 'react-native';
 
 const login = () => {
 
@@ -28,6 +27,18 @@ const login = () => {
       await SecureStore.setItemAsync('token', token);
       const storedToken = await SecureStore.getItemAsync('token');
       console.log('Stored Token:', storedToken);
+    } catch (error) {
+      console.error('Error saving token:', error);
+    }
+  };
+  const saveUserId = async (userId) => {
+    try {
+      if (typeof userId !== 'string') {
+        userId = JSON.stringify(userId); // Ensure it's a string
+      }
+      await SecureStore.setItemAsync('userId', userId);
+      const storedUserId = await SecureStore.getItemAsync('userId');
+      console.log('Stored UserId:', storedUserId);
     } catch (error) {
       console.error('Error saving token:', error);
     }
@@ -49,11 +60,20 @@ const login = () => {
       // Save token securely
       await saveToken(token);
 
+      const userId = data.data?.id; // Correctly access the token
+      if (!userId) {
+        throw new Error('Login failed: UserId not provided');
+      }
+
+      // Save token securely
+      await saveUserId(userId);
+
       // Navigate to the feed page
-      router.push('feed');
+      router.push({ pathname: '/feed' });
+      ToastAndroid.show('Inicio de sesión exitoso', ToastAndroid.SHORT);
 
     } catch (error) {
-      Alert.alert('Error', error.message || 'Login failed');
+      Alert.alert('Error', error.message || 'Login fallido');
     } finally {
       setLoading(false);
     }

@@ -93,11 +93,6 @@ const Post = () => {
       },
     },
   ];
-  const sampleComments = [
-    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema en mi equipo y resultó ser un error de la terminal de windows' },
-    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: '¡Tengo el mismo problema! Si encuentras una solución por favor compartela' },
-    { avatar: '../assets/images/charlie.jpg', date: '12 March, 20', text: 'Tuve ese mismo problema en mi equipo y resultó ser un error de la terminal de windows' },
-  ];
   return (
     <View style={styles.container}>
       <ScreenWrapper>
@@ -181,7 +176,7 @@ const Post = () => {
           </View>
         </View>
       </ScreenWrapper>
-      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} comments={sampleComments} />
+      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
     </View>
   );

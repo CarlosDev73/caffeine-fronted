@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable, ToastAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import ScreenWrapper from '../components/ScreenWrapper'
@@ -52,29 +52,29 @@ const CreatePost = () => {
 
     const handleCreatePost = async () => {
         if (!postTitle || !postContent || tags.length === 0 || !postImg) {
-            Alert.alert('Error', 'Por favor completa todos los campos y selecciona una imagen.');
+            ToastAndroid.show('Completa los campos y selecciona una imagen', ToastAndroid.SHORT);
             return;
         }
 
 
-            const formData = new FormData();
-            formData.append('title', postTitle);
-            formData.append('content', postContent);
-            formData.append('type', type); // Asegúrate de incluir el tipo correcto
-            formData.append('tags', tags.join(',')); // Convierte el array a un string separado por comas
+        const formData = new FormData();
+        formData.append('title', postTitle);
+        formData.append('content', postContent);
+        formData.append('type', type); // Asegúrate de incluir el tipo correcto
+        formData.append('tags', tags.join(',')); // Convierte el array a un string separado por comas
 
-            if (postImg) {
-                formData.append('postImg', {
-                  uri: postImg.uri,
-                  name: 'postImg.jpg',
-                  type: 'image/jpeg',
-                });
-              }
+        if (postImg) {
+            formData.append('postImg', {
+                uri: postImg.uri,
+                name: 'postImg.jpg',
+                type: 'image/jpeg',
+            });
+        }
 
-            console.log('FormData being sent:', formData);
-            try {
+        console.log('FormData being sent:', formData);
+        try {
             const response = await createPost(formData);
-            Alert.alert('Éxito', 'Post creado exitosamente');
+            ToastAndroid.show('Post creado exitosamente', ToastAndroid.SHORT);
             router.push('/feed'); // Redirige al feed
         } catch (error) {
             console.error('Error al crear el post:', error);
@@ -162,7 +162,7 @@ const CreatePost = () => {
                                 <OptionsButtons tags={availableTags} onSelectTag={handleTagSelection} selectedTags={tags} />
                             </View>
                             <Pressable onPress={handleImagePicker}>
-                            <View style={styles.postPicContainer}>
+                                <View style={styles.postPicContainer}>
                                     {postImg ? (
                                         <Image source={{ uri: postImg.uri }} style={styles.postPic} />
                                     ) : (
@@ -170,7 +170,7 @@ const CreatePost = () => {
                                     )}
                                     <Text style={styles.postPicText}>Adjuntar Imágenes</Text>
                                 </View>
-                        
+
                             </Pressable>
                             <View style={{ marginVertical: heightPercentage(3) }}>
                                 <Button
@@ -231,18 +231,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: heightPercentage(2),
         marginBottom: heightPercentage(2),
-      },
-      postPic: {
+    },
+    postPic: {
         width: widthPercentage(20),
         height: widthPercentage(20),
         borderRadius: 10,
         borderWidth: 2,
         borderColor: '#000',
-      },
-      postPicText: {
+    },
+    postPicText: {
         marginLeft: widthPercentage(4),
         fontSize: heightPercentage(2),
-      },
+    },
     text: {
 
     },
