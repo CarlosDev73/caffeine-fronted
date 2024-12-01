@@ -44,7 +44,7 @@ const SignUpStepTwo = () => {
 
   const handleRegister = async () => {
     if (!biography || skills.length === 0 || !profileImg) {
-      ToastAndroid.show('Por favor completa los campos y selecciona una imagen de perfil', ToastAndroid.SHORT);
+      ToastAndroid.show('Completa los campos y selecciona una imagen de perfil', ToastAndroid.SHORT);
       return;
     }
 

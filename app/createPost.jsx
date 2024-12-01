@@ -52,7 +52,7 @@ const CreatePost = () => {
 
     const handleCreatePost = async () => {
         if (!postTitle || !postContent || tags.length === 0 || !postImg) {
-            ToastAndroid.show('Por favor completa los campos y selecciona una imagen', ToastAndroid.SHORT);
+            ToastAndroid.show('Completa los campos y selecciona una imagen', ToastAndroid.SHORT);
             return;
         }
 

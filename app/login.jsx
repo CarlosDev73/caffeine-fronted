@@ -70,6 +70,7 @@ const login = () => {
 
       // Navigate to the feed page
       router.push({ pathname: '/feed' });
+      ToastAndroid.show('Inicio de sesión exitoso', ToastAndroid.SHORT);
 
     } catch (error) {
       Alert.alert('Error', error.message || 'Login fallido');
