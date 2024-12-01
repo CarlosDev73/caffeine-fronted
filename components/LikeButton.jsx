@@ -48,7 +48,7 @@ const LikeButton = ({ postId, currentUserId }) => {
     return (
         <Pressable onPress={handleLike} style={styles.container}>
             <Octicons
-                name="heart"
+                name={isLiked ? 'heart-fill' : 'heart'}
                 size={24}
                 color={isLiked ? 'red' : 'black'} // Red if liked, black otherwise
             />
