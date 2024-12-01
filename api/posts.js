@@ -69,13 +69,23 @@ export const createPost = async (formData) => {
 
 export const updatePost = async (postId, updateData) => {
   try {
-    const token = await getToken();
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+    
     const response = await axios.put(`${API_URL}/post/${postId}`, updateData, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Asegúrate de usar multipart para datos con imágenes
+      },
     });
+    console.log("Respuesta de la API:", response.data);
+
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: "Failed to update post" };
+    console.error("Error in updatePost:", error.response?.data || error.message);
   }
 };
 

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, Alert } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
@@ -12,7 +12,6 @@ import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain.jsx'
 import { loginProccess } from '../api/auth'
 import * as SecureStore from 'expo-secure-store'
-import { Alert } from 'react-native';
 
 const login = () => {
 
