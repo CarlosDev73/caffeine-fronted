@@ -1,31 +1,34 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 
-const SimpleFeedPost = () => {
+const SimpleFeedPost = ({ post }) => {
   const [comments, setComments] = useState(0);
   const [likes, setLikes] = useState(0);
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.imagePlaceholder}>
-          <MaterialCommunityIcons name="image-outline" size={40} color="white" />
+          {post.media?.[0]?.secure_url ? (
+            <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+          ) : (
+            <MaterialCommunityIcons name="image-outline" size={40} color="white" />
+          )}
         </View>
         <View style={styles.textAndReactions}>
-          <Text style={styles.dateText}>12 Marzo, 20</Text>
-          <Text style={styles.titleText}>I'm post title, Please 2 line only...</Text>
+          <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
+          <Text style={styles.titleText}>{post.title}</Text>
           <View style={styles.reactions}>
             <Pressable style={styles.reactionButton} onPress={() => setComments(comments + 1)}>
               <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-              <Text style={styles.reactionText}>Comment</Text>
+              <Text style={styles.reactionText}>1.5k</Text>
             </Pressable>
             <Pressable style={[styles.reactionButton, styles.likeButton]} onPress={() => setLikes(likes + 1)}>
               <Octicons name="heart" size={20} color="black" />
-              <Text style={styles.reactionText}>Like</Text>
+              <Text style={styles.reactionText}>2k</Text>
             </Pressable>
           </View>
         </View>
@@ -52,12 +55,18 @@ const styles = StyleSheet.create({
   },
   imagePlaceholder: {
     width: 90,
-    height: 90, // Ensure consistent height
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.radius.sm,
+    height: 90, // Fixed dimensions for placeholder
+    backgroundColor: theme.colors.primary, // Fallback background color
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    borderRadius: 8, // Optional: Add rounded corners
+    overflow: 'hidden', // Ensures the image fits within rounded corners
+  },
+  postImage: {
+    width: '100%',
+    height: '100%', // Fill the placeholder completely
+    resizeMode: 'cover', // Ensures the image scales proportionally
   },
   textAndReactions: {
     flex: 1,

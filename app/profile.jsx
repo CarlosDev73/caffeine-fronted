@@ -1,6 +1,7 @@
-import React, { useState } from 'react'; // Asegúrate de importar useState
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import React, { useState, useEffect } from 'react'; // Asegúrate de importar useState
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
@@ -8,14 +9,33 @@ import SimpleFeedPost from '../components/SimpleFeedPost';
 import MainPanel from '../components/MainPanel';
 import ActionModal from '../components/ActionModal'; // Importar ActionModal
 import LogOutModal from '../components/LogOutModal'; // import LogOutModal
-
 import Feather from '@expo/vector-icons/Feather'; // Importar íconos necesarios
+import { fetchUserPosts } from '../api/posts';
 
 const Profile = () => {
   const router = useRouter();
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
   const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);// Status modal Log out confirmation
+  const [userPosts, setUserPosts] = useState([]);
+  useEffect(() => {
+    const loadUserPosts = async () => {
+      try {
+        const userId = await SecureStore.getItemAsync('userId');
+        if (!userId) {
+          Alert.alert('Error', 'No se encontró el ID del usuario. Por favor, inicia sesión nuevamente.');
+          return;
+        }
 
+        const posts = await fetchUserPosts(userId);
+        setUserPosts(posts);
+      } catch (error) {
+        console.error('Error al cargar los posts del usuario:', error);
+        Alert.alert('Error', 'No se pudieron cargar los posts.');
+      }
+    };
+
+    loadUserPosts();
+  }, []);
   // Acciones para el ActionModal en el perfil
   const profileActions = [
     {
@@ -87,10 +107,12 @@ const Profile = () => {
 
         {/* Last Post Section */}
         <View style={styles.lastPostSection}>
-          <Text style={styles.sectionTitle}>Último post</Text>
-          <TouchableOpacity onPress={() => router.push('myPost')}>
-            <SimpleFeedPost />
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Últimos posts</Text>
+          {userPosts.map((post) => (
+            <TouchableOpacity key={post._id} onPress={() => router.push(`post/${post._id}`)}>
+              <SimpleFeedPost post={post} />
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Tags Section */}

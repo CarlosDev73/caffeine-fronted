@@ -43,6 +43,18 @@ export const fetchPostById = async (postId) => {
     throw error.response?.data || { message: 'Failed to fetch post' };
   }
 };
+export const fetchUserPosts = async (userId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    const response = await axios.get(`${API_URL}/user/${userId}/posts`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.posts;
+  } catch (error) {
+    console.error('Error en fetchUserPosts:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error al obtener los posts del usuario.' };
+  }
+};
 
 
 export const createPost = async (formData) => {
