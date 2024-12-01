@@ -131,9 +131,17 @@ export const fetchComments = async (postId) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    if (response.data.message === 'No se encontraron comentarios para este post.') {
+      return []; 
+  }
+
     return response.data.comments;
   } catch (error) {
-    console.error('Error en fetchComments:', error.response?.data || error.message);
+    if (error.response) {
+      console.error('Error en fetchComments:', error.response.data);
+      throw error.response.data;
+    }
+    console.error('Unexpected error in fetchComments:', error.message);
     throw error.response?.data || { message: 'Error al obtener los comentarios.' };
   }
 };

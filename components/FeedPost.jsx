@@ -10,6 +10,8 @@ import Feather from '@expo/vector-icons/Feather';
 import { deletePost } from '../api/posts'
 import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
 import LikeButton from './LikeButton';
+import CommentCountButton from './CommentButton';
+
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
@@ -146,10 +148,7 @@ const FeedPost = ({ post }) => {
 
       {/* Reacciones */}
       <View style={styles.reactionsContainer}>
-        <Pressable style={styles.reactions}>
-          <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-          <Text style={styles.reactionsText}>{comments}</Text>
-        </Pressable>
+        <CommentCountButton postId={post._id} />
 
         <LikeButton 
          postId={post._id}
