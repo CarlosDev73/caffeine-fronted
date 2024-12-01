@@ -9,17 +9,20 @@ import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
 import { deletePost } from '../api/posts'
 import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
+import LikeButton from './LikeButton';
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
 
   const [comments, setComments] = useState(post.comments?.length || 0);
   const [points, setPoints] = useState(post.stars?.length || 0);
-  const [likes, setLikes] = useState(post.likes?.length || 0);
   const [userId, setUserId] = useState(null);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
   
   const isOwner = post._userId._id?.toString() === userId?.toString();
+
+  const [likesCount, setLikesCount] = useState(post.likesCount);
+  const [isLiked, setIsLiked] = useState(post.isLiked);
 
   const optionsActions = [
     ...(isOwner
@@ -78,14 +81,33 @@ const FeedPost = ({ post }) => {
     },
   ];
   useEffect(() => {
-    const loadUserId = async () => {
-      const storedUserId = await SecureStore.getItemAsync('userId');
-      if (storedUserId) {
-        setUserId(storedUserId);
+    const fetchUserIdAndInitializeLikes = async () => {
+      try {
+        // Fetch the current user ID from SecureStore
+        const fetchedUserId = await SecureStore.getItemAsync('userId');
+        if (!fetchedUserId) {
+          console.error("User ID not found in SecureStore");
+          return;
+        }
+  
+        // Set the user ID state
+        setUserId(fetchedUserId);
+  
+        // Fetch likes data for the post
+        
+      } catch (error) {
+        console.error("Error initializing likes:", error);
       }
     };
-    loadUserId();
-  }, []);
+  
+    // Ensure the function runs only if post._id exists
+    if (post._id) {
+      fetchUserIdAndInitializeLikes();
+    }
+  }, [post._id]);
+  
+  
+  
   return (
     <View style={styles.container}>
       {/* Header del Post */}
@@ -129,10 +151,10 @@ const FeedPost = ({ post }) => {
           <Text style={styles.reactionsText}>{comments}</Text>
         </Pressable>
 
-        <Pressable style={styles.reactions} onPress={() => setLikes(likes + 1)}>
-          <Octicons name="heart" size={19} color="black" />
-          <Text style={styles.reactionsText}>{likes}</Text>
-        </Pressable>
+        <LikeButton 
+         postId={post._id}
+         currentUserId={userId}
+        />
 
         <Pressable style={styles.reactions} onPress={() => setPoints(points + 1)}>
           <Feather name="star" size={20} color="black" />
