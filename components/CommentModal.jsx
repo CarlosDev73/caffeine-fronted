@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, FlatList, TextInput, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
+import { fetchComments } from '../api/posts';
 
-const CommentModal = ({ visible, onClose, comments }) => {
+const CommentModal = ({ visible, onClose, postId }) => {
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    if (visible && postId) {
+      const loadComments = async () => {
+        try {
+          const fetchedComments = await fetchComments(postId);
+          setComments(fetchedComments);
+        } catch (error) {
+          console.error('Error al cargar los comentarios:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadComments();
+    }
+  }, [visible, postId]);
   return (
     <Modal
       animationType="slide"
@@ -28,15 +47,18 @@ const CommentModal = ({ visible, onClose, comments }) => {
                 {/* Comments List */}
                 <FlatList
                   data={comments}
-                  keyExtractor={(item, index) => index.toString()}
+                  keyExtractor={(item) => item._id} 
                   renderItem={({ item }) => (
                     <View style={styles.commentWrapper}>
                       {/* Avatar, Date, and Check icon in a single row */}
                       <View style={styles.commentHeader}>
-                        <Image source={require('../assets/images/avatar.png')} style={styles.avatar} />
+                      <Image
+                            source={{ uri: item._userId.profileImg?.secure_url || 'https://via.placeholder.com/150' }}
+                            style={styles.avatar}
+                          />
                         <View style={styles.commentContent}>
-                          <Text style={styles.dateText}>{item.date}</Text>
-                          <Text style={styles.commentText}>{item.text}</Text>
+                        <Text style={styles.dateText}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                          <Text style={styles.commentText}>{item.content}</Text>
                         </View>
                         {/* Custom Check Icon with Green Background and Black Border */}
                         <View style={styles.checkIconContainer}>
@@ -61,6 +83,13 @@ const CommentModal = ({ visible, onClose, comments }) => {
                       </View>
                     </View>
                   )}
+                  ListEmptyComponent={
+                    !loading && (
+                      <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>Aun no hay comentarios</Text>
+                      </View>
+                    )
+                  }
                   ListFooterComponent={
                     <View style={styles.commentInputContainer}>
                       <TextInput
@@ -205,5 +234,15 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.dark,
     borderWidth: 2,
     borderBottomWidth: 5,
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: 'gray',
+    textAlign: 'center',
   },
 });

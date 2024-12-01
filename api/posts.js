@@ -118,3 +118,22 @@ export const deletePost = async (postId) => {
     throw error.response?.data || { message: 'Fallo al eliminar el post' };
   }
 };
+
+export const fetchComments = async (postId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token no encontrado. Por favor, inicia sesión nuevamente.');
+    }
+
+    const response = await axios.get(`${API_URL}/post/${postId}/comments`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data.comments;
+  } catch (error) {
+    console.error('Error en fetchComments:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error al obtener los comentarios.' };
+  }
+};

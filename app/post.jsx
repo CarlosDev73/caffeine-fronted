@@ -181,7 +181,7 @@ const Post = () => {
           </View>
         </View>
       </ScreenWrapper>
-      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} comments={sampleComments} />
+      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
     </View>
   );
