@@ -1,39 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
+import { useRouter } from 'expo-router';
 import { heightPercentage, widthPercentage } from '../helpers/common';
+import * as SecureStore from 'expo-secure-store';
+import LikeButton from './LikeButton';
+import CommentButton from './CommentButton';
 
 const SimpleFeedPost = ({ post }) => {
-  const [comments, setComments] = useState(0);
-  const [likes, setLikes] = useState(0);
+  const router = useRouter();
+
+  const [userId, setUserId] = useState(null);
+  useEffect(() => {
+    const fetchUserIdAndInitializeLikes = async () => {
+      try {
+        // Fetch the current user ID from SecureStore
+        const fetchedUserId = await SecureStore.getItemAsync('userId');
+        if (!fetchedUserId) {
+          console.error("User ID not found in SecureStore");
+          return;
+        }
+
+        // Set the user ID state
+        setUserId(fetchedUserId);
+
+        // Fetch likes data for the post
+
+      } catch (error) {
+        console.error("Error initializing likes:", error);
+      }
+    };
+
+    // Ensure the function runs only if post._id exists
+    if (post._id) {
+      fetchUserIdAndInitializeLikes();
+    }
+  }, [post._id]);
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.imagePlaceholder}>
-          {post.media?.[0]?.secure_url ? (
-            <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
-          ) : (
-            <MaterialCommunityIcons name="image-outline" size={40} color="white" />
-          )}
-        </View>
-        <View style={styles.textAndReactions}>
-          <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
-          <Text style={styles.titleText}>{post.title}</Text>
-          <View style={styles.reactions}>
-            <Pressable style={styles.reactionButton} onPress={() => setComments(comments + 1)}>
-              <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-              <Text style={styles.reactionText}>1.5k</Text>
-            </Pressable>
-            <Pressable style={[styles.reactionButton, styles.likeButton]} onPress={() => setLikes(likes + 1)}>
-              <Octicons name="heart" size={20} color="black" />
-              <Text style={styles.reactionText}>2k</Text>
-            </Pressable>
+    <Pressable
+      onPress={() => {
+        router.push({ pathname: '/post', params: { id: post._id } });
+      }}
+    >
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.imagePlaceholder}>
+            {post.media?.[0]?.secure_url ? (
+              <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+            ) : (
+              <MaterialCommunityIcons name="image-outline" size={40} color="white" />
+            )}
+          </View>
+          <View style={styles.textAndReactions}>
+            <Text style={styles.dateText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
+            <Text style={styles.titleText}>{post.title}</Text>
+            <View style={styles.reactions}>
+              <View style={styles.reactionButton}>
+                <CommentButton postId={post._id} />
+              </View>
+              <View style={styles.reactionButton}>
+                <LikeButton style={styles.reactionButton}
+                  postId={post._id}
+                  currentUserId={userId}
+                />
+              </View>
+
+
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -84,13 +123,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   reactions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row', // Align buttons horizontally
   },
   reactionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 16,
+    marginHorizontal: 10,
   },
   likeButton: {
     marginRight: 0,
