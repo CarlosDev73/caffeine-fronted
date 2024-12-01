@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Pressable, ToastAndroid } from 'react-native';
 import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -44,7 +44,7 @@ const SignUpStepTwo = () => {
 
   const handleRegister = async () => {
     if (!biography || skills.length === 0 || !profileImg) {
-      Alert.alert('Error', 'Por favor completa todos los campos y selecciona una imagen de perfil.');
+      ToastAndroid.show('Por favor completa los campos y selecciona una imagen de perfil', ToastAndroid.SHORT);
       return;
     }
 
@@ -66,7 +66,7 @@ const SignUpStepTwo = () => {
     console.log('FormData being sent:', formData);
     try {
       const response = await registerUser(formData);
-      Alert.alert('Éxito', 'Cuenta creada exitosamente');
+      ToastAndroid.show('Cuenta creada exitosamente', ToastAndroid.SHORT);
       router.push('/login'); // Redirige al usuario a la página de inicio de sesión
     } catch (error) {
       // Manejo de errores específicos

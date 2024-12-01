@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View, Alert } from 'react-native'
+import { Pressable, StyleSheet, Text, View, Alert, ToastAndroid } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
@@ -72,7 +72,7 @@ const login = () => {
       router.push({ pathname: '/feed' });
 
     } catch (error) {
-      Alert.alert('Error', error.message || 'Login failed');
+      Alert.alert('Error', error.message || 'Login fallido');
     } finally {
       setLoading(false);
     }

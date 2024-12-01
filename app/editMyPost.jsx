@@ -80,15 +80,15 @@ const editMyPost = () => {
 
         if (postImg) {
             formData.append('postImg', {
-              uri: postImg.uri,
-              name: 'postImg.jpg',
-              type: 'image/jpeg',
+                uri: postImg.uri,
+                name: 'postImg.jpg',
+                type: 'image/jpeg',
             });
-          }
-          console.log('FormData being sent:', formData);
+        }
+        console.log('FormData being sent:', formData);
         try {
             const response = await updatePost(id, formData); // Call updatePost API
-            ToastAndroid.show('Post actualizado con éxito', ToastAndroid.SHORT);
+            ToastAndroid.show('Post actualizado exitosamente', ToastAndroid.SHORT);
             router.push('/feed'); // Redirige al feed
         } catch (error) {
             Alert.alert('Error', error.message || 'Failed to update the post.');
