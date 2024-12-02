@@ -139,7 +139,11 @@ const Post = () => {
                     year: 'numeric',
                   })}
                 </Text>
-                <Text>Redes, Modelo OSI</Text>
+                {post.tags?.length > 0 && (
+                  <Text style={styles.tagsText}>
+                    {post.tags.join(', ')}
+                  </Text>
+                )}
               </View>
               <View style={styles.imageTextContainer}>
                 <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />

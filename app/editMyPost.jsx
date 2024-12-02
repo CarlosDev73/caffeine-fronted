@@ -163,7 +163,19 @@ const editMyPost = () => {
                                 />
                             </View>
                             <View>
-                                <OptionsButtons tags={availableTags} onSelectTag={(tag) => setTags([...tags, tag])} selectedTags={tags} />
+                            <OptionsButtons
+  tags={availableTags}
+  selectedTags={tags} // Pre-selected tags
+  onSelectTag={(tag, isSelected) => {
+    if (isSelected) {
+      // Add tag if selected
+      setTags((prevTags) => [...prevTags, tag]);
+    } else {
+      // Remove tag if deselected
+      setTags((prevTags) => prevTags.filter((t) => t !== tag));
+    }
+  }}
+/>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: heightPercentage(1) }}>
                                 <Pressable onPress={handleImagePicker}>
@@ -177,6 +189,7 @@ const editMyPost = () => {
                                     </View>
                                 </Pressable>
                             </View>
+                            </ScrollView>
                             <View style={{ marginVertical: heightPercentage(3) }}>
                                 <Button
                                     title='Guardar cambios'
@@ -187,7 +200,7 @@ const editMyPost = () => {
                                     textStyle={{ fontWeight: theme.fonts.extraBold }}
                                 />
                             </View>
-                        </ScrollView>
+                        
                     </View>
                 </Animated.View>
             </ScreenWrapper>

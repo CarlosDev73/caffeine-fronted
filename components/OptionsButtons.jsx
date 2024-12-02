@@ -1,40 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { heightPercentage } from '../helpers/common';
 import Feather from '@expo/vector-icons/Feather';
 
-const OptionsButtons = ({ tags, onSelectTag }) => {
+const OptionsButtons = ({ tags, onSelectTag, selectedTags }) => {
 
-  const [selectedTags, setSelectedTags] = useState({});
+  const [selectedTagsState, setSelectedTagsState] = useState({});
 
-  const selectedTag = (item) => {
-    onSelectTag(item);
-    setSelectedTags((prevSelectedTags) => ({
-      ...prevSelectedTags,
-      [item]: !prevSelectedTags[item],
+  useEffect(() => {
+    // Initialize selected tags from props
+    const initialSelectedTags = selectedTags.reduce((acc, tag) => {
+      acc[tag] = true;
+      return acc;
+    }, {});
+    setSelectedTagsState(initialSelectedTags);
+  }, [selectedTags]);
+
+  const toggleTagSelection = (tag) => {
+    const isSelected = selectedTagsState[tag];
+    setSelectedTagsState((prev) => ({
+      ...prev,
+      [tag]: !isSelected,
     }));
-  }
-
-  const renderItem = ({ item }) => {
-    const isSelected = selectedTags[item];
-    return (
-      <View style={[styles.tagContainer]}>
-        <TouchableOpacity style={[styles.tag, isSelected && styles.selectedTag]} onPress={() => selectedTag(item)}>
-          <Text style={styles.tagText}>{item}</Text>
-          {isSelected && <Feather name="x" size={15} color="black" />}
-        </TouchableOpacity>
-      </View>
-    );
+    onSelectTag(tag, !isSelected); // Pass the toggle state to the parent
   };
 
+
   return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', marginVertical: heightPercentage(2)}}>
-      {tags.map((item, index) => {
-        const isSelected = selectedTags[item];
+    <View style={styles.container}>
+      {tags.map((tag) => {
+        const isSelected = selectedTagsState[tag];
         return (
-          <View style={[styles.tagContainer]} key={index}>
-            <TouchableOpacity style={[styles.tag, isSelected && styles.selectedTag]} onPress={() => selectedTag(item)}>
-              <Text style={styles.tagText}>{item}</Text>
+          <View style={styles.tagContainer} key={tag}>
+            <TouchableOpacity
+              style={[styles.tag, isSelected && styles.selectedTag]}
+              onPress={() => toggleTagSelection(tag)}
+            >
+              <Text style={styles.tagText}>{tag}</Text>
               {isSelected && <Feather name="x" size={15} color="black" />}
             </TouchableOpacity>
           </View>
@@ -48,7 +50,10 @@ export default OptionsButtons;
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: heightPercentage(2)
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'flex-start', 
+    marginVertical: heightPercentage(2),
   },
   row: {
     justifyContent: 'space-between',
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     alignItems: 'center',
-    marginHorizontal: 2,
+    marginHorizontal: 3,
     marginVertical: heightPercentage(0.7)
   },
   tag: {

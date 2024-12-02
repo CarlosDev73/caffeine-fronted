@@ -131,9 +131,17 @@ export const fetchComments = async (postId) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    if (response.data.message === 'No se encontraron comentarios para este post.') {
+      return []; 
+  }
+
     return response.data.comments;
   } catch (error) {
-    console.error('Error en fetchComments:', error.response?.data || error.message);
+    if (error.response) {
+      console.error('Error en fetchComments:', error.response.data);
+      throw error.response.data;
+    }
+    console.error('Unexpected error in fetchComments:', error.message);
     throw error.response?.data || { message: 'Error al obtener los comentarios.' };
   }
 };
@@ -156,5 +164,47 @@ export const createComment = async (postId, data) => {
   } catch (error) {
     console.error('Error in createComment:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Failed to create comment' };
+  }
+};
+
+export const likePost = async (postId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    const response = await axios.post(`${API_URL}/post/${postId}/like`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error liking post:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to like post.' };
+  }
+};
+
+export const unlikePost = async (postId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    const response = await axios.delete(`${API_URL}/post/${postId}/like`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error unliking post:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to unlike post.' };
+  }
+};
+
+export const fetchPostLikes = async (postId, currentUserId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    const response = await axios.get(`${API_URL}/post/${postId}/likes`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const likes = Array.isArray(response.data) ? response.data : []; // Ensure `likes` is always an array
+
+    
+    return likes;
+  } catch (error) {
+    console.error('Error fetching post likes:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Failed to fetch post likes' };
   }
 };
