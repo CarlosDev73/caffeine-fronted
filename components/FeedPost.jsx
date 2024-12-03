@@ -12,7 +12,7 @@ import ActionModal from './ActionModal'; // Ensure this component exists or adju
 import LikeButton from './LikeButton';
 import CommentCountButton from './CommentButton';
 import FavoriteButton from './FavoriteButton';
-
+import ShareButton from './ShareButton';
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
@@ -161,9 +161,7 @@ const FeedPost = ({ post }) => {
          currentUserId={userId}
         />
 
-        <Pressable>
-          <Feather name="share" size={20} color="black" />
-        </Pressable>
+        <ShareButton post={post} />
       </View>
 
       {/* Modal de opciones */}

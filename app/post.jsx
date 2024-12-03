@@ -17,6 +17,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import LikeButton from '../components/LikeButton';
 import CommentButton from '../components/CommentButton';
 import FavoriteButton from '../components/FavoriteButton';
+import ShareButton from '../components/ShareButton';
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -167,9 +168,7 @@ const Post = () => {
               </Pressable>
               <LikeButton postId={post._id} currentUserId={userId} />
               <FavoriteButton postId={post._id} currentUserId={userId} />
-              <Pressable>
-                <Feather name="share" size={20} color="black" />
-              </Pressable>
+              <ShareButton post={post} />
             </View>
             <Input
               icon={<FontAwesome5 name="comment" size={24} color="black" />}
