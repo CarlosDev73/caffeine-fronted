@@ -10,16 +10,19 @@ import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
 import CommentModal from '../components/CommentModal';
 import ActionModal from '../components/ActionModal'; // Asegúrate de importar ActionModal correctamente
-
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import LikeButton from '../components/LikeButton';
+import CommentButton from '../components/CommentButton';
+import FavoriteButton from '../components/FavoriteButton';
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { fetchPostById } from '../api/posts';
+
+import * as SecureStore from 'expo-secure-store';
 
 const Post = () => {
   const router = useRouter();
@@ -27,14 +30,10 @@ const Post = () => {
   //console.log('Retrieved post ID:', id);
   const [modalVisible, setModalVisible] = useState(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false); // Estado para ActionModal
-  const [user, setUser] = useState({});
   const [post, setPost] = useState(null);
-  const [comments, setComments] = useState(0);
   const [points, setPoints] = useState(0);
-  const [likes, setLikes] = useState(0);
   const [loading, setLoading] = useState(true);
-
-  const translateY = useSharedValue(300);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const loadPost = async () => {
@@ -44,6 +43,16 @@ const Post = () => {
         const fetchedPost = await fetchPostById(id); // Fetching the post by ID
         //  console.log('Fetched Post:', fetchedPost);
         setPost(fetchedPost); // Set the fetched post data
+
+        const fetchedUserId = await SecureStore.getItemAsync('userId');
+        if (!fetchedUserId) {
+          console.error("User ID not found in SecureStore");
+          return;
+        }
+
+        // Set the user ID state
+        setUserId(fetchedUserId);
+
       } catch (error) {
         Alert.alert('Error', error.message || 'Failed to fetch post data.');
       } finally {
@@ -153,21 +162,11 @@ const Post = () => {
           </View>
           <View style={styles.reactionsSection}>
             <View style={styles.reactionsContainer}>
-              <Pressable style={styles.reactions} onPress={() => setModalVisible(true)}>
-                <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
-                <Text style={styles.reactionsText}>{comments}</Text>
-              </Pressable>
-              <Pressable style={styles.reactions} onPress={() => setLikes(likes + 1)}>
-                <Octicons name="heart" size={19} color="black" />
-                <Text style={styles.reactionsText}>{likes}</Text>
-              </Pressable>
-              <Pressable style={styles.reactions}>
+              <CommentButton postId={post._id} />
+              <LikeButton postId={post._id} currentUserId={userId} />
+              <FavoriteButton postId={post._id} currentUserId={userId} />
+              <Pressable>
                 <Feather name="share" size={20} color="black" />
-                <Text style={styles.reactionsText}>{points}</Text>
-              </Pressable>
-              <Pressable style={styles.reactions} onPress={() => setPoints(points + 1)}>
-                <Feather name="star" size={20} color="black" />
-                <Text style={styles.reactionsText}>{points}</Text>
               </Pressable>
             </View>
             <Input
