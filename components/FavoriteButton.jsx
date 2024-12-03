@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 import Octicons from '@expo/vector-icons/Octicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { markAsFavorite, unmarkAsFavorite, fetchPostFavorites} from '../api/favorites';
 
 const FavoriteButton = ({ postId, currentUserId }) => {
@@ -47,11 +48,11 @@ const FavoriteButton = ({ postId, currentUserId }) => {
 
     return (
         <Pressable onPress={handleFavorite} style={styles.container}>
-            <Octicons
-                name={isFavorited ? 'star-fill' : 'star'}
-                size={20}
-                color={isFavorited ? 'gold' : 'black'} // Gold if favorited, black otherwise
-            />
+            <MaterialCommunityIcons 
+            name={isFavorited ? 'bookmark' : 'bookmark-outline'}
+            size={20}
+            color={isFavorited ? 'black' : 'black'} 
+             />
             <Text style={styles.favoritesText}>{favoritesCount}</Text>
         </Pressable>
     );

@@ -167,8 +167,8 @@ const Post = () => {
                 <CommentButton postId={post._id} onPress={() => setModalVisible(true)} />
               </Pressable>
               <LikeButton postId={post._id} currentUserId={userId} />
-              <FavoriteButton postId={post._id} currentUserId={userId} />
               <ShareButton post={post} />
+              <FavoriteButton postId={post._id} currentUserId={userId} />
             </View>
             <Input
               icon={<FontAwesome5 name="comment" size={24} color="black" />}

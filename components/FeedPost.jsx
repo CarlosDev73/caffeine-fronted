@@ -156,12 +156,13 @@ const FeedPost = ({ post }) => {
          currentUserId={userId}
         />
 
+        <ShareButton post={post} />
+
         <FavoriteButton
          postId={post._id}
          currentUserId={userId}
         />
-
-        <ShareButton post={post} />
+        
       </View>
 
       {/* Modal de opciones */}
