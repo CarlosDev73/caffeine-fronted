@@ -1,80 +1,92 @@
-import { StyleSheet, Text, View, Image, ScrollView, Pressable} from 'react-native'
-import React from 'react'
-import ScreenWrapper from '../components/ScreenWrapper'
-import { StatusBar } from 'expo-status-bar'
-import { widthPercentage, heightPercentage } from '../helpers/common.js'
-import { theme } from '../constants/theme.js'
-import { useRouter } from 'expo-router'
-import MainPanel from '../components/MainPanel.jsx'
-import FeedPost from '../components/FeedPost.jsx'
-import AbsoluteButton from '../components/AbsoluteButton.jsx'
+import { StyleSheet, Text, View, Image, ScrollView, Pressable, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import ScreenWrapper from '../components/ScreenWrapper';
+import { StatusBar } from 'expo-status-bar';
+import { widthPercentage, heightPercentage } from '../helpers/common.js';
+import { theme } from '../constants/theme.js';
+import { useRouter } from 'expo-router';
+import MainPanel from '../components/MainPanel.jsx';
+import FeedPost from '../components/FeedPost.jsx';
+import AbsoluteButton from '../components/AbsoluteButton.jsx';
 import Feather from '@expo/vector-icons/Feather';
+import { fetchFavoritePostsByUser } from '../api/favorites';
 
-const favorites = () => {
+const Favorites = () => {
   const router = useRouter();
+  const [favoritePosts, setFavoritePosts] = useState([]);
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const response = await fetchFavoritePostsByUser();
+        const favorites = response.formattedFavorites || [];
+        console.log('Raw API Response:', favorites);
+        // Filter and map valid posts
+        const validPosts = favorites.map((favorite) => ({
+          _id: favorite._id,
+          ...favorite,
+        }));
+        console.log('Valid Posts:', validPosts);
+
+        setFavoritePosts(validPosts);
+      } catch (error) {
+        Alert.alert('Error', 'Failed to fetch favorite posts.');
+        console.error('Error fetching favorite posts:', error);
+      }
+    };
+
+    loadFavorites();
+  }, []);
+
   return (
     <ScreenWrapper>
-      <StatusBar style='dark'/>
+      <StatusBar style="dark" />
       <View>
-        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5), marginHorizontal: 16,}}>Favoritos</Text>
+        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5), marginHorizontal: 16 }}>
+          Favoritos
+        </Text>
       </View>
       <View style={styles.container}>
         <ScrollView>
-            <FeedPost />
-            <FeedPost />
+        {favoritePosts.length > 0 ? (
+            favoritePosts.map((post) => (
+              console.log(post._id),
+              <FeedPost key={post._id} post={post} />
+            ))
+          ) : (
+            <Text style={styles.noPostsText}>No posts available.</Text>
+          )}
         </ScrollView>
-        <View style={{width: widthPercentage(100), flexDirection: 'row', justifyContent: 'flex-end',}}>
-          <AbsoluteButton 
-            child={<Feather name="plus" size={35} color="black" />} 
-            color={theme.colors.primary} 
-            buttonStyle={{bottom: 5, right: -5}}
-            onPress={()=>{router.push('createPost')}}
+        <View style={{ width: widthPercentage(100), flexDirection: 'row', justifyContent: 'flex-end' }}>
+          <AbsoluteButton
+            child={<Feather name="plus" size={35} color="black" />}
+            color={theme.colors.primary}
+            buttonStyle={{ bottom: 5, right: -5 }}
+            onPress={() => {
+              router.push('createPost');
+            }}
           />
         </View>
         <MainPanel />
       </View>
     </ScreenWrapper>
-  )
-}
+  );
+};
 
-export default favorites
-
+export default Favorites;
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'space-around',
     backgroundColor: 'white',
-    paddingHorizontal: widthPercentage(4)
+    paddingHorizontal: widthPercentage(4),
   },
-  welcomeImage:{
-    height: heightPercentage(30),
-    width: widthPercentage(100),
-    alignSelf: 'center',
-  },
-  circle: {
-    width: 300, 
-    height: 300,
-    borderRadius: 200, 
-    backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  title:{
-    color: theme.colors.textTitles, //esto viene de nuestra carpeta constants
-    fontSize: heightPercentage(4),
-    textAlign: 'center',
-    fontWeight: theme.fonts.extraBold
-  },
-  punchline:{
-    textAlign: 'center',
-    paddingHorizontal: widthPercentage(10),
+  noPostsText: {
     fontSize: heightPercentage(2.5),
-    color: theme.colors.text
+    color: 'gray',
+    textAlign: 'center',
+    marginTop: heightPercentage(10),
   },
-  footer:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  }
-})
+});

@@ -51,6 +51,7 @@ export const fetchFavoritePostsByUser = async () => {
     const response = await axios.get(`${API_URL}/favorites`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log('API Response:', response.data);
     return response.data; 
   } catch (error) {
     console.error('Error fetching favorite posts:', error.response?.data || error.message);
