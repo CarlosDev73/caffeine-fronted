@@ -20,13 +20,13 @@ const Favorites = () => {
       try {
         const response = await fetchFavoritePostsByUser();
         const favorites = response.formattedFavorites || [];
-        console.log('Raw API Response:', favorites);
+        //console.log('Raw API Response:', favorites);
         // Filter and map valid posts
         const validPosts = favorites.map((favorite) => ({
           _id: favorite._id,
           ...favorite,
         }));
-        console.log('Valid Posts:', validPosts);
+        //console.log('Valid Posts:', validPosts);
 
         setFavoritePosts(validPosts);
       } catch (error) {
@@ -50,7 +50,6 @@ const Favorites = () => {
         <ScrollView>
         {favoritePosts.length > 0 ? (
             favoritePosts.map((post) => (
-              console.log(post._id),
               <FeedPost key={post._id} post={post} />
             ))
           ) : (
