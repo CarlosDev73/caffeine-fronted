@@ -162,7 +162,9 @@ const Post = () => {
           </View>
           <View style={styles.reactionsSection}>
             <View style={styles.reactionsContainer}>
-              <CommentButton postId={post._id} />
+              <Pressable style={styles.reactions} onPress={() => setModalVisible(true)}>
+                <CommentButton postId={post._id} onPress={() => setModalVisible(true)} />
+              </Pressable>
               <LikeButton postId={post._id} currentUserId={userId} />
               <FavoriteButton postId={post._id} currentUserId={userId} />
               <Pressable>
