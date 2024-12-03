@@ -18,8 +18,7 @@ const Favorites = () => {
   useEffect(() => {
     const loadFavorites = async () => {
       try {
-        const response = await fetchFavoritePostsByUser();
-        const favorites = response.formattedFavorites || [];
+        const favorites = await fetchFavoritePostsByUser();
         //console.log('Raw API Response:', favorites);
         // Filter and map valid posts
         const validPosts = favorites.map((favorite) => ({

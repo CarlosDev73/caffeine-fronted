@@ -52,7 +52,7 @@ export const fetchFavoritePostsByUser = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     //console.log('API Response:', response.data);
-    return response.data; 
+    return response.data.favorites; 
   } catch (error) {
     console.error('Error fetching favorite posts:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Failed to fetch favorite posts.' };
