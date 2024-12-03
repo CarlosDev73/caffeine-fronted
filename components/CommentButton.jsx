@@ -3,7 +3,7 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { fetchComments } from '../api/posts'; // Ensure this API endpoint exists
 
-const CommentButton = ({ postId }) => {
+const CommentButton = ({ postId, onPress }) => {
     const [commentsCount, setCommentsCount] = useState(0);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const CommentButton = ({ postId }) => {
     }, [postId]);
 
     return (
-        <Pressable style={styles.container}>
+        <Pressable style={styles.container} onPress={onPress}>
             <MaterialCommunityIcons name="comment-outline" size={20} color="black" />
             <Text style={styles.commentsText}>{commentsCount}</Text>
         </Pressable>

@@ -11,7 +11,8 @@ import { deletePost } from '../api/posts'
 import ActionModal from './ActionModal'; // Ensure this component exists or adjust the import path accordingly
 import LikeButton from './LikeButton';
 import CommentCountButton from './CommentButton';
-
+import FavoriteButton from './FavoriteButton';
+import ShareButton from './ShareButton';
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
@@ -155,14 +156,13 @@ const FeedPost = ({ post }) => {
          currentUserId={userId}
         />
 
-        <Pressable style={styles.reactions} onPress={() => setPoints(points + 1)}>
-          <Feather name="star" size={20} color="black" />
-          <Text style={styles.reactionsText}>{points}</Text>
-        </Pressable>
+        <ShareButton post={post} />
 
-        <Pressable>
-          <Feather name="share" size={20} color="black" />
-        </Pressable>
+        <FavoriteButton
+         postId={post._id}
+         currentUserId={userId}
+        />
+        
       </View>
 
       {/* Modal de opciones */}
