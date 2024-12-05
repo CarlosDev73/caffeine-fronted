@@ -1,4 +1,3 @@
-// components/ProfileComponents.jsx
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Svg, { ClipPath, Defs, Image as SvgImage, Polygon, Rect } from 'react-native-svg';
@@ -6,6 +5,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { theme } from '../constants/theme';
 import { widthPercentage } from '../helpers/common';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import LevelBar from './LevelBar';
 
 // StarAvatar Component
 export const StarAvatar = ({ avatarSource, size = 150 }) => {
@@ -64,26 +64,18 @@ export const FollowButton = ({ following, onPress }) => (
 );
 
 // LevelBar Component with Follow Button Alignment
-export const LevelBar = ({ levelName, progress, maxProgress }) => {
-  const progressPercentage = (progress / maxProgress) * 100;
+export const LevelBarWrapper = ({ levelName, progress, maxProgress }) => {
   const [following, setFollowing] = useState(false);
 
   return (
     <View style={styles.levelBarWrapper}>
       <View style={styles.levelContainer}>
-        {/* Header: Level Name and Points */}
-        <View style={styles.header}>
-          <Text style={styles.levelName}>{levelName}</Text>
-          <Text style={styles.pointsText}>{progress}/{maxProgress}</Text>
-        </View>
-
-        {/* Progress Bar */}
-        <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
-        </View>
+        <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} />
       </View>
 
-      {/* Follow Button aligned next to LevelBar */}
+      
+
+      {/* Follow Button */}
       <FollowButton following={following} onPress={() => setFollowing(!following)} />
     </View>
   );
@@ -145,8 +137,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: widthPercentage(90),
     marginVertical: 10,
+    paddingHorizontal: 10,
   },
-
   levelContainer: {
     backgroundColor: 'white',
     padding: 10,
@@ -156,38 +148,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     flex: 1,
     alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 10,
-    marginBottom: 5,
-  },
-  levelName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.colors.dark,
-  },
-  pointsText: {
-    fontSize: 14,
-    color: theme.colors.text,
-  },
-  progressBarBackground: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    height: 12,
-    backgroundColor: '#F1F1F1',
-    borderRadius: 10,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#FFA07A',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
+    minWidth: 200,
   },
 
   // Stats Component Styles
@@ -235,7 +196,7 @@ const styles = StyleSheet.create({
 export default {
   StarAvatar,
   FollowButton,
-  LevelBar,
+  LevelBarWrapper,
   Stats,
   Tags,
 };

@@ -89,7 +89,7 @@ const Profile = () => {
           <Text style={styles.username}>@katiness</Text>
 
           {/* Level Bar */}
-          <ProfileComponents.LevelBar levelName="Capuchino" progress={2500} maxProgress={3000} />
+          <ProfileComponents.LevelBarWrapper levelName="Capuchino" progress={2500} maxProgress={3000} widthMultiplier={62} />
 
           {/* Stats Section */}
           <View style={styles.statsContainer}>
