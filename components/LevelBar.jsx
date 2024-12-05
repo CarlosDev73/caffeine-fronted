@@ -7,7 +7,7 @@ const LevelBar = ({ levelName, progress, maxProgress, widthMultiplier }) => {
   const progressPercentage = (progress / maxProgress) * 100;
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Header: Level Name and Points */}
       <View style={styles.header}>
         <Text style={styles.levelName}>{levelName}</Text>
@@ -25,7 +25,9 @@ const LevelBar = ({ levelName, progress, maxProgress, widthMultiplier }) => {
 };
 
 const styles = StyleSheet.create({
- 
+  container: {
+        marginVertical: 8,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

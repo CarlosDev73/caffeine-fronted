@@ -64,20 +64,14 @@ export const FollowButton = ({ following, onPress }) => (
 );
 
 // LevelBar Component with Follow Button Alignment
-export const LevelBarWrapper = ({ levelName, progress, maxProgress }) => {
-  const [following, setFollowing] = useState(false);
-
+export const LevelBarWrapper = ({ levelName, progress, maxProgress, widthMultiplier, onPress }) => {
   return (
-    <View style={styles.levelBarWrapper}>
+    <TouchableOpacity onPress={onPress} style={styles.levelBarWrapper}>
       <View style={styles.levelContainer}>
-        <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} />
+        <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} widthMultiplier={widthMultiplier} />
       </View>
-
-      
-
-      {/* Follow Button */}
-      <FollowButton following={following} onPress={() => setFollowing(!following)} />
-    </View>
+      <FollowButton following={false} onPress={() => console.log('Follow Button Pressed')} />
+    </TouchableOpacity>
   );
 };
 

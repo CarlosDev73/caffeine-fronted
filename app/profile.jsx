@@ -11,9 +11,11 @@ import ActionModal from '../components/ActionModal'; // Importar ActionModal
 import LogOutModal from '../components/LogOutModal'; // import LogOutModal
 import Feather from '@expo/vector-icons/Feather'; // Importar íconos necesarios
 import { fetchUserPosts } from '../api/posts';
+import LevelModal from '../components/LevelModal';
 
 const Profile = () => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
   const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);// Status modal Log out confirmation
   const [userPosts, setUserPosts] = useState([]);
@@ -89,7 +91,13 @@ const Profile = () => {
           <Text style={styles.username}>@katiness</Text>
 
           {/* Level Bar */}
-          <ProfileComponents.LevelBarWrapper levelName="Capuchino" progress={2500} maxProgress={3000} widthMultiplier={62} />
+          <ProfileComponents.LevelBarWrapper
+            levelName="Capuchino"
+            progress={2500}
+            maxProgress={3000}
+            widthMultiplier={62}
+            onPress={() => setModalVisible(true)} // Aquí llamas al estado del modal
+          />
 
           {/* Stats Section */}
           <View style={styles.statsContainer}>
@@ -125,6 +133,10 @@ const Profile = () => {
       {/* Bottom Menu */}
       <MainPanel />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={profileActions} />
+      <LevelModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
       <LogOutModal visible={isModalLogOutVisible} onClose={() => setIsModaLogOutlVisible(false)} />
     </ScreenWrapper>
   );
