@@ -139,21 +139,24 @@ const Profile = () => {
         {/* Tags Section */}
         <View style={styles.tagsSection}>
           <Text style={styles.sectionTitle}>Tags</Text>
-          {userData?.skills ? (
+          {userData?.skills && userData.skills.length > 0 ? (
             <View style={styles.tagsContainer}>
-              {userData.skills.map((skill, index) => (
-                <View
-                  key={`tag-${index}-${skill}`}
-                  style={[styles.tag, { backgroundColor: generateColor(index) }]}
-                >
-                  <Text style={styles.tagText}>{skill.trim()}</Text>
-                </View>
-              ))}
+              {userData.skills[0]
+                .split(',')
+                .map((skill, index) => (
+                  <View
+                    key={`tag-${index}-${skill}`}
+                    style={[styles.tag, { backgroundColor: generateColor(index) }]}
+                  >
+                    <Text style={styles.tagText}>{String(skill).trim()}</Text>
+                  </View>
+                ))}
             </View>
           ) : (
             <Text style={styles.bioText}>No hay etiquetas asignadas actualmente.</Text>
           )}
         </View>
+
 
       </ScrollView>
 
