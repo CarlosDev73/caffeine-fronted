@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Asegúrate de importar useState
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -7,17 +7,36 @@ import { theme } from '../constants/theme';
 import ProfileComponents from '../components/ProfileComponents';
 import SimpleFeedPost from '../components/SimpleFeedPost';
 import MainPanel from '../components/MainPanel';
-import ActionModal from '../components/ActionModal'; // Importar ActionModal
-import LogOutModal from '../components/LogOutModal'; // import LogOutModal
-import Feather from '@expo/vector-icons/Feather'; // Importar íconos necesarios
+import ActionModal from '../components/ActionModal';
+import LogOutModal from '../components/LogOutModal';
+import Feather from '@expo/vector-icons/Feather';
 import { fetchUserPosts } from '../api/posts';
+import { fetchUserById } from '../api/users';
+import LevelModal from '../components/LevelModal';
 
 const Profile = () => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
-  const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);// Status modal Log out confirmation
+  const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
+  const [userData, setUserData] = useState(null);
   useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userId = await SecureStore.getItemAsync('userId');
+        if (!userId) {
+          Alert.alert('Error', 'No se encontró el ID del usuario. Por favor, inicia sesión nuevamente.');
+          return;
+        }
+
+        const user = await fetchUserById(userId); // Carga los datos del usuario
+        setUserData(user);
+      } catch (error) {
+        console.error('Error al cargar los datos del usuario:', error);
+        Alert.alert('Error', 'No se pudieron cargar los datos del usuario.');
+      }
+    };
     const loadUserPosts = async () => {
       try {
         const userId = await SecureStore.getItemAsync('userId');
@@ -33,10 +52,9 @@ const Profile = () => {
         Alert.alert('Error', 'No se pudieron cargar los posts.');
       }
     };
-
+    loadUserData();
     loadUserPosts();
   }, []);
-  // Acciones para el ActionModal en el perfil
   const profileActions = [
     {
       text: 'Editar perfil',
@@ -66,13 +84,10 @@ const Profile = () => {
     },
   ];
 
-  const tagsData = [
-    { text: 'C++', color: '#E0E0E0' },
-    { text: 'JavaScript', color: '#FFD700' },
-    { text: 'Python', color: '#A7FFEB' },
-    { text: 'Visual Basic', color: '#FFCCBC' },
-    { text: 'POO', color: '#CFD8DC' },
-  ];
+  const generateColor = (index) => {
+    const colors = ['#61E4C5', '#FFD465', '#FFC7DE', '#FFF4CC', '#F4F5F7'];
+    return colors[index % colors.length]; // Selecciona un color de forma cíclica
+  };
 
   return (
     <ScreenWrapper style={styles.screenWrapper}>
@@ -80,29 +95,35 @@ const Profile = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <ProfileComponents.StarAvatar avatarSource={require('../assets/images/pic.png')} size={100} />
+            <ProfileComponents.CircularAvatar
+              avatarSource={{ uri: userData?.profileImg?.secure_url || '../assets/images/pic.png' }}
+            />
           </View>
           <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>
             <Feather name="more-vertical" size={24} color="black" />
           </Pressable>
-          <Text style={styles.name}>Katrisa Feona</Text>
-          <Text style={styles.username}>@katiness</Text>
+          <Text style={styles.name}>{userData?.displayName || 'Usuario'}</Text>
+          <Text style={styles.username}>@{userData?.userName || 'username'}</Text>
 
           {/* Level Bar */}
-          <ProfileComponents.LevelBar levelName="Capuchino" progress={2500} maxProgress={3000} />
+          <ProfileComponents.LevelBarWrapper
+            levelName="Capuchino"
+            progress={2500}
+            maxProgress={3000}
+            widthMultiplier={62}
+            onPress={() => setModalVisible(true)} // Aquí llamas al estado del modal
+          />
 
           {/* Stats Section */}
           <View style={styles.statsContainer}>
-            <ProfileComponents.Stats posts={276} followers="62k" following={23} />
+            <ProfileComponents.Stats posts={userPosts.length} followers={userData?.followers?.length || 0} following={userData?.following?.length || 0} />
           </View>
         </View>
 
         {/* Bio Section */}
         <View style={styles.bioSection}>
           <Text style={styles.sectionTitle}>Bio</Text>
-          <Text style={styles.bioText}>
-            Soy una desarrolladora apasionada del desarrollo web y me gustaría compartir mis conocimientos con todos
-          </Text>
+          <Text style={styles.bioText}>{userData?.biography || 'Sin biografía'}</Text>
         </View>
 
         {/* Last Post Section */}
@@ -118,13 +139,34 @@ const Profile = () => {
         {/* Tags Section */}
         <View style={styles.tagsSection}>
           <Text style={styles.sectionTitle}>Tags</Text>
-          <ProfileComponents.Tags tags={tagsData} />
+          {userData?.skills && userData.skills.length > 0 ? (
+            <View style={styles.tagsContainer}>
+              {userData.skills[0]
+                .split(',')
+                .map((skill, index) => (
+                  <View
+                    key={`tag-${index}-${skill}`}
+                    style={[styles.tag, { backgroundColor: generateColor(index) }]}
+                  >
+                    <Text style={styles.tagText}>{String(skill).trim()}</Text>
+                  </View>
+                ))}
+            </View>
+          ) : (
+            <Text style={styles.bioText}>No hay etiquetas asignadas actualmente.</Text>
+          )}
         </View>
+
+
       </ScrollView>
 
       {/* Bottom Menu */}
       <MainPanel />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={profileActions} />
+      <LevelModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
       <LogOutModal visible={isModalLogOutVisible} onClose={() => setIsModaLogOutlVisible(false)} />
     </ScreenWrapper>
   );
@@ -151,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
-    position: 'relative', // Para el posicionamiento del botón de opciones
+    position: 'relative',
   },
   avatarContainer: {
     position: 'relative',
@@ -192,7 +234,29 @@ const styles = StyleSheet.create({
   lastPostSection: {
     padding: 20,
   },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Permite que los elementos se ajusten a múltiples filas
+    marginTop: 8,
+    gap: 8, // Espaciado uniforme entre chips
+  },
+  tag: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  tagText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   tagsSection: {
+    paddingVertical: 10,
     padding: 20,
   },
 });

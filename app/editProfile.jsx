@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import ScreenWrapper from '../components/ScreenWrapper'
-import { StatusBar } from 'expo-status-bar'
-import { widthPercentage, heightPercentage } from '../helpers/common.js'
-import { theme } from '../constants/theme.js'
-import { useRouter } from 'expo-router'
-import AbsoluteButton from '../components/AbsoluteButton.jsx'
-import Input from '../components/Input.jsx'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import ScreenWrapper from '../components/ScreenWrapper';
+import { StatusBar } from 'expo-status-bar';
+import { widthPercentage, heightPercentage } from '../helpers/common.js';
+import { theme } from '../constants/theme.js';
+import { useRouter } from 'expo-router';
+import AbsoluteButton from '../components/AbsoluteButton.jsx';
+import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
 import OptionsButtons from '../components/OptionsButtons.jsx';
 
@@ -15,26 +15,56 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import * as ImagePicker from 'expo-image-picker';
+import * as SecureStore from 'expo-secure-store';
+import { updateUser } from '../api/users';
 
 const EditProfile = () => {
-
     const router = useRouter();
 
-    const tags = [
-        'Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'
-    ];
+    const [userId, setUserId] = useState(null);
+    const [name, setName] = useState('');
+    const [biography, setBiography] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [profileImg, setProfileImg] = useState(null);
+    const [country, setCountry] = useState('');
+    const [phone, setPhone] = useState('');
 
-    const handleTag = (tag) => { };
+    const tags = ['Git', 'C++', 'Python', 'Laravel', 'Redes', 'Desarrollo Móvil', 'JavaScript'];
 
-    const [user, setUser] = useState({});
-    const [post, setPost] = useState({});
-    const [comments, setComments] = useState(0);
-    const [points, setPoints] = useState(0);
-    const [likes, setLikes] = useState(0);
+    const handleTag = (tag) => {
+        setSelectedTags((prevTags) =>
+            prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
+        );
+    };
+    const handleImagePicker = async () => {
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setProfileImg(result.assets[0]); // Asegúrate de usar este estado en tu componente
+            } else {
+                console.log('Image picker canceled');
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+            Alert.alert('Error', 'No se pudo seleccionar la imagen.');
+        }
+    };
 
     const translateY = useSharedValue(300);
 
     useEffect(() => {
+        const loadUserId = async () => {
+            const storedUserId = await SecureStore.getItemAsync('userId');
+            setUserId(storedUserId);
+        };
+        loadUserId();
         translateY.value = withTiming(0, { duration: 600 });
     }, []);
 
@@ -42,85 +72,133 @@ const EditProfile = () => {
         transform: [{ translateY: translateY.value }],
     }));
 
+    const handleSave = async () => {
+        if (!userId) {
+            Alert.alert('Error', 'No se encontró el ID del usuario.');
+            return;
+        }
+
+
+        // Crear el FormData para enviar los datos al backend
+        const formData = new FormData();
+
+        // Agregar campos editables al FormData
+        if (name) formData.append('displayName', name);
+        if (biography) formData.append('biography', biography);
+        if (selectedTags.length > 0) formData.append('skills', selectedTags.join(','));
+        if (country) formData.append('country', country);
+        if (phone) formData.append('phone', phone);
+
+        // Agregar la imagen al FormData si existe
+        if (profileImg) {
+            formData.append('profileImg', {
+                uri: profileImg.uri,
+                name: 'profileImg.jpg',
+                type: 'image/jpeg',
+            });
+        }
+
+        console.log('FormData being sent:', formData);
+        try {
+            // Llamar a la función `updateUser` con el ID del usuario y los datos del formulario
+            const response = await updateUser(userId, formData);
+
+            Alert.alert('Éxito', 'Perfil actualizado con éxito.');
+            router.push('profile');
+        } catch (error) {
+            console.error('Error al actualizar el perfil:', error);
+            Alert.alert('Error', error.message || 'No se pudo actualizar el perfil.');
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <StatusBar style='dark' />
+            <StatusBar style="dark" />
             <ScreenWrapper>
                 <View style={styles.exitBtn}>
                     <AbsoluteButton
                         child={<Feather name="x" size={30} color="black" />}
                         buttonStyle={{ top: -10, backgroundColor: 'white' }}
-                        onPress={() => { router.push('feed') }}
+                        onPress={() => { router.push('profile') }}
                     />
                 </View>
                 <Animated.View style={[animatedStyle, styles.content]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={require('../assets/images/pic.png')} style={{ borderRadius: 100, borderWidth: 10, width: 30, height: 30 }} />
                             <View style={{ marginLeft: 7 }}>
-                                <Text style={[{ fontWeight: theme.fonts.bold }]}>Katrisa Feona</Text>
-                                <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
-                                    <AntDesign name="star" size={20} color="green" />
-                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Capuchino</Text>
-                                </View>
+                                <Text style={[{ fontWeight: theme.fonts.bold, fontSize: 24 }]}>Editar Perfil</Text>
                             </View>
                         </TouchableOpacity>
-                        <Pressable>
-                            <Feather name="more-vertical" size={20} color="black" />
-                        </Pressable>
                     </View>
-                    <View style={{ flex: 1, }}>
+                    <View style={{ flex: 1 }}>
                         <ScrollView>
-                            <View style={{ marginBottom: heightPercentage(1), flexDirection: 'row', width: widthPercentage(87), justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: heightPercentage(3.5), fontWeight: theme.fonts.bold }}>
-                                    Editar Perfil
-                                </Text>
-                            </View>
-                            <View style={{ paddingVertical: heightPercentage(1) }}>
-                                <Input
-                                    placeholder='@ Usuario'
-                                    onChangeText={() => { }}
-                                    inputStyle={{ fontSize: heightPercentage(2) }}
-                                    containerStyles={{ marginBottom: heightPercentage(2) }}
-                                />
-                                <Input
-                                    placeholder='Biografía'
-                                    icon={<Ionicons name="document-text-outline" size={24} color="black" />}
-                                    onChangeText={() => { }}
-                                    inputStyle={{ fontSize: heightPercentage(2) }}
-                                    containerStyles={{ height: 'fit-content', }}
-                                    multiline={true}
-                                    numberOfLines={7}
-                                />
-                            </View>
+                            <Input
+                                placeholder="Nombre"
+                                icon={<Ionicons name="card-outline" size={24} color="black" />}
+                                value={name}
+                                onChangeText={setName}
+                                inputStyle={{ fontSize: heightPercentage(2) }}
+                                containerStyles={{ marginBottom: heightPercentage(2) }}
+                            />
+                            <Input
+                                placeholder="Biografía"
+                                icon={<Ionicons name="document-text-outline" size={24} color="black" />}
+                                value={biography}
+                                onChangeText={setBiography}
+                                inputStyle={{ fontSize: heightPercentage(2) }}
+                                containerStyles={{ height: 'fit-content', marginBottom: heightPercentage(2) }}
+                                multiline={true}
+                                numberOfLines={7}
+                            />
+                            <Input
+                                placeholder="País"
+                                icon={<Ionicons name="map-outline" size={24} color="black" />}
+                                value={country}
+                                onChangeText={setCountry}
+                                inputStyle={{ fontSize: heightPercentage(2) }}
+                                containerStyles={{ marginBottom: heightPercentage(2) }}
+                            />
+                            <Input
+                                placeholder="Teléfono"
+                                icon={<Ionicons name="phone-portrait-sharp" size={24} color="black" />}
+                                value={phone}
+                                onChangeText={setPhone}
+                                inputStyle={{ fontSize: heightPercentage(2) }}
+                                containerStyles={{ marginBottom: heightPercentage(2) }}
+                                keyboardType="phone-pad"
+                            />
                             <View style={{ marginVertical: heightPercentage(2) }}>
-                                <Text style={{ fontSize: heightPercentage(2.5) }}>Intereses</Text>
-                                <OptionsButtons tags={tags} onSelectTag={handleTag} />
+                                <Text style={styles.sectionTitle}> Intereses </Text>
+                                <OptionsButtons tags={tags} selectedTags={selectedTags} onSelectTag={handleTag} />
                             </View>
-                            <View>
-                                <Text style={{ fontSize: heightPercentage(2.5) }}>Foto de Perfil</Text>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: heightPercentage(1) }}>
-                                    <Image source={require('../assets/images/addImage.png')} style={{ borderRadius: 10, borderWidth: 2, borderColor: '#000' }} />
-                                    <Text style={{ marginHorizontal: 10, fontSize: heightPercentage(2) }}>Adjuntar Imágenes</Text>
-                                </View>
+                            <View style={styles.imagePickerContainer}>
+                                <Text style={styles.sectionTitle}>Foto de Perfil</Text>
+                                <Pressable onPress={handleImagePicker}>
+                                    <View style={styles.imagePicker}>
+                                        {profileImg ? (
+                                            <Image source={{ uri: profileImg?.uri }} style={styles.imagePreview} />
+                                        ) : (
+                                            <Image source={require('../assets/images/addImage.png')} style={styles.imagePreview} />
+                                        )}
+                                        <Text style={styles.imagePickerText}>Adjuntar Imágenes</Text>
+                                    </View>
+                                </Pressable>
                             </View>
-                            <View style={{ marginVertical: heightPercentage(3) }}>
-                                <Button
-                                    title='Guardar'
-                                    buttonStyle={styles.publicBtn}
-                                    onPress={() => { router.push('profile')}}
-                                    backgroundColor={theme.colors.primary}
-                                    textColor='black'
-                                    textStyle={{ fontWeight: theme.fonts.extraBold }}
-                                />
-                            </View>
+                            <Button
+                                title="Guardar"
+                                buttonStyle={styles.publicBtn}
+                                onPress={handleSave}
+                                backgroundColor={theme.colors.primary}
+                                textColor="black"
+                                textStyle={{ fontWeight: theme.fonts.extraBold }}
+                            />
                         </ScrollView>
                     </View>
                 </Animated.View>
             </ScreenWrapper>
         </View>
-    )
-}
+    );
+};
 
 export default EditProfile;
 
@@ -131,7 +209,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         backgroundColor: '#bababc',
         paddingHorizontal: widthPercentage(4),
-        height: heightPercentage(100)
+        height: heightPercentage(100),
     },
     exitBtn: {
         width: widthPercentage(100),
@@ -142,13 +220,40 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        height: heightPercentage(100),
         backgroundColor: '#ffffff',
         borderRadius: 10,
         borderColor: 'black',
         borderTopWidth: 5,
         borderWidth: 2,
-        paddingHorizontal: widthPercentage(5)
+        paddingHorizontal: widthPercentage(5),
+    },
+    title: {
+        fontSize: heightPercentage(3.5),
+        fontWeight: theme.fonts.bold,
+        marginVertical: heightPercentage(2),
+    },
+    sectionTitle: {
+        fontSize: heightPercentage(2.5),
+        fontWeight: theme.fonts.bold,
+        marginVertical: heightPercentage(1),
+    },
+    imagePickerContainer: {
+        marginVertical: heightPercentage(2),
+    },
+    imagePicker: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    imagePreview: {
+        width: widthPercentage(20),
+        height: widthPercentage(20),
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#000',
+    },
+    imagePickerText: {
+        marginLeft: widthPercentage(4),
+        fontSize: heightPercentage(2),
     },
     publicBtn: {
         width: 'fit-content',
@@ -158,16 +263,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.radius.md,
         borderBottomWidth: 5
     },
-    text: {
-
+    saveButton: {
+        marginVertical: heightPercentage(3),
     },
-    minText: {},
-    reactions: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        textStyle: {
-            marginLeft: 4,
-            fontWeight: theme.fonts.bold
-        }
-    },
-})
+});
