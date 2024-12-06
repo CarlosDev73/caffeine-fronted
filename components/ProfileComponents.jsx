@@ -96,13 +96,23 @@ export const Stats = ({ posts, followers, following }) => (
 // Tags Component with Dynamic Background Color
 export const Tags = ({ tags }) => (
   <View style={styles.tags}>
-    {tags.map(tag => (
-      <View key={tag.text} style={[styles.tag, { backgroundColor: tag.color || theme.colors.background }]}>
-        <Text style={styles.tagText}>{tag.text}</Text>
+    {tags.map((tag, index) => (
+      <View
+        key={`tag-${index}-${tag}`} // Genera una clave única para cada etiqueta
+        style={[
+          styles.tag,
+          { backgroundColor: generateColor(index) }, // Genera un color dinámico
+        ]}
+      >
+        <Text style={styles.tagText}>{tag}</Text>
       </View>
     ))}
   </View>
 );
+const generateColor = (index) => {
+  const colors = ['#FFD700', '#A7FFEB', '#FFCCBC', '#CFD8DC', '#FFABAB'];
+  return colors[index % colors.length]; // Selecciona un color de forma cíclica
+};
 
 const styles = StyleSheet.create({
   starContainer: {
