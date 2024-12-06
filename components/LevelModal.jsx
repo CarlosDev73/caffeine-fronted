@@ -5,7 +5,9 @@ import {
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
-  FlatList,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import LevelBar from './LevelBar';
 
@@ -19,27 +21,37 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
     >
       <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback>
-            <View style={styles.modalContainer}>
-              {/* Modal Header */}
-              <View style={styles.modalHeader}>
-                <View style={styles.modalHandle}></View>
-                <Text style={styles.modalTitle}>Detalles del Nivel</Text>
-                <Text style={styles.modalText}>Resuelve problemas de la comunidad, comenta, crea contenido y escala hasta el café más intenso</Text>
-                
-                <LevelBar levelName={'Decaf'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Light Roast'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Latte'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Cappuccino'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Mocha'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Flat White'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Americano'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Espresso'} progress={2500} maxProgress={3000} widthMultiplier={95} />
-                <LevelBar levelName={'Lungo'} progress={2500} maxProgress={3000} widthMultiplier={95} />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardAvoidingView}
+          >
+            {/* Prevent TouchableWithoutFeedback from intercepting touch events */}
+            <TouchableWithoutFeedback>
+              <View style={styles.modalContainer}>
+                {/* Modal Header */}
+                <View style={styles.modalHeader}>
+                  <View style={styles.modalHandle}></View>
+                  <Text style={styles.modalTitle}>Detalles del Nivel</Text>
+                  <Text style={styles.modalText}>
+                    Resuelve problemas de la comunidad, comenta, crea contenido y escala hasta el café más intenso
+                  </Text>
+                </View>
 
+                {/* Scrollable Levels */}
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                  <LevelBar levelName={'Decaf'} progress={3000} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Light Roast'} progress={3000} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Latte'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Cappuccino'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Mocha'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Flat White'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Americano'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Espresso'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  <LevelBar levelName={'Lungo'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                </ScrollView>
               </View>
-            </View>
-          </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -53,6 +65,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   modalContainer: {
     backgroundColor: 'white',
@@ -84,9 +100,12 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontSize: 16,
-    fontWeight: 'light',
+    fontWeight: '300',
     color: 'black',
-    marginVertical: 10,
+    marginBottom: 20,
+    textAlign: 'center',
   },
-
+  scrollContainer: {
+    paddingBottom: 20,
+  },
 });
