@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, Alert } from 'react-native'
+import React, { useState } from 'react'
 import ScreenWrapper from '../components/ScreenWrapper'
 import { StatusBar } from 'expo-status-bar'
 import ButtonBack from '../components/ButtonBack'
@@ -9,10 +9,39 @@ import { theme } from '../constants/theme'
 import Input from '../components/Input'
 import Feather from '@expo/vector-icons/Feather'
 import ButtonMain from '../components/ButtonMain'
+import * as SecureStore from 'expo-secure-store'
+import { changeUserPassword } from '../api/users'
 
 const updatePassword = () => {
 
   const router = useRouter();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const handleChangePassword = async () => {
+    // Validar que la nueva contraseña y la confirmación coincidan
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'La nueva contraseña y la confirmación no coinciden.');
+      return;
+    }
+    try {
+      // Obtener el ID del usuario almacenado en SecureStore
+      const userId = await SecureStore.getItemAsync('userId');
+      if (!userId) {
+        Alert.alert('Error', 'No se encontró el ID del usuario.');
+        return;
+      }
+
+      // Llamar a la API para cambiar la contraseña
+      const response = await changeUserPassword(userId, currentPassword, newPassword);
+      Alert.alert('Éxito', response);
+      router.push('profile'); // Redirigir al perfil tras éxito
+    } catch (error) {
+      console.error('Error al cambiar la contraseña:', error);
+      Alert.alert('Error', error.message || 'No se pudo cambiar la contraseña.');
+    }
+  };
+
   return (
     <ScreenWrapper>
       <StatusBar style='dark'/>
@@ -36,21 +65,24 @@ const updatePassword = () => {
             <Input
               icon={<Feather name="lock" size={24} color="black" />}
               placeholder='Contraseña actual'
-              onChangeText={value=>{passwordRef.current = value}}
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
               secureTextEntry
               inputStyle = {{ fontSize: heightPercentage(2.5) }}
             />
             <Input
               icon={<Feather name="lock" size={24} color="black" />}
               placeholder='Contraseña nueva'
-              onChangeText={value=>{passwordRef.current = value}}
+              value={newPassword}
+              onChangeText={setNewPassword}
               secureTextEntry
               inputStyle = {{ fontSize: heightPercentage(2.5) }}
             />
             <Input
               icon={<Feather name="lock" size={24} color="black" />}
               placeholder='Repetir contraseña'
-              onChangeText={value=>{passwordRef.current = value}}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
               secureTextEntry
               inputStyle = {{ fontSize: heightPercentage(2.5) }}
             />
@@ -59,7 +91,7 @@ const updatePassword = () => {
             <ButtonMain
               title='Enviar'
               buttonStyle={{marginHorizontal:widthPercentage(0)}}
-              onPress={()=>{router.push('profile')}}
+              onPress={handleChangePassword}
               backgroundColor={theme.colors.primary}
               textColor= {theme.colors.dark}
             /> 
