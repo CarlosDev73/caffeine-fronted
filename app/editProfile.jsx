@@ -125,12 +125,8 @@ const EditProfile = () => {
                 <Animated.View style={[animatedStyle, styles.content]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image
-                                source={profileImg ? { uri: profileImg.uri } : require('../assets/images/pic.png')}
-                                style={{ borderRadius: 100, borderWidth: 10, width: 30, height: 30 }}
-                            />
                             <View style={{ marginLeft: 7 }}>
-                                <Text style={[{ fontWeight: theme.fonts.bold }]}>Editar Perfil</Text>
+                                <Text style={[{ fontWeight: theme.fonts.bold, fontSize: 24 }]}>Editar Perfil</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -172,7 +168,7 @@ const EditProfile = () => {
                                 keyboardType="phone-pad"
                             />
                             <View style={{ marginVertical: heightPercentage(2) }}>
-                                <Text style={{ fontSize: heightPercentage(2.5) }}> Intereses </Text>
+                                <Text style={styles.sectionTitle}> Intereses </Text>
                                 <OptionsButtons tags={tags} selectedTags={selectedTags} onSelectTag={handleTag} />
                             </View>
                             <View style={styles.imagePickerContainer}>
