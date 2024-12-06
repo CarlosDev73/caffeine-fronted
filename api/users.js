@@ -43,13 +43,13 @@ export const updateUser = async (userId, updateData) => {
       formData.append(key, updateData[key]);
     });
 
-    const response = await axios.put(`${API_URL}/users/update/${userId}`, formData, {
+    const response = await axios.put(`${API_URL}/users/update/${userId}`, updateData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-
-    return response.data.data.updatedUser;
+    console.log("Respuesta de la API:", response.data);
+    return response.data.updatedUser;
   } catch (error) {
     console.error('Error al actualizar el usuario:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Error al actualizar el usuario.' };

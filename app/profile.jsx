@@ -32,7 +32,6 @@ const Profile = () => {
 
         const user = await fetchUserById(userId); // Carga los datos del usuario
         setUserData(user);
-        console.log('Skills:', userData?.skills);
       } catch (error) {
         console.error('Error al cargar los datos del usuario:', error);
         Alert.alert('Error', 'No se pudieron cargar los datos del usuario.');
@@ -96,9 +95,8 @@ const Profile = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <ProfileComponents.StarAvatar
+            <ProfileComponents.CircularAvatar
               avatarSource={{ uri: userData?.profileImg?.secure_url || '../assets/images/pic.png' }}
-              size={100}
             />
           </View>
           <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>

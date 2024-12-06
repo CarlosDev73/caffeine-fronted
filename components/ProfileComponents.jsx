@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity,Image } from 'react-native';
 import Svg, { ClipPath, Defs, Image as SvgImage, Polygon, Rect } from 'react-native-svg';
 import Feather from '@expo/vector-icons/Feather';
 import { theme } from '../constants/theme';
@@ -8,49 +8,32 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import LevelBar from './LevelBar';
 
 // StarAvatar Component
-export const StarAvatar = ({ avatarSource, size = 150 }) => {
-    const starSize = size * 1.5;
-    const starPoints = `
-    ${starSize * 0.5},0 
-    ${starSize * 0.62},${starSize * 0.35} 
-    ${starSize},${starSize * 0.38} 
-    ${starSize * 0.7},${starSize * 0.6} 
-    ${starSize * 0.82},${starSize} 
-    ${starSize * 0.5},${starSize * 0.75} 
-    ${starSize * 0.18},${starSize} 
-    ${starSize * 0.3},${starSize * 0.6} 
-    0,${starSize * 0.38} 
-    ${starSize * 0.38},${starSize * 0.35}
-  `;
-
-
+export const CircularAvatar = ({ avatarSource, size = 150 }) => {
   return (
-    <View style={[styles.starContainer, { width: starSize, height: starSize }]}>
-      <Svg width={starSize} height={starSize} viewBox={`0 0 ${starSize} ${starSize}`}>
-        <Defs>
-          {/* Define the star clip path */}
-          <ClipPath id="starClip">
-            <Polygon points={starPoints} />
-          </ClipPath>
-        </Defs>
-
-        {/* Orange filled star with black border */}
-        <Polygon points={starPoints} fill="#F95A2C" stroke="black" strokeWidth="2" />
-
-        {/* Clipped profile image inside the star */}
-        <SvgImage
-          href={avatarSource}
-          width={starSize * 0.6} // Keep the image at 60% of the new star size
-          height={starSize * 0.6}
-          x={(starSize - starSize * 0.6) / 2} // Center the image horizontally
-          y={(starSize - starSize * 0.6) / 2} // Center the image vertically
-          preserveAspectRatio="xMidYMid slice"
-          clipPath="url(#starClip)"
-        />
-      </Svg>
+    <View
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size / 2, // Hace que la vista sea un círculo
+        overflow: "hidden", // Recorta la imagen dentro del círculo
+        borderWidth: 2, // Ancho del borde
+        borderColor: "black", // Color del borde
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Image
+        source={avatarSource}
+        style={{
+          width: size,
+          height: size,
+          resizeMode: "cover", // Ajusta la imagen para llenar el círculo
+        }}
+      />
     </View>
   );
 };
+
 
 // Follow Button Component
 export const FollowButton = ({ following, onPress }) => (
@@ -198,7 +181,7 @@ const styles = StyleSheet.create({
 });
 
 export default {
-  StarAvatar,
+  CircularAvatar,
   FollowButton,
   LevelBarWrapper,
   Stats,
