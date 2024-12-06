@@ -85,7 +85,7 @@ const Profile = () => {
   ];
 
   const generateColor = (index) => {
-    const colors = ['#FFD700', '#A7FFEB', '#FFCCBC', '#CFD8DC', '#FFABAB'];
+    const colors = ['#61E4C5', '#FFD465', '#FFC7DE', '#FFF4CC', '#F4F5F7'];
     return colors[index % colors.length]; // Selecciona un color de forma cíclica
   };
 

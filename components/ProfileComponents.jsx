@@ -92,11 +92,6 @@ export const Tags = ({ tags }) => (
     ))}
   </View>
 );
-const generateColor = (index) => {
-  const colors = ['#FFD700', '#A7FFEB', '#FFCCBC', '#CFD8DC', '#FFABAB'];
-  return colors[index % colors.length]; // Selecciona un color de forma cíclica
-};
-
 const styles = StyleSheet.create({
   starContainer: {
     alignItems: 'center',
