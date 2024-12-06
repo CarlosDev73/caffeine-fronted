@@ -119,7 +119,7 @@ const EditProfile = () => {
                     <AbsoluteButton
                         child={<Feather name="x" size={30} color="black" />}
                         buttonStyle={{ top: -10, backgroundColor: 'white' }}
-                        onPress={() => router.push('feed')}
+                        onPress={() => { router.push('profile') }}
                     />
                 </View>
                 <Animated.View style={[animatedStyle, styles.content]}>
@@ -218,8 +218,9 @@ const styles = StyleSheet.create({
     exitBtn: {
         width: widthPercentage(100),
         height: heightPercentage(10),
+        flexDirection: 'row',
         justifyContent: 'center',
-        backgroundColor: 'transparent',
+        backgroundColor: 'transparent'
     },
     content: {
         flex: 1,
