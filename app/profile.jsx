@@ -88,6 +88,9 @@ const Profile = () => {
     const colors = ['#61E4C5', '#FFD465', '#FFC7DE', '#FFF4CC', '#F4F5F7'];
     return colors[index % colors.length]; // Selecciona un color de forma cíclica
   };
+  const currentPoints = userData?.points || 0;
+  const nextLevelRequirements = userData?.nextLevelRequirements || 0;
+  const levelName = userData?.level?.name || 'Nivel Desconocido';
 
   return (
     <ScreenWrapper style={styles.screenWrapper}>
@@ -107,11 +110,11 @@ const Profile = () => {
 
           {/* Level Bar */}
           <ProfileComponents.LevelBarWrapper
-            levelName="Capuchino"
-            progress={2500}
-            maxProgress={3000}
+            levelName={levelName}
+            progress={currentPoints}
+            maxProgress={nextLevelRequirements}
             widthMultiplier={62}
-            onPress={() => setModalVisible(true)} // Aquí llamas al estado del modal
+            onPress={() => setModalVisible(true)} // Handle modal display
           />
 
           {/* Stats Section */}

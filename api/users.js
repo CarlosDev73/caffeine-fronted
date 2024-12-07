@@ -15,7 +15,11 @@ export const fetchAllUsers = async () => {
 export const fetchUserById = async (userId) => {
   try {
     const response = await axios.get(`${API_URL}/users/${userId}`);
-    return response.data.data.singleUser;
+    const { singleUser, nextLevelRequirements } = response.data.data;
+    return {
+      ...singleUser,
+      nextLevelRequirements, 
+    };
   } catch (error) {
     console.error('Error al obtener el usuario:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Error al obtener el usuario.' };
