@@ -3,29 +3,46 @@ import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, FlatList, Text
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { theme } from '../constants/theme';
-import { fetchComments, createComment } from '../api/posts';
+import * as SecureStore from 'expo-secure-store';
+import { fetchComments, createComment, likeComment } from '../api/posts';
 
 const CommentModal = ({ visible, onClose, postId }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     if (visible && postId) {
-      const loadComments = async () => {
+      const loadCommentsAndUser = async () => {
         try {
+          // Fetch and set the user ID
+          const storedUserId = await SecureStore.getItemAsync('userId');
+          setUserId(storedUserId);
+
+          // Fetch comments for the post
           const fetchedComments = await fetchComments(postId);
-          setComments(fetchedComments);
+
+          // Map comments to include whether the user has liked them
+          const enrichedComments = fetchedComments.map((comment) => ({
+            ...comment,
+            likesCount: comment.likes?.length || 0,
+            likedByUser: comment.likes?.some((like) => like._userId === storedUserId),
+          }));
+
+          setComments(enrichedComments);
         } catch (error) {
-          console.error('Error al cargar los comentarios:', error);
+          console.error('Error al cargar los comentarios o usuario:', error);
         } finally {
           setLoading(false);
         }
       };
-      loadComments();
+
+      loadCommentsAndUser();
     }
   }, [visible, postId, refreshKey]);
+
   const handleCreateComment = async () => {
     if (!newComment.trim()) {
       Alert.alert('Error', 'El comentario no puede estar vacío.');
@@ -66,44 +83,66 @@ const CommentModal = ({ visible, onClose, postId }) => {
                 {/* Comments List */}
                 <FlatList
                   data={comments}
-                  keyExtractor={(item, index) => item._id || `${index}-${Date.now()}`}
+                  keyExtractor={(item) => item._id}
                   renderItem={({ item }) => (
                     <View style={styles.commentWrapper}>
-                      {/* Avatar, Date, and Check icon in a single row */}
+                      {/* Avatar and User Info */}
                       <View style={styles.commentHeader}>
                         <Image
                           source={{ uri: item._userId?.profileImg?.secure_url || 'https://via.placeholder.com/150' }}
                           style={styles.avatar}
                         />
                         <View style={styles.commentContent}>
-                          <Text style={styles.commentMeta}>
-                            {item._userId?.userName || 'Usuario desconocido'}
-                          </Text>
+                          <Text style={styles.commentMeta}>{item._userId?.userName || 'Usuario desconocido'}</Text>
                           <Text style={styles.commentText}>{item.content}</Text>
-
                         </View>
-                        {/* Custom Check Icon with Green Background and Black Border */}
                         <View style={styles.checkIconContainer}>
                           <MaterialCommunityIcons name="check" size={20} color="black" />
                         </View>
                       </View>
+
+                      {/* Date */}
                       <Text style={styles.dateText}>
                         {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Fecha no disponible'}
                       </Text>
 
-                      {/* Action Buttons outside the comment box */}
+                      {/* Actions */}
                       <View style={styles.commentActions}>
+                        <TouchableWithoutFeedback
+                          onPress={async () => {
+                            try {
+                              // Call the likeComment API with the comment ID
+                              const response = await likeComment(item._id);
 
-                        <TouchableWithoutFeedback>
+                              // Extract the updated comment data from the response
+                              const updatedComment = response.data;
+
+                              // Update the comments state
+                              setComments((prevComments) =>
+                                prevComments.map((comment) =>
+                                  comment._id === updatedComment._id
+                                    ? {
+                                      ...comment,
+                                      likes: updatedComment.likes, // Update the likes array
+                                      likesCount: updatedComment.likes.length, // Update the likes count
+                                      likedByUser: updatedComment.likes.some((like) => like._userId === userId), // Check if the user has liked
+                                    }
+                                    : comment
+                                )
+                              );
+                            } catch (error) {
+                              console.error('Error updating like:', error);
+                              Alert.alert('Error', 'No se pudo actualizar el like.');
+                            }
+                          }}
+                        >
                           <View style={styles.actionButton}>
-                            <MaterialCommunityIcons name="comment-outline" size={16} color="black" />
-                            <Text style={styles.actionText}>Comentar</Text>
-                          </View>
-                        </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback>
-                          <View style={styles.actionButton}>
-                            <Octicons name="heart" size={16} color="black" />
-                            <Text style={styles.actionText}>Me gusta</Text>
+                            <Octicons
+                              name="heart"
+                              size={16}
+                              color={item.likedByUser ? 'red' : 'black'} // Change color if liked
+                            />
+                            <Text style={styles.actionText}>{item.likesCount || 0} Me gusta</Text>
                           </View>
                         </TouchableWithoutFeedback>
                       </View>
@@ -117,21 +156,22 @@ const CommentModal = ({ visible, onClose, postId }) => {
                     )
                   }
                 />
-                  <View style={styles.commentInputContainer}>
-                    <TextInput
-                      style={styles.commentInput}
-                      placeholder="Escribe un comentario..."
-                      placeholderTextColor="gray"
-                      multiline={true}
-                      value={newComment}
-                      onChangeText={setNewComment}
-                    />
-                    <TouchableWithoutFeedback onPress={handleCreateComment}>
-                      <View style={styles.sendButton}>
-                        <MaterialCommunityIcons name="comment-outline" size={24} color="black" />
-                      </View>
-                    </TouchableWithoutFeedback>
-                  </View>
+
+                <View style={styles.commentInputContainer}>
+                  <TextInput
+                    style={styles.commentInput}
+                    placeholder="Escribe un comentario..."
+                    placeholderTextColor="gray"
+                    multiline={true}
+                    value={newComment}
+                    onChangeText={setNewComment}
+                  />
+                  <TouchableWithoutFeedback onPress={handleCreateComment}>
+                    <View style={styles.sendButton}>
+                      <MaterialCommunityIcons name="comment-outline" size={24} color="black" />
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
 
               </View>
             </TouchableWithoutFeedback>

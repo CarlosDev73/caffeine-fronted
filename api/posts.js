@@ -208,3 +208,23 @@ export const fetchPostLikes = async (postId, currentUserId) => {
     throw error.response?.data || { message: 'Failed to fetch post likes' };
   }
 };
+
+export const likeComment = async (commentId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token no encontrado. Inicia sesión nuevamente.');
+    }
+    const response = await axios.put(
+      `${API_URL}/like/${commentId}`, 
+      {}, 
+      {
+        headers: { Authorization: `Bearer ${token}` }, 
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error liking comment:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error liking comment.' };
+  }
+};
