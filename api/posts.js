@@ -228,3 +228,25 @@ export const likeComment = async (commentId) => {
     throw error.response?.data || { message: 'Error liking comment.' };
   }
 };
+
+export const markCommentAsCorrect = async (commentId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
+    const response = await axios.put(
+      `${API_URL}/correct/${commentId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error marking comment as correct:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error marking comment as correct.' };
+  }
+};

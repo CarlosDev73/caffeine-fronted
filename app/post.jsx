@@ -180,7 +180,7 @@ const Post = () => {
           </View>
         </View>
       </ScreenWrapper>
-      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} />
+      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} postType={post.type} postOwnerId={post._userId} />
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
     </View>
   );

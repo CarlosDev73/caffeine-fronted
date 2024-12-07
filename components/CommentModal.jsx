@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableWithoutFeedback, FlatList, TextInput, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Octicons from '@expo/vector-icons/Octicons';
+import Entypo from '@expo/vector-icons/Entypo';
 import { theme } from '../constants/theme';
 import * as SecureStore from 'expo-secure-store';
-import { fetchComments, createComment, likeComment } from '../api/posts';
+import { fetchComments, createComment, likeComment, markCommentAsCorrect } from '../api/posts';
 
-const CommentModal = ({ visible, onClose, postId }) => {
+const CommentModal = ({ visible, onClose, postId, postType = '', postOwnerId = ''  }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
@@ -23,7 +23,8 @@ const CommentModal = ({ visible, onClose, postId }) => {
 
           // Fetch comments for the post
           const fetchedComments = await fetchComments(postId);
-
+          console.log('postType:', postType);
+          console.log('postOwnerId:', postOwnerId);
           // Map comments to include whether the user has liked them
           const enrichedComments = fetchedComments.map((comment) => ({
             ...comment,
@@ -41,7 +42,7 @@ const CommentModal = ({ visible, onClose, postId }) => {
 
       loadCommentsAndUser();
     }
-  }, [visible, postId, refreshKey]);
+  }, [visible, postId, refreshKey,postType, postOwnerId]);
 
   const handleCreateComment = async () => {
     if (!newComment.trim()) {
@@ -57,6 +58,23 @@ const CommentModal = ({ visible, onClose, postId }) => {
     } catch (error) {
       console.error('Error al crear comentario:', error);
       Alert.alert('Error', 'No se pudo crear el comentario.');
+    }
+  };
+  const handleToggleCorrect = async (commentId) => {
+    try {
+      const response = await markCommentAsCorrect(commentId);
+      const updatedComment = response.data;
+
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === updatedComment._id
+            ? { ...comment, isCorrect: updatedComment.isCorrect }
+            : { ...comment, isCorrect: false } // Ensure only one correct comment
+        )
+      );
+    } catch (error) {
+      console.error('Error al marcar comentario como correcto:', error);
+      Alert.alert('Error', 'No se pudo marcar el comentario como correcto.');
     }
   };
 
@@ -96,9 +114,18 @@ const CommentModal = ({ visible, onClose, postId }) => {
                           <Text style={styles.commentMeta}>{item._userId?.userName || 'Usuario desconocido'}</Text>
                           <Text style={styles.commentText}>{item.content}</Text>
                         </View>
-                        <View style={styles.checkIconContainer}>
-                          <MaterialCommunityIcons name="check" size={20} color="black" />
-                        </View>
+                        {postType === 'issue' && postOwnerId === userId && (
+                          <TouchableWithoutFeedback onPress={() => handleToggleCorrect(item._id)}>
+                            <View
+                              style={[
+                                styles.checkIconContainer,
+                                { backgroundColor: item.isCorrect ? '#00C6AE' : 'transparent' },
+                              ]}
+                            >
+                              <MaterialCommunityIcons name="check" size={20} color="black" />
+                            </View>
+                          </TouchableWithoutFeedback>
+                        )}
                       </View>
 
                       {/* Date */}
@@ -137,8 +164,8 @@ const CommentModal = ({ visible, onClose, postId }) => {
                           }}
                         >
                           <View style={styles.actionButton}>
-                            <Octicons
-                              name="heart"
+                            <Entypo
+                              name={item.likedByUser ? 'heart' : 'heart-outlined'}
                               size={16}
                               color={item.likedByUser ? 'red' : 'black'} // Change color if liked
                             />
