@@ -183,7 +183,7 @@ export const likePost = async (postId) => {
 export const unlikePost = async (postId) => {
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.delete(`${API_URL}/post/${postId}/like`, {
+    const response = await axios.delete(`${API_URL}/post/${postId}/unlike`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
