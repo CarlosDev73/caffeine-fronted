@@ -11,15 +11,21 @@ export const markAsFavorite = async (postId) => {
     if (!token) {
       throw new Error('Token not found. Please login again.');
     }
-    const response = await axios.post(`${API_URL}/favorites`, { postId }, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+    const response = await axios.post(
+      `${API_URL}/${postId}/favorite`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error marking post as favorite:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Failed to mark post as favorite.' };
   }
 };
+
 
 
 export const unmarkAsFavorite = async (postId) => {
@@ -29,9 +35,9 @@ export const unmarkAsFavorite = async (postId) => {
     if (!token) {
       throw new Error('Token not found. Please login again.');
     }
-    const response = await axios.delete(`${API_URL}/favorites`, {
+
+    const response = await axios.delete(`${API_URL}/${postId}/unfavorite`, {
       headers: { Authorization: `Bearer ${token}` },
-      data: { postId },
     });
     return response.data;
   } catch (error) {
