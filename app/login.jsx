@@ -111,7 +111,7 @@ const login = () => {
             secureTextEntry
             inputStyle={{ fontSize: heightPercentage(2.5) }}
           />
-          <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+          <Text style={styles.forgotPassword} onPress={()=>{router.push('forgot-password')}}>¿Olvidaste tu contraseña?</Text>
 
           {/*Boton Iniciar sesion*/}
           <ButtonMain
