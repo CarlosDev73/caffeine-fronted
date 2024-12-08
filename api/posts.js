@@ -183,7 +183,7 @@ export const likePost = async (postId) => {
 export const unlikePost = async (postId) => {
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.delete(`${API_URL}/post/${postId}/like`, {
+    const response = await axios.delete(`${API_URL}/post/${postId}/unlike`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -206,5 +206,47 @@ export const fetchPostLikes = async (postId, currentUserId) => {
   } catch (error) {
     console.error('Error fetching post likes:', error.response?.data || error.message);
     throw error.response?.data || { message: 'Failed to fetch post likes' };
+  }
+};
+
+export const likeComment = async (commentId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token no encontrado. Inicia sesión nuevamente.');
+    }
+    const response = await axios.put(
+      `${API_URL}/like/${commentId}`, 
+      {}, 
+      {
+        headers: { Authorization: `Bearer ${token}` }, 
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error liking comment:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error liking comment.' };
+  }
+};
+
+export const markCommentAsCorrect = async (commentId) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
+    const response = await axios.put(
+      `${API_URL}/correct/${commentId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error marking comment as correct:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error marking comment as correct.' };
   }
 };
