@@ -1,10 +1,13 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { checkTokenExpiration } from './auth';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL; 
 
 
 export const markAsFavorite = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token'); // Retrieve token from SecureStore
 
@@ -29,6 +32,8 @@ export const markAsFavorite = async (postId) => {
 
 
 export const unmarkAsFavorite = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token'); // Retrieve token from SecureStore
 
@@ -48,6 +53,8 @@ export const unmarkAsFavorite = async (postId) => {
 
 
 export const fetchFavoritePostsByUser = async () => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token'); // Retrieve token from SecureStore
 
@@ -66,6 +73,8 @@ export const fetchFavoritePostsByUser = async () => {
 };
 
 export const fetchPostFavorites = async (postId) => {
+  checkTokenExpiration();
+  
     try {
       const token = await SecureStore.getItemAsync('token');
   
