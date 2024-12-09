@@ -3,30 +3,53 @@ import React from 'react';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import Fontisto from '@expo/vector-icons/Fontisto';
+import Fontawesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
-import { useRouter } from 'expo-router';
+import Entypo from '@expo/vector-icons/Entypo';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
+import { useRouter, usePathname } from 'expo-router';
 
 const MainPanel = () => {
   const router = useRouter();
+  const currentPath = usePathname();
+
+  const isActive = (path) => currentPath === path;
 
   return (
     <View style={styles.container}>
       <Pressable onPress={() => router.push('/feed')} style={styles.button}>
-        <SimpleLineIcons name="home" size={23} color="black" />
-        <Text style={styles.text}>Home</Text>
+      {isActive('/feed') ? (
+          <Entypo name="home" size={23} color="black" />
+        ) : (
+          <SimpleLineIcons name="home" size={23} color="gray" />
+        )}
+        <Text style={[styles.text, isActive('/feed') && styles.active]}>Home</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/searchProfile')} style={styles.button}>
-        <Fontisto name="search" size={23} color="black" />
-        <Text style={styles.text}>Buscar</Text>
+      {isActive('/searchProfile') ? (
+          <Ionicons name="search-sharp" size={28} color="black" />
+        ) : (
+          <Ionicons name="search-outline" size={23} color="gray" />
+        )}
+        <Text style={[styles.text, isActive('/searchProfile') && styles.active]}>Buscar</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/favorites')} style={styles.button}>
-        <Feather name="heart" size={23} color="black" />
-        <Text style={styles.text}>Favoritos</Text>
+      {isActive('/favorites') ? (
+          <MaterialCommunityIcons name="bookmark" size={28} color="black" />
+        ) : (
+          <Feather name="bookmark" size={23} color="gray" />
+        )}
+        <Text style={[styles.text, isActive('/favorites') && styles.active]}>Favoritos</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/profile')} style={styles.button}>
-        <Feather name="user" size={24} color="black" />
-        <Text style={styles.text}>Perfil</Text>
+      {isActive('/profile') ? (
+          <Fontawesome name="user" size={28} color="black" />
+        ) : (
+          <Feather name="user" size={23} color="gray" />
+        )}
+        <Text style={[styles.text, isActive('/profile') && styles.active]}>Perfil</Text>
       </Pressable>
     </View>
   );

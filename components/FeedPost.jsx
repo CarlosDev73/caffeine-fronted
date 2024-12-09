@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: heightPercentage(3.4),
-    fontWeight: theme.fonts.bold,
+    fontWeight: theme.fonts.semibold,
   },
   description: {
     fontSize: heightPercentage(2.5),

@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: heightPercentage(2.5),
-    fontWeight: theme.fonts.bold,
+    fontWeight: theme.fonts.semiBold,
     color: theme.colors.dark,
     marginBottom: 10,
   },
