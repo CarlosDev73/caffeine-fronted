@@ -1,12 +1,10 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable,TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable, TouchableWithoutFeedback } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { StatusBar } from 'expo-status-bar';
 import { widthPercentage, heightPercentage } from '../helpers/common.js';
 import { theme } from '../constants/theme.js';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import AbsoluteButton from '../components/AbsoluteButton.jsx';
-import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
 import CommentModal from '../components/CommentModal';
 import ActionModal from '../components/ActionModal'; // Asegúrate de importar ActionModal correctamente
@@ -29,7 +27,6 @@ const Post = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false); // Estado para ActionModal
   const [post, setPost] = useState(null);
-  const [points, setPoints] = useState(0);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
@@ -40,6 +37,7 @@ const Post = () => {
         //  console.log('Fetching post by ID:', id);
         const fetchedPost = await fetchPostById(id); // Fetching the post by ID
         //  console.log('Fetched Post:', fetchedPost);
+        console.log('Profile Image URL:', post._userId?.profileImg?.secure_url);
         setPost(fetchedPost); // Set the fetched post data
 
         const fetchedUserId = await SecureStore.getItemAsync('userId');
@@ -113,12 +111,19 @@ const Post = () => {
         <View style={styles.content}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={require('../assets/images/avatar.png')} style={{ borderRadius: 100, borderWidth: 10 }} />
+              <Image
+                source={
+                  post._userId?.profileImg?.secure_url
+                    ? { uri: post._userId.profileImg.secure_url }
+                    : require('../assets/images/avatar.png') // Reemplaza con una imagen predeterminada
+                }
+                style={styles.avatar}
+              />
               <View style={{ marginLeft: 7 }}>
-                <Text style={[{ fontWeight: theme.fonts.bold }]}>Lamborci Mona</Text>
+                <Text style={[{ fontWeight: theme.fonts.bold }]}>@{post._userId?.userName || 'Unknown User'}</Text>
                 <View style={styles.statusContainer}>
                   <AntDesign name="star" size={20} color="green" />
-                  <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Expresso</Text>
+                  <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{post._userId.level?.name || 'N/A'}</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -140,11 +145,9 @@ const Post = () => {
               <Text style={styles.title}>{post.title}</Text>
               <View style={styles.dateTags}>
                 <Text style={styles.date}>
-                  {new Date(post.createdAt).toLocaleDateString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
+                  {post.createdAt
+                    ? `${new Date(post.createdAt).toLocaleDateString()} ${new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                    : 'Fecha no disponible'}
                 </Text>
                 {post.tags?.length > 0 && (
                   <Text style={styles.tagsText}>
@@ -154,6 +157,17 @@ const Post = () => {
               </View>
               <View style={styles.imageTextContainer}>
                 <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+              </View>
+              <View style={styles.contentContainer}>
+                {post.type === 'issue' && post.codeContent ? (
+                  <View style={styles.codeContainer}>
+                    <Text style={styles.codeContent}>{post.codeContent}</Text>
+                  </View>
+                ) : (
+                  <>
+
+                  </>
+                )}
                 <Text style={styles.description}>{post.content}</Text>
               </View>
             </ScrollView>
@@ -168,13 +182,13 @@ const Post = () => {
               <FavoriteButton postId={post._id} currentUserId={userId} />
             </View>
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-  <View style={[styles.inputContainer, { flexDirection: 'row-reverse' }]}>
-    <FontAwesome5 name="comment" size={24} color="black" />
-    <Text style={[styles.placeholderText, { fontSize: heightPercentage(1.5) }]}>
-      Escribe un comentario...
-    </Text>
-  </View>
-</TouchableWithoutFeedback>
+              <View style={[styles.inputContainer, { flexDirection: 'row-reverse' }]}>
+                <FontAwesome5 name="comment" size={24} color="black" />
+                <Text style={[styles.placeholderText, { fontSize: heightPercentage(1.5) }]}>
+                  Escribe un comentario...
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
         </View>
       </ScreenWrapper>
@@ -193,6 +207,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#bababc',
     paddingHorizontal: widthPercentage(4),
     height: heightPercentage(100)
+  },
+  codeContainer: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+  },
+  codeContent: {
+    fontFamily: 'monospace',
+    fontSize: heightPercentage(2),
+    color: theme.colors.dark,
+  },
+  contentContainer: {
+    marginVertical: 10,
   },
   exitBtn: {
     width: widthPercentage(100),
@@ -265,7 +293,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    height: heightPercentage(7,2),
+    height: heightPercentage(7, 2),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -278,5 +306,12 @@ const styles = StyleSheet.create({
   placeholderText: {
     flex: 1,
     fontSize: heightPercentage(2.5),
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: theme.colors.dark,
   },
 });
