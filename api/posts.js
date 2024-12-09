@@ -1,9 +1,12 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { checkTokenExpiration } from './auth';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const fetchPosts = async (page = 1, limit = 10) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token'); // Retrieve token from SecureStore
 
@@ -26,6 +29,8 @@ export const fetchPosts = async (page = 1, limit = 10) => {
   }
 };
 export const fetchPostById = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -44,6 +49,8 @@ export const fetchPostById = async (postId) => {
   }
 };
 export const fetchUserPosts = async (userId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     const response = await axios.get(`${API_URL}/user/${userId}/posts`, {
@@ -58,6 +65,8 @@ export const fetchUserPosts = async (userId) => {
 
 
 export const createPost = async (formData) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -80,6 +89,8 @@ export const createPost = async (formData) => {
 };
 
 export const updatePost = async (postId, updateData) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -102,6 +113,8 @@ export const updatePost = async (postId, updateData) => {
 };
 
 export const deletePost = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     if (!token) {
@@ -120,6 +133,8 @@ export const deletePost = async (postId) => {
 };
 
 export const fetchComments = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -146,6 +161,8 @@ export const fetchComments = async (postId) => {
   }
 };
 export const createComment = async (postId, data) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -168,6 +185,8 @@ export const createComment = async (postId, data) => {
 };
 
 export const likePost = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     const response = await axios.post(`${API_URL}/post/${postId}/like`, null, {
@@ -181,6 +200,8 @@ export const likePost = async (postId) => {
 };
 
 export const unlikePost = async (postId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     const response = await axios.delete(`${API_URL}/post/${postId}/unlike`, {
@@ -194,6 +215,8 @@ export const unlikePost = async (postId) => {
 };
 
 export const fetchPostLikes = async (postId, currentUserId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     const response = await axios.get(`${API_URL}/post/${postId}/likes`, {
@@ -210,6 +233,8 @@ export const fetchPostLikes = async (postId, currentUserId) => {
 };
 
 export const likeComment = async (commentId) => {
+  checkTokenExpiration();
+
   try {
     const token = await SecureStore.getItemAsync('token');
     if (!token) {
@@ -230,6 +255,8 @@ export const likeComment = async (commentId) => {
 };
 
 export const markCommentAsCorrect = async (commentId) => {
+  checkTokenExpiration();
+  
   try {
     const token = await SecureStore.getItemAsync('token');
     if (!token) {
