@@ -1,10 +1,11 @@
-import { StyleSheet, View, Text, Modal, TouchableOpacity, Animated, Easing } from 'react-native';
+import { StyleSheet, View, Text, Modal, TouchableOpacity, Animated, Easing, Alert, ToastAndroid } from 'react-native';
 import React, { useRef, useEffect } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import Button from './Button';
 import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store'
 
 const LogOutModal = ({ visible, onClose}) => {
 
@@ -27,6 +28,20 @@ const LogOutModal = ({ visible, onClose}) => {
       }).start(() => onClose());
     }
   }, [visible]);
+
+  const handleLogout = async () => {
+    try {
+
+      await SecureStore.deleteItemAsync('token');
+
+      // Navigate to the feed page
+      router.push({ pathname: '/login' });
+      ToastAndroid.show('Has cerrado la sesión', ToastAndroid.SHORT);
+      
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Cierre de sesión fallido');
+    }
+  };
 
   return (
     <Modal transparent visible={visible}>
@@ -51,7 +66,7 @@ const LogOutModal = ({ visible, onClose}) => {
           <Button
             title='Cerrar sesión'
             buttonStyle={styles.btnDelete}
-            onPress={() => router.push('login')}
+            onPress={() => handleLogout()}
             backgroundColor={theme.colors.textTitles}
             textColor='white'
             textStyle={{ fontSize: heightPercentage(2)}}
