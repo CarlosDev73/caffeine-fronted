@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Pressable,TouchableWithoutFeedback } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { StatusBar } from 'expo-status-bar';
@@ -18,11 +18,8 @@ import LikeButton from '../components/LikeButton';
 import CommentButton from '../components/CommentButton';
 import FavoriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
-
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-
 import { fetchPostById } from '../api/posts';
-
 import * as SecureStore from 'expo-secure-store';
 
 const Post = () => {
@@ -170,13 +167,14 @@ const Post = () => {
               <ShareButton post={post} />
               <FavoriteButton postId={post._id} currentUserId={userId} />
             </View>
-            <Input
-              icon={<FontAwesome5 name="comment" size={24} color="black" />}
-              placeholder='Escribe un comentario...'
-              onChangeText={() => { }}
-              inputStyle={{ fontSize: heightPercentage(1.5) }}
-              containerStyles={{ flexDirection: 'row-reverse' }}
-            />
+            <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+  <View style={[styles.inputContainer, { flexDirection: 'row-reverse' }]}>
+    <FontAwesome5 name="comment" size={24} color="black" />
+    <Text style={[styles.placeholderText, { fontSize: heightPercentage(1.5) }]}>
+      Escribe un comentario...
+    </Text>
+  </View>
+</TouchableWithoutFeedback>
           </View>
         </View>
       </ScreenWrapper>
@@ -264,5 +262,21 @@ const styles = StyleSheet.create({
   reactionsText: {
     marginLeft: 4,
     fontWeight: theme.fonts.bold,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    height: heightPercentage(7,2),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: theme.colors.dark,
+    borderRadius: theme.radius.xl,
+    borderCurve: 'continuous',
+    paddingHorizontal: 18,
+    gap: 12,
+  },
+  placeholderText: {
+    flex: 1,
+    fontSize: heightPercentage(2.5),
   },
 });
