@@ -30,6 +30,12 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
+  const translateY = useSharedValue(300);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   useEffect(() => {
     const loadPost = async () => {
       try {
@@ -47,6 +53,8 @@ const Post = () => {
 
         // Set the user ID state
         setUserId(fetchedUserId);
+
+        translateY.value = withTiming(0, { duration: 600 });
 
       } catch (error) {
         Alert.alert('Error', error.message || 'Failed to fetch post data.');
@@ -107,7 +115,7 @@ const Post = () => {
             onPress={() => { router.push('feed') }}
           />
         </View>
-        <View style={styles.content}>
+        <Animated.View style={[animatedStyle, styles.content]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
@@ -173,13 +181,12 @@ const Post = () => {
           </View>
           <View style={styles.reactionsSection}>
             <View style={styles.reactionsContainer}>
-              <Pressable style={styles.reactions} onPress={() => setModalVisible(true)}>
-                <CommentButton postId={post._id} onPress={() => setModalVisible(true)} />
-              </Pressable>
+              <CommentButton postId={post._id} />
               <LikeButton postId={post._id} currentUserId={userId} />
               <ShareButton post={post} />
               <FavoriteButton postId={post._id} currentUserId={userId} />
             </View>
+
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
               <View style={[styles.inputContainer, { flexDirection: 'row-reverse' }]}>
                 <FontAwesome5 name="comment" size={24} color="black" />
@@ -189,9 +196,19 @@ const Post = () => {
               </View>
             </TouchableWithoutFeedback>
           </View>
-        </View>
+        </Animated.View>
       </ScreenWrapper>
-      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} postType={post.type} postOwnerId={post._userId} />
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <CommentModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            postId={id}
+            postType={post.type}
+            postOwnerId={post._userId}
+          />
+        </View>
+      </TouchableWithoutFeedback>
       <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
     </View>
   );
@@ -275,7 +292,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   reactionsSection: {
-    height: heightPercentage(15)
+    height: heightPercentage(15),
   },
   reactionsContainer: {
     flexDirection: 'row',
