@@ -28,6 +28,7 @@ const CreatePost = () => {
 
     const [postTitle, setPostTitle] = useState('');
     const [postContent, setPostContent] = useState('');
+    const [codeContent, setCodeContent] = useState('');
     const [tags, setTags] = useState([]);
     const [postImg, setPostImg] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +52,7 @@ const CreatePost = () => {
     };
 
     const handleCreatePost = async () => {
-        if (!postTitle || !postContent || tags.length === 0 || !postImg) {
+        if (!postTitle || !postContent || tags.length === 0 || !postImg || (type === 'issue' && !codeContent)) {
             ToastAndroid.show('Completa los campos y selecciona una imagen', ToastAndroid.SHORT);
             return;
         }
@@ -60,9 +61,11 @@ const CreatePost = () => {
         const formData = new FormData();
         formData.append('title', postTitle);
         formData.append('content', postContent);
-        formData.append('type', type); // Asegúrate de incluir el tipo correcto
+        formData.append('type', type); 
         formData.append('tags', tags.join(',')); // Convierte el array a un string separado por comas
-
+        if (type === 'issue') {
+            formData.append('codeContent', encodeURIComponent(codeContent));
+        }
         if (postImg) {
             formData.append('postImg', {
                 uri: postImg.uri,
@@ -142,7 +145,8 @@ const CreatePost = () => {
                                 />
                                 <Input
                                     placeholder='Código'
-                                    onChangeText={() => { }}
+                                    onChangeText={(text) => setCodeContent(text)}
+                                    value={codeContent}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ height: 'fit-content', marginVertical: heightPercentage(2) }}
                                     multiline={true}

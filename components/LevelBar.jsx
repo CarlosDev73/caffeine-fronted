@@ -4,7 +4,7 @@ import { theme } from '../constants/theme';
 import { widthPercentage } from '../helpers/common';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-const LevelBar = ({ levelName, progress, maxProgress, widthMultiplier }) => {
+const LevelBar = ({ levelName, progress, maxProgress, description, widthMultiplier }) => {
   const progressPercentage = (progress / maxProgress) * 100;
 
   return (
@@ -15,7 +15,15 @@ const LevelBar = ({ levelName, progress, maxProgress, widthMultiplier }) => {
         <Text style={styles.pointsText}>
           {progress}/{maxProgress}
         </Text>
+        
       </View>
+      <View style={styles.descriptionContainer}>
+
+      <Text style={styles.descriptionText}>
+          {description}
+        </Text>
+
+        </View>
 
       {/* Progress Bar and Icon */}
       <View style={styles.progressBarRow}>
@@ -24,9 +32,9 @@ const LevelBar = ({ levelName, progress, maxProgress, widthMultiplier }) => {
         </View>
         <View style={styles.iconContainer}>
           <MaterialIcons
-            name={progress === maxProgress ? 'check-circle' : 'check-circle-outline'}
+            name={progress > maxProgress ? 'check-circle' : 'check-circle-outline'}
             size={24}
-            color={progress === maxProgress ? '#00C6AE' : '#000000'} // Verde si está completo, negro si no
+            color={progress > maxProgress ? '#00C6AE' : '#000000'} // Verde si está completo, negro si no
           />
         </View>
       </View>
@@ -54,6 +62,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text,
   },
+  descriptionText: {
+    fontSize: 14,
+    color: theme.colors.text,
+  },
   progressBarRow: {
     flexDirection: 'row', // Coloca la barra de progreso y el ícono horizontalmente
     alignItems: 'center',
@@ -76,6 +88,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  descriptionContainer: {
+    justifyContent: 'center',
+    paddingHorizontal: 8,
   },
 });
 
