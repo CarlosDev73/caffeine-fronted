@@ -3,39 +3,63 @@ import { View, Text, StyleSheet } from 'react-native';
 import { theme } from '../constants/theme';
 import { widthPercentage } from '../helpers/common';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const LevelBar = ({ levelName, progress, maxProgress, description, widthMultiplier }) => {
-  const progressPercentage = (progress / maxProgress) * 100;
 
+const LevelBar = ({ levelName, progress, maxProgress, description, widthMultiplier, isNextLevel }) => {
+  const adjustedProgress = progress > maxProgress ? maxProgress : progress;
+  const progressPercentage = progress > maxProgress ? 100 : (adjustedProgress / maxProgress) * 100;
   return (
     <View style={styles.container}>
       {/* Header: Level Name and Points */}
       <View style={styles.header}>
         <Text style={styles.levelName}>{levelName}</Text>
         <Text style={styles.pointsText}>
-          {progress}/{maxProgress}
+          {adjustedProgress}/{maxProgress}
         </Text>
-        
+
       </View>
       <View style={styles.descriptionContainer}>
 
-      <Text style={styles.descriptionText}>
+        <Text style={styles.descriptionText}>
           {description}
         </Text>
 
-        </View>
+      </View>
 
       {/* Progress Bar and Icon */}
       <View style={styles.progressBarRow}>
         <View style={[styles.progressBarContainer, { width: widthPercentage(widthMultiplier) }]}>
-          <View style={[styles.progressBar, { width: `${progressPercentage}%` }]} />
+          <View
+            style={[
+              styles.progressBar,
+              {
+                width: isNextLevel
+                  ? `${progressPercentage}%` 
+                  : `${progressPercentage}%`, 
+                backgroundColor: isNextLevel
+                  ? '#FFA07A' 
+                  : progress > maxProgress
+                    ? '#00C6AE' 
+                    : '#CCCCCC', 
+              },
+            ]}
+          />
         </View>
         <View style={styles.iconContainer}>
-          <MaterialIcons
-            name={progress > maxProgress ? 'check-circle' : 'check-circle-outline'}
-            size={24}
-            color={progress > maxProgress ? '#00C6AE' : '#000000'} // Verde si está completo, negro si no
-          />
+          {isNextLevel ? (
+            <MaterialIcons
+              name={'check-circle-outline'}
+              size={24}
+              color={'#000000'} // Green if complete, black otherwise
+            />
+          ) : (
+            <MaterialIcons
+              name={progress > maxProgress ? 'check-circle' : 'lock'}
+              size={24}
+              color={progress > maxProgress ? '#00C6AE' : '#CCCCCC'} // Green if complete, black otherwise
+            />
+          )}
         </View>
       </View>
     </View>

@@ -18,8 +18,10 @@ import FavoriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { fetchPostById } from '../api/posts';
+import { fetchUserById } from '../api/users';
 import * as SecureStore from 'expo-secure-store';
-
+import FollowButton from '../components/FollowButton.jsx';
+import VerticalDots from '../components/VerticalDots.jsx';
 const Post = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -29,6 +31,12 @@ const Post = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const translateY = useSharedValue(300);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
 
   useEffect(() => {
     const loadPost = async () => {
@@ -44,9 +52,13 @@ const Post = () => {
           console.error("User ID not found in SecureStore");
           return;
         }
-
+        const userData = await fetchUserById(fetchedUserId);
         // Set the user ID state
-        setUserId(fetchedUserId);
+        setUserId(userData);
+
+        translateY.value = withTiming(0, { duration: 600 });
+
+
 
       } catch (error) {
         Alert.alert('Error', error.message || 'Failed to fetch post data.');
@@ -73,30 +85,10 @@ const Post = () => {
       </View>
     );
   }
+  const isOwner = post?._userId?._id?.toString() === userId?._id.toString();
 
 
 
-  // Acciones para el ActionModal de opciones
-  const optionsActions = [
-    {
-      text: 'Editar',
-      icon: <Feather name="edit" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Editar opción seleccionada');
-        // Agregar lógica de edición aquí
-      },
-    },
-    {
-      text: 'Eliminar',
-      icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Eliminar opción seleccionada');
-        // Agregar lógica de eliminación aquí
-      },
-    },
-  ];
   return (
     <View style={styles.container}>
       <ScreenWrapper>
@@ -107,7 +99,7 @@ const Post = () => {
             onPress={() => { router.push('feed') }}
           />
         </View>
-        <View style={styles.content}>
+        <Animated.View style={[animatedStyle, styles.content]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
@@ -126,18 +118,11 @@ const Post = () => {
                 </View>
               </View>
             </TouchableOpacity>
-            <Button
-              title='Seguir'
-              buttonStyle={styles.followBtn}
-              onPress={() => { console.log('seguido') }}
-              backgroundColor={theme.colors.primary}
-              textColor='black'
-              textStyle={{ fontSize: heightPercentage(1.5) }}
+            <FollowButton
+              targetId={post._userId?._id}
+              initialFollowStatus={userId.following?.includes(post._userId?._id) || false}
             />
-            {/* Botón de opciones (tres puntos) 
-            <Pressable onPress={() => setOptionsModalVisible(true)}>
-              <Feather name="more-vertical" size={20} color="black" />
-            </Pressable>*/}
+            <VerticalDots isOwner={isOwner} postId={post._id} router={router} />
           </View>
           <View style={{ flex: 1 }}>
             <ScrollView>
@@ -173,13 +158,12 @@ const Post = () => {
           </View>
           <View style={styles.reactionsSection}>
             <View style={styles.reactionsContainer}>
-              <Pressable style={styles.reactions} onPress={() => setModalVisible(true)}>
-                <CommentButton postId={post._id} onPress={() => setModalVisible(true)} />
-              </Pressable>
+              <CommentButton postId={post._id} />
               <LikeButton postId={post._id} currentUserId={userId} />
               <ShareButton post={post} />
               <FavoriteButton postId={post._id} currentUserId={userId} />
             </View>
+
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
               <View style={[styles.inputContainer, { flexDirection: 'row-reverse' }]}>
                 <FontAwesome5 name="comment" size={24} color="black" />
@@ -189,10 +173,24 @@ const Post = () => {
               </View>
             </TouchableWithoutFeedback>
           </View>
-        </View>
+        </Animated.View>
       </ScreenWrapper>
-      <CommentModal visible={modalVisible} onClose={() => setModalVisible(false)} postId={id} postType={post.type} postOwnerId={post._userId} />
-      <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <CommentModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            postId={id}
+            postType={post.type}
+            postOwnerId={post._userId}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+        </View>
+      </TouchableWithoutFeedback>
+
     </View>
   );
 };
@@ -275,7 +273,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   reactionsSection: {
-    height: heightPercentage(15)
+    height: heightPercentage(15),
   },
   reactionsContainer: {
     flexDirection: 'row',

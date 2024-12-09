@@ -51,7 +51,7 @@ export const LevelBarWrapper = ({ levelName, progress, maxProgress, widthMultipl
   return (
     <TouchableOpacity onPress={onPress} style={styles.levelBarWrapper}>
       <View style={styles.levelContainer}>
-        <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} widthMultiplier={widthMultiplier} />
+        <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} widthMultiplier={widthMultiplier}  isNextLevel={true}/>
       </View>
       <FollowButton following={false} onPress={() => console.log('Follow Button Pressed')} />
     </TouchableOpacity>
@@ -67,11 +67,11 @@ export const Stats = ({ posts, followers, following }) => (
     </View>
     <View style={styles.statItem}>
       <Text style={styles.statValue}>{followers}</Text>
-      <Text style={styles.statLabel}>Followers</Text>
+      <Text style={styles.statLabel}>Seguidores</Text>
     </View>
     <View style={styles.statItem}>
       <Text style={styles.statValue}>{following}</Text>
-      <Text style={styles.statLabel}>Following</Text>
+      <Text style={styles.statLabel}>Siguiendo</Text>
     </View>
   </View>
 );

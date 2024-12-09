@@ -7,7 +7,7 @@ import { heightPercentage } from '../helpers/common';
 import * as SecureStore from 'expo-secure-store';
 import { fetchComments, createComment, likeComment, markCommentAsCorrect } from '../api/posts';
 
-const CommentModal = ({ visible, onClose, postId, postType = '', postOwnerId = '' }) => {
+const CommentModal = ({ visible, onClose, postId, postType, postOwnerId }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
@@ -31,6 +31,7 @@ const CommentModal = ({ visible, onClose, postId, postType = '', postOwnerId = '
             ...comment,
             likesCount: comment.likes?.length || 0,
             likedByUser: comment.likes?.some((like) => like._userId === storedUserId),
+            isCorrect: comment.isCorrect || false, 
           }));
 
           setComments(enrichedComments);
@@ -69,10 +70,15 @@ const CommentModal = ({ visible, onClose, postId, postType = '', postOwnerId = '
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === updatedComment._id
-            ? { ...comment, isCorrect: updatedComment.isCorrect }
-            : { ...comment, isCorrect: false } // Ensure only one correct comment
-        )
+      ? {
+        ...updatedComment, 
+        likesCount: updatedComment.likes?.length || 0,
+        likedByUser: updatedComment.likes?.some((like) => like._userId === userId),
+      }
+    : comment
+)
       );
+      setRefreshKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error('Error al marcar comentario como correcto:', error);
       Alert.alert('Error', 'No se pudo marcar el comentario como correcto.');
@@ -125,7 +131,7 @@ const CommentModal = ({ visible, onClose, postId, postType = '', postOwnerId = '
                   </View>
                   <TouchableWithoutFeedback
                     onPress={() => {
-                      if (postType === 'issue' && postOwnerId === userId) {
+                      if (postType === 'issue' && postOwnerId?._id === userId) {
                         handleToggleCorrect(item._id); // Allow owner to mark as correct
                       } else {
                         ToastAndroid.show('No eres el autor de este issue', ToastAndroid.SHORT);

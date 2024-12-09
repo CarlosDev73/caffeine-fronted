@@ -11,10 +11,11 @@ import Input from '../components/Input.jsx'
 import Button from '../components/Button.jsx';
 import OptionsButtons from '../components/OptionsButtons.jsx';
 import { createPost } from '../api/posts';
+import { fetchUserById } from '../api/users';
 import * as SecureStore from 'expo-secure-store'
 
 import Feather from '@expo/vector-icons/Feather';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Fontisto from '@expo/vector-icons/Fontisto';
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import SliderButton from '../components/SliderButton.jsx'
@@ -33,6 +34,8 @@ const CreatePost = () => {
     const [postImg, setPostImg] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [type, setType] = useState('post');
+    const [userData, setUserData] = useState(null);
+
     const handleTagSelection = (tag) => {
         setTags((prevTags) =>
             prevTags.includes(tag) ? prevTags.filter((t) => t !== tag) : [...prevTags, tag]
@@ -92,6 +95,23 @@ const CreatePost = () => {
     const translateY = useSharedValue(300);
 
     useEffect(() => {
+        const loadUserData = async () => {
+            try {
+              const userId = await SecureStore.getItemAsync('userId');
+              if (!userId) {
+                Alert.alert('Error', 'No se encontró el ID del usuario. Por favor, inicia sesión nuevamente.');
+                return;
+              }
+      
+              const user = await fetchUserById(userId); // Carga los datos del usuario
+              setUserData(user);
+            } catch (error) {
+              console.error('Error al cargar los datos del usuario:', error);
+              Alert.alert('Error', 'No se pudieron cargar los datos del usuario.');
+            }
+          };
+          loadUserData();
+
         translateY.value = withTiming(0, { duration: 600 });
     }, []);
 
@@ -114,12 +134,12 @@ const CreatePost = () => {
                 <Animated.View style={[animatedStyle, styles.content]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={require('../assets/images/avatar.png')} style={{ borderRadius: 100, borderWidth: 10 }} />
+                            <Image source={{uri: userData?.profileImg?.secure_url || '../assets/images/pic.png'}} style={styles.avatar} />
                             <View style={{ marginLeft: 7 }}>
-                                <Text style={[{ fontWeight: theme.fonts.bold }]}>Lamborci Mona</Text>
+                                <Text style={[{ fontWeight: theme.fonts.bold }]}>@{userData?.userName || 'username'}</Text>
                                 <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
-                                    <AntDesign name="star" size={20} color="green" />
-                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Expresso</Text>
+                                    <Fontisto name="coffeescript" size={16} color="black" />
+                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{userData?.level?.name || 'N/A'}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -247,8 +267,11 @@ const styles = StyleSheet.create({
         marginLeft: widthPercentage(4),
         fontSize: heightPercentage(2),
     },
-    text: {
-
-    },
-    minText: {}
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: theme.colors.dark,
+      },
 })

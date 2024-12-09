@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import LevelBar from './LevelBar';
 import * as SecureStore from 'expo-secure-store';
+import { heightPercentage } from '../helpers/common';
 
 import { fetchLevels, fetchUserById } from '../api/levels';
 
@@ -18,6 +19,8 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
   const [levels, setLevels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userPoints, setUserPoints] = useState(0);
+  const [currentLevel, setCurrentLevel] = useState(null);
+  const [nextLevel, setNextLevel] = useState(null);
 
 
   useEffect(() => {
@@ -25,8 +28,18 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
       try {
         const userId = await SecureStore.getItemAsync('userId');
         const [fetchedLevels, userData] = await Promise.all([fetchLevels(), fetchUserById(userId)]);
+
         setLevels(fetchedLevels || []);
         setUserPoints(userData?.points);
+
+        const userLevelId = userData?.level?._id;
+        const userLevel = fetchedLevels.find((level) => level._id === userLevelId);
+        setCurrentLevel(userLevel);
+
+        const userLevelIndex = fetchedLevels.findIndex((level) => level._id === userLevelId);
+        const nextLevel = fetchedLevels[userLevelIndex + 1] || null;
+        setNextLevel(nextLevel);
+
       } catch (error) {
         console.error('Error loading levels:', error);
       } finally {
@@ -47,17 +60,20 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
     >
       <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
+        </View>
+
+        </TouchableWithoutFeedback>
+
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.keyboardAvoidingView}
           >
             {/* Prevent TouchableWithoutFeedback from intercepting touch events */}
-            <TouchableWithoutFeedback>
               <View style={styles.modalContainer}>
                 {/* Modal Header */}
                 <View style={styles.modalHeader}>
                   <View style={styles.modalHandle}></View>
-                  <Text style={styles.modalTitle}>Detalles del Nivel</Text>
+                  <Text style={styles.modalTitle}>Adquiere puntos y sube de nivel</Text>
                   <Text style={styles.modalText}>
                     Resuelve problemas de la comunidad, comenta, crea contenido y escala hasta el café más intenso
                   </Text>
@@ -73,14 +89,12 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
                       maxProgress={level.requirements}
                       description={level.description}
                       widthMultiplier={90}
+                      isNextLevel={nextLevel?._id === level._id}
                     />
                   ))}
                 </ScrollView>
               </View>
-            </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
-        </View>
-      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -94,7 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   keyboardAvoidingView: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'flex-end',
   },
   modalContainer: {
@@ -105,7 +123,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     paddingVertical: 20,
     paddingHorizontal: 10,
-    maxHeight: '70%',
+    maxHeight: heightPercentage(70),
     borderWidth: 2,
   },
   modalHeader: {

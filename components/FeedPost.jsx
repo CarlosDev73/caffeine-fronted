@@ -13,6 +13,7 @@ import LikeButton from './LikeButton';
 import CommentCountButton from './CommentButton';
 import FavoriteButton from './FavoriteButton';
 import ShareButton from './ShareButton';
+import VerticalDots from './VerticalDots';
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
@@ -21,67 +22,11 @@ const FeedPost = ({ post }) => {
   const isOwner = post._userId._id?.toString() === userId?.toString();
   const [isExpanded, setIsExpanded] = useState(false);
   const charLimit = 150;
-  
+
   const toggleContent = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const optionsActions = [
-    ...(isOwner
-      ? [
-        {
-          text: 'Editar',
-          icon: <Feather name="edit" size={24} color="black" />,
-          onPress: () => {
-            setOptionsModalVisible(false);
-            router.push({ pathname: '/editMyPost', params: { id: post._id } });
-            console.log('Editar opción seleccionada');
-          },
-        },
-        {
-          text: 'Eliminar',
-          icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-          onPress: async () => {
-            console.log('Opción eliminar tocada');
-            try {
-              Alert.alert(
-                'Confirmar eliminación',
-                '¿Estás seguro de que deseas eliminar este post?',
-                [
-                  {
-                    text: 'Cancelar',
-                    onPress: () => console.log('Eliminación cancelada'),
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'Eliminar',
-                    onPress: async () => {
-                      const response = await deletePost(post._id);
-                      ToastAndroid.show('Post eliminado exitosamente', ToastAndroid.SHORT);
-                      router.push('/feed');
-                    },
-                  },
-                ]
-              );
-            } catch (error) {
-              console.error('Error en la eliminación del post:', error);
-              Alert.alert('Error', error.message || 'Hubo un problema al eliminar el post.');
-            }
-          },
-        },
-
-
-      ]
-      : []),
-    {
-      text: 'Compartir',
-      icon: <Feather name="share" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Compartir opción seleccionada');
-      },
-    },
-  ];
   useEffect(() => {
     const fetchUserIdAndInitializeLikes = async () => {
       try {
@@ -128,9 +73,7 @@ const FeedPost = ({ post }) => {
             </Text>
           </View>
         </TouchableOpacity>
-        <Pressable onPress={() => setOptionsModalVisible(true)}>
-          <Feather name="more-vertical" size={20} color="black" />
-        </Pressable>
+        <VerticalDots isOwner={isOwner} postId={post._id} router={router} />
       </View>
 
       {/* Contenido del Post */}
@@ -142,7 +85,7 @@ const FeedPost = ({ post }) => {
         <View>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.description}>
-          {isExpanded || post.content.length <= charLimit
+            {isExpanded || post.content.length <= charLimit
               ? post.content
               : `${post.content.substring(0, charLimit)}...`}
           </Text>
@@ -151,20 +94,20 @@ const FeedPost = ({ post }) => {
               <Text style={styles.readMoreText}>
                 {isExpanded ? 'Mostrar menos' : 'Leer más'}
               </Text>
-              </TouchableOpacity>
-)}
+            </TouchableOpacity>
+          )}
         </View>
         {post.type === 'issue' ? (
-  <View style={styles.codeContainer}>
-    <Text style={styles.codeContent}>{post.codeContent || 'No code available'}</Text>
-  </View>
-) : (
-  post.media?.[0]?.secure_url && (
-    <View style={styles.imageContainer}>
-      <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
-    </View>
-  )
-)}
+          <View style={styles.codeContainer}>
+            <Text style={styles.codeContent}>{post.codeContent || 'No code available'}</Text>
+          </View>
+        ) : (
+          post.media?.[0]?.secure_url && (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+            </View>
+          )
+        )}
       </Pressable>
 
       {/* Reacciones */}
@@ -184,9 +127,6 @@ const FeedPost = ({ post }) => {
         />
 
       </View>
-
-      {/* Modal de opciones */}
-      <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
     </View>
   );
 };
@@ -228,7 +168,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: heightPercentage(3.4),
-    fontWeight: theme.fonts.bold,
+    fontWeight: theme.fonts.semibold,
   },
   description: {
     fontSize: heightPercentage(2.5),
@@ -256,16 +196,16 @@ const styles = StyleSheet.create({
     fontWeight: theme.fonts.bold,
   },
   codeContainer: {
-  backgroundColor: '#f4f4f4',
-  borderRadius: 10,
-  padding: 10,
-  marginTop: 10,
-  borderWidth: 1,
-  borderColor: 'gray',
-},
-codeContent: {
-  fontFamily: 'monospace', // Use a monospaced font for code
-  fontSize: heightPercentage(2),
-  color: 'black',
-},
+    backgroundColor: '#f4f4f4',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+  },
+  codeContent: {
+    fontFamily: 'monospace', // Use a monospaced font for code
+    fontSize: heightPercentage(2),
+    color: 'black',
+  },
 });
