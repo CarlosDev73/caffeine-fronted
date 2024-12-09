@@ -256,16 +256,16 @@ const styles = StyleSheet.create({
     fontWeight: theme.fonts.bold,
   },
   codeContainer: {
-    backgroundColor: '#f4f4f4',
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-  },
-  codeContent: {
-    fontFamily: 'monospace', // Use a monospaced font for code
-    fontSize: heightPercentage(2),
-    color: 'black',
-  },
+  backgroundColor: '#f4f4f4',
+  borderRadius: 10,
+  padding: 10,
+  marginTop: 10,
+  borderWidth: 1,
+  borderColor: 'gray',
+},
+codeContent: {
+  fontFamily: 'monospace', // Use a monospaced font for code
+  fontSize: heightPercentage(2),
+  color: 'black',
+},
 });

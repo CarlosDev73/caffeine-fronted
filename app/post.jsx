@@ -10,7 +10,7 @@ import CommentModal from '../components/CommentModal';
 import ActionModal from '../components/ActionModal'; // Asegúrate de importar ActionModal correctamente
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Fontisto from '@expo/vector-icons/Fontisto';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import LikeButton from '../components/LikeButton';
 import CommentButton from '../components/CommentButton';
@@ -37,7 +37,6 @@ const Post = () => {
         //  console.log('Fetching post by ID:', id);
         const fetchedPost = await fetchPostById(id); // Fetching the post by ID
         //  console.log('Fetched Post:', fetchedPost);
-        console.log('Profile Image URL:', post._userId?.profileImg?.secure_url);
         setPost(fetchedPost); // Set the fetched post data
 
         const fetchedUserId = await SecureStore.getItemAsync('userId');
@@ -122,7 +121,7 @@ const Post = () => {
               <View style={{ marginLeft: 7 }}>
                 <Text style={[{ fontWeight: theme.fonts.bold }]}>@{post._userId?.userName || 'Unknown User'}</Text>
                 <View style={styles.statusContainer}>
-                  <AntDesign name="star" size={20} color="green" />
+                  <Fontisto name="coffeescript" size={heightPercentage(1.5)} color="black" />
                   <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{post._userId.level?.name || 'N/A'}</Text>
                 </View>
               </View>
