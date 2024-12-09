@@ -139,7 +139,7 @@ const CreatePost = () => {
                                 <Text style={[{ fontWeight: theme.fonts.bold }]}>@{userData?.userName || 'username'}</Text>
                                 <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
                                     <Fontisto name="coffeescript" size={16} color="black" />
-                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{userData.level?.name || 'N/A'}</Text>
+                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{userData?.level?.name || 'N/A'}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
