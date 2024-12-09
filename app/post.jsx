@@ -21,7 +21,7 @@ import { fetchPostById } from '../api/posts';
 import { fetchUserById } from '../api/users';
 import * as SecureStore from 'expo-secure-store';
 import FollowButton from '../components/FollowButton.jsx';
-
+import VerticalDots from '../components/VerticalDots.jsx';
 const Post = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -31,12 +31,12 @@ const Post = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
-
   const translateY = useSharedValue(300);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
   }));
+
 
   useEffect(() => {
     const loadPost = async () => {
@@ -57,6 +57,8 @@ const Post = () => {
         setUserId(userData);
 
         translateY.value = withTiming(0, { duration: 600 });
+
+
 
       } catch (error) {
         Alert.alert('Error', error.message || 'Failed to fetch post data.');
@@ -83,30 +85,10 @@ const Post = () => {
       </View>
     );
   }
+  const isOwner = post?._userId?._id?.toString() === userId?._id.toString();
 
 
 
-  // Acciones para el ActionModal de opciones
-  const optionsActions = [
-    {
-      text: 'Editar',
-      icon: <Feather name="edit" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Editar opción seleccionada');
-        // Agregar lógica de edición aquí
-      },
-    },
-    {
-      text: 'Eliminar',
-      icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-      onPress: () => {
-        setOptionsModalVisible(false);
-        console.log('Eliminar opción seleccionada');
-        // Agregar lógica de eliminación aquí
-      },
-    },
-  ];
   return (
     <View style={styles.container}>
       <ScreenWrapper>
@@ -137,13 +119,10 @@ const Post = () => {
               </View>
             </TouchableOpacity>
             <FollowButton
-  targetId={post._userId?._id} 
-  initialFollowStatus={userId.following?.includes(post._userId?._id) || false} 
-/>
-            {/* Botón de opciones (tres puntos) 
-            <Pressable onPress={() => setOptionsModalVisible(true)}>
-              <Feather name="more-vertical" size={20} color="black" />
-            </Pressable>*/}
+              targetId={post._userId?._id}
+              initialFollowStatus={userId.following?.includes(post._userId?._id) || false}
+            />
+            <VerticalDots isOwner={isOwner} postId={post._id} router={router} />
           </View>
           <View style={{ flex: 1 }}>
             <ScrollView>
@@ -207,7 +186,11 @@ const Post = () => {
           />
         </View>
       </TouchableWithoutFeedback>
-      <ActionModal visible={optionsModalVisible} onClose={() => setOptionsModalVisible(false)} actions={optionsActions} />
+      <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+        </View>
+      </TouchableWithoutFeedback>
+
     </View>
   );
 };
