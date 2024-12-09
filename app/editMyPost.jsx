@@ -30,6 +30,7 @@ const editMyPost = () => {
     const [post, setPost] = useState({});
     const [postTitle, setPostTitle] = useState('');
     const [postContent, setPostContent] = useState('');
+    const [codeContent, setCodeContent] = useState('');
     const [tags, setTags] = useState([]);
     const [postImg, setPostImg] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,7 @@ const editMyPost = () => {
                 const fetchedPost = await fetchPostById(id); // Fetching the post
                 setPostTitle(fetchedPost.title);
                 setPostContent(fetchedPost.content);
+                setCodeContent(fetchedPost.codeContent);
                 setTags(fetchedPost.tags || []);
                 setType(fetchedPost.type || 'post');
                 if (fetchedPost.media?.secure_url) {
@@ -68,7 +70,7 @@ const editMyPost = () => {
         }
     };
     const handleUpdatePost = async () => {
-        if (!postTitle || !postContent || tags.length === 0 || !postImg) {
+        if (!postTitle || !postContent || tags.length === 0 || !postImg || (type === 'issue' && !codeContent)) {
             ToastAndroid.show('Title and content are required.', ToastAndroid.SHORT);
             return;
         }
@@ -77,7 +79,9 @@ const editMyPost = () => {
         formData.append('content', postContent);
         formData.append('type', type);
         formData.append('tags', tags.join(',')); // Convert array to string
-
+        if (type === 'issue') {
+            formData.append('codeContent', encodeURIComponent(codeContent));
+        }
         if (postImg) {
             formData.append('postImg', {
                 uri: postImg.uri,
@@ -146,7 +150,8 @@ const editMyPost = () => {
                                 />
                                 <Input
                                     placeholder='Código'
-                                    onChangeText={() => { }}
+                                    onChangeText={(text) => setCodeContent(text)}
+                                    value={codeContent}
                                     inputStyle={{ fontSize: heightPercentage(2) }}
                                     containerStyles={{ height: 'fit-content', marginVertical: heightPercentage(2) }}
                                     multiline={true}

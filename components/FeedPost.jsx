@@ -16,63 +16,62 @@ import ShareButton from './ShareButton';
 
 const FeedPost = ({ post }) => {
   const router = useRouter();
-
-  const [comments, setComments] = useState(post.comments?.length || 0);
-  const [points, setPoints] = useState(post.stars?.length || 0);
   const [userId, setUserId] = useState(null);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
-  
   const isOwner = post._userId._id?.toString() === userId?.toString();
-
-  const [likesCount, setLikesCount] = useState(post.likesCount);
-  const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const charLimit = 150;
+  
+  const toggleContent = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   const optionsActions = [
     ...(isOwner
       ? [
-          {
-            text: 'Editar',
-            icon: <Feather name="edit" size={24} color="black" />,
-            onPress: () => {
-              setOptionsModalVisible(false);
-              router.push({ pathname: '/editMyPost', params: { id: post._id } });
-              console.log('Editar opción seleccionada');
-            },
+        {
+          text: 'Editar',
+          icon: <Feather name="edit" size={24} color="black" />,
+          onPress: () => {
+            setOptionsModalVisible(false);
+            router.push({ pathname: '/editMyPost', params: { id: post._id } });
+            console.log('Editar opción seleccionada');
           },
-          {
-            text: 'Eliminar',
-            icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
-            onPress: async () => {
-              console.log('Opción eliminar tocada');
-              try {
-                Alert.alert(
-                  'Confirmar eliminación',
-                  '¿Estás seguro de que deseas eliminar este post?',
-                  [
-                    {
-                      text: 'Cancelar',
-                      onPress: () => console.log('Eliminación cancelada'),
-                      style: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          icon: <MaterialCommunityIcons name="trash-can-outline" size={24} color="black" />,
+          onPress: async () => {
+            console.log('Opción eliminar tocada');
+            try {
+              Alert.alert(
+                'Confirmar eliminación',
+                '¿Estás seguro de que deseas eliminar este post?',
+                [
+                  {
+                    text: 'Cancelar',
+                    onPress: () => console.log('Eliminación cancelada'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Eliminar',
+                    onPress: async () => {
+                      const response = await deletePost(post._id);
+                      ToastAndroid.show('Post eliminado exitosamente', ToastAndroid.SHORT);
+                      router.push('/feed');
                     },
-                    {
-                      text: 'Eliminar',
-                      onPress: async () => {
-                        const response = await deletePost(post._id);
-                        ToastAndroid.show('Post eliminado exitosamente', ToastAndroid.SHORT);
-                        router.push('/feed');
-                      },
-                    },
-                  ]
-                );
-              } catch (error) {
-                console.error('Error en la eliminación del post:', error);
-                Alert.alert('Error', error.message || 'Hubo un problema al eliminar el post.');
-              }
-            },
+                  },
+                ]
+              );
+            } catch (error) {
+              console.error('Error en la eliminación del post:', error);
+              Alert.alert('Error', error.message || 'Hubo un problema al eliminar el post.');
+            }
           },
-          
-          
-        ]
+        },
+
+
+      ]
       : []),
     {
       text: 'Compartir',
@@ -92,25 +91,25 @@ const FeedPost = ({ post }) => {
           console.error("User ID not found in SecureStore");
           return;
         }
-  
+
         // Set the user ID state
         setUserId(fetchedUserId);
-  
+
         // Fetch likes data for the post
-        
+
       } catch (error) {
         console.error("Error initializing likes:", error);
       }
     };
-  
+
     // Ensure the function runs only if post._id exists
     if (post._id) {
       fetchUserIdAndInitializeLikes();
     }
   }, [post._id]);
-  
-  
-  
+
+
+
   return (
     <View style={styles.container}>
       {/* Header del Post */}
@@ -122,7 +121,11 @@ const FeedPost = ({ post }) => {
           />
           <View style={{ marginLeft: 7 }}>
             <Text style={styles.text}>{post._userId.userName || 'Usuario desconocido'}</Text>
-            <Text style={styles.minText}>{new Date(post.createdAt).toLocaleDateString()}</Text>
+            <Text style={styles.minText}>
+              {post.createdAt
+                ? `${new Date(post.createdAt).toLocaleDateString()} ${new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : 'Fecha no disponible'}
+            </Text>
           </View>
         </TouchableOpacity>
         <Pressable onPress={() => setOptionsModalVisible(true)}>
@@ -138,31 +141,48 @@ const FeedPost = ({ post }) => {
       >
         <View>
           <Text style={styles.title}>{post.title}</Text>
-          <Text style={styles.description}>{post.content}</Text>
+          <Text style={styles.description}>
+          {isExpanded || post.content.length <= charLimit
+              ? post.content
+              : `${post.content.substring(0, charLimit)}...`}
+          </Text>
+          {post.content.length > charLimit && (
+            <TouchableOpacity onPress={toggleContent}>
+              <Text style={styles.readMoreText}>
+                {isExpanded ? 'Mostrar menos' : 'Leer más'}
+              </Text>
+              </TouchableOpacity>
+)}
         </View>
-        {post.media?.[0]?.secure_url && (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
-          </View>
-        )}
+        {post.type === 'issue' ? (
+  <View style={styles.codeContainer}>
+    <Text style={styles.codeContent}>{post.codeContent || 'No code available'}</Text>
+  </View>
+) : (
+  post.media?.[0]?.secure_url && (
+    <View style={styles.imageContainer}>
+      <Image source={{ uri: post.media[0].secure_url }} style={styles.postImage} />
+    </View>
+  )
+)}
       </Pressable>
 
       {/* Reacciones */}
       <View style={styles.reactionsContainer}>
         <CommentCountButton postId={post._id} />
 
-        <LikeButton 
-         postId={post._id}
-         currentUserId={userId}
+        <LikeButton
+          postId={post._id}
+          currentUserId={userId}
         />
 
         <ShareButton post={post} />
 
         <FavoriteButton
-         postId={post._id}
-         currentUserId={userId}
+          postId={post._id}
+          currentUserId={userId}
         />
-        
+
       </View>
 
       {/* Modal de opciones */}
@@ -234,5 +254,18 @@ const styles = StyleSheet.create({
   reactionsText: {
     marginLeft: 4,
     fontWeight: theme.fonts.bold,
+  },
+  codeContainer: {
+    backgroundColor: '#f4f4f4',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+  },
+  codeContent: {
+    fontFamily: 'monospace', // Use a monospaced font for code
+    fontSize: heightPercentage(2),
+    color: 'black',
   },
 });
