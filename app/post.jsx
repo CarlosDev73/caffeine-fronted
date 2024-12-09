@@ -18,7 +18,9 @@ import FavoriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { fetchPostById } from '../api/posts';
+import { fetchUserById } from '../api/users';
 import * as SecureStore from 'expo-secure-store';
+import FollowButton from '../components/FollowButton.jsx';
 
 const Post = () => {
   const router = useRouter();
@@ -50,9 +52,9 @@ const Post = () => {
           console.error("User ID not found in SecureStore");
           return;
         }
-
+        const userData = await fetchUserById(fetchedUserId);
         // Set the user ID state
-        setUserId(fetchedUserId);
+        setUserId(userData);
 
         translateY.value = withTiming(0, { duration: 600 });
 
@@ -134,14 +136,10 @@ const Post = () => {
                 </View>
               </View>
             </TouchableOpacity>
-            <Button
-              title='Seguir'
-              buttonStyle={styles.followBtn}
-              onPress={() => { console.log('seguido') }}
-              backgroundColor={theme.colors.primary}
-              textColor='black'
-              textStyle={{ fontSize: heightPercentage(1.5) }}
-            />
+            <FollowButton
+  targetId={post._userId?._id} 
+  initialFollowStatus={userId.following?.includes(post._userId?._id) || false} 
+/>
             {/* Botón de opciones (tres puntos) 
             <Pressable onPress={() => setOptionsModalVisible(true)}>
               <Feather name="more-vertical" size={20} color="black" />
