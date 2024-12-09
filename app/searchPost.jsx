@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, Image, Pressable} from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState } from 'react';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -11,9 +11,27 @@ import SimpleFeedPost from '../components/SimpleFeedPost';
 import FeedPost from '../components/FeedPost.jsx';
 import { useRouter } from 'expo-router';
 
-const searchProfile = () => {
+const searchPost = () => {
 
   const router = useRouter();
+
+  const [search, setSearch] = useState('');
+  const [filteredPosts, setFilteredPosts] = useState([]);
+
+  const searchPosts = async (text) => {
+    setSearch(text);
+    setFilteredPosts(await searchUser(search));
+  };
+
+  const renderPosts = ({ item }) => (
+    <TouchableOpacity onPress={
+      () => router.push(`post/${item._id}`)}
+    >
+      <View style={styles.itemContainer}>
+        <SimpleFeedPost post={ item } />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <ScreenWrapper>
@@ -25,35 +43,16 @@ const searchProfile = () => {
       <View style={styles.container}>
         <SearchBar 
         placeholder="Buscar Posts"
+        handleSearch={ () => { searchPosts(search) }} 
+        searchVal={search} 
+        setSearchVal={setSearch}
         />
-        <ScrollView>
-
-        
-          <View style={styles.itemContainer}>
-          <Pressable onPress={()=> router.push('post')}>
-            <SimpleFeedPost/>
-          </Pressable>
-          </View>
-        
-
-          <View style={styles.itemContainer}>
-            <SimpleFeedPost/>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <SimpleFeedPost/>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <SimpleFeedPost/>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <SimpleFeedPost/>
-          </View>
-
-        </ScrollView>
-
+        <FlatList
+          data={filteredPosts}
+          keyExtractor={(item) => item._id}
+          renderItem={renderPosts}
+          ListEmptyComponent={<Text style={{ textAlign: 'center', marginVertical: 7 }}>No hay resultados</Text>}
+        />
         <View style={styles.mainPanel}>
         <MainPanel />
         </View>
@@ -62,7 +61,7 @@ const searchProfile = () => {
   )
 }
 
-export default searchProfile
+export default searchPost
 
 const styles = StyleSheet.create({
   header:{

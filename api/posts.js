@@ -48,6 +48,25 @@ export const fetchPostById = async (postId) => {
     throw error.response?.data || { message: 'Failed to fetch post' };
   }
 };
+
+export const searchPost = async (postString) => {
+  try {
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
+    const response = await axios.get(`${API_URL}/posts/searchPost?query=${postString}`);
+    const filteredPosts = response.data.data;
+
+    return filteredPosts;
+  } catch (error) {
+    console.error('Error al obtener posts:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error al obtener a los posts.' };
+  }
+};
+
 export const fetchUserPosts = async (userId) => {
   checkTokenExpiration();
 

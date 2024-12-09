@@ -108,3 +108,22 @@ export const unfollowUser = async (targetId) => {
     throw error.response?.data || { message: 'Error unfollowing user.' };
   }
 };
+
+export const searchUser = async (userString) => {
+  checkTokenExpiration();
+  try {
+    const token = await SecureStore.getItemAsync('token');
+
+    if (!token) {
+      throw new Error('Token not found. Please login again.');
+    }
+
+    const response = await axios.get(`${API_URL}/users/searchUser?query=${userString}`);
+    const filteredUsers = response.data.data;
+
+    return filteredUsers;
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error.response?.data || error.message);
+    throw error.response?.data || { message: 'Error al obtener a los usuarios.' };
+  }
+};

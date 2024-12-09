@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { theme } from '../constants/theme';
@@ -21,17 +21,27 @@ const Profile = () => {
   const [isModalLogOutVisible, setIsModaLogOutlVisible] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const { id } = useLocalSearchParams();
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const userId = await SecureStore.getItemAsync('userId');
-        if (!userId) {
+
+        if(id)
+          setUserId(id)
+        else
+          setUserId(await SecureStore.getItemAsync('userId'));
+
+        /* if (!userId) {
           Alert.alert('Error', 'No se encontró el ID del usuario. Por favor, inicia sesión nuevamente.');
           return;
-        }
+        } */
 
-        const user = await fetchUserById(userId); // Carga los datos del usuario
-        setUserData(user);
+        if(userId){
+          const user = await fetchUserById(userId); // Carga los datos del usuario
+          setUserData(user);
+        }
       } catch (error) {
         console.error('Error al cargar los datos del usuario:', error);
         Alert.alert('Error', 'No se pudieron cargar los datos del usuario.');
@@ -39,14 +49,20 @@ const Profile = () => {
     };
     const loadUserPosts = async () => {
       try {
-        const userId = await SecureStore.getItemAsync('userId');
-        if (!userId) {
+        
+        if(id)
+          setUserId(id)
+        else
+          setUserId(await SecureStore.getItemAsync('userId'));
+
+        /* if (!userId) {
           Alert.alert('Error', 'No se encontró el ID del usuario. Por favor, inicia sesión nuevamente.');
           return;
+        } */
+        if(userId){
+          const posts = await fetchUserPosts(userId);
+          setUserPosts(posts);
         }
-
-        const posts = await fetchUserPosts(userId);
-        setUserPosts(posts);
       } catch (error) {
         console.error('Error al cargar los posts del usuario:', error);
         Alert.alert('Error', 'No se pudieron cargar los posts.');
@@ -54,7 +70,7 @@ const Profile = () => {
     };
     loadUserData();
     loadUserPosts();
-  }, []);
+  }, [userId]);
   const profileActions = [
     {
       text: 'Editar perfil',
@@ -102,9 +118,11 @@ const Profile = () => {
               avatarSource={{ uri: userData?.profileImg?.secure_url || '../assets/images/pic.png' }}
             />
           </View>
-          <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>
-            <Feather name="more-vertical" size={24} color="black" />
-          </Pressable>
+          { !id && (
+            <Pressable onPress={() => setOptionsModalVisible(true)} style={styles.optionsButton}>
+              <Feather name="more-vertical" size={24} color="black" />
+            </Pressable>
+          )}
           <Text style={styles.name}>{userData?.displayName || 'Usuario'}</Text>
           <Text style={styles.username}>@{userData?.userName || 'username'}</Text>
 
