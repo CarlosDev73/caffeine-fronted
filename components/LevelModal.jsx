@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,34 @@ import {
   Platform,
 } from 'react-native';
 import LevelBar from './LevelBar';
+import * as SecureStore from 'expo-secure-store';
+
+import { fetchLevels, fetchUserById } from '../api/levels';
 
 const LevelModal = ({ modalVisible, setModalVisible }) => {
+  const [levels, setLevels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userPoints, setUserPoints] = useState(0);
+
+
+  useEffect(() => {
+    const loadLevels = async () => {
+      try {
+        const userId = await SecureStore.getItemAsync('userId');
+        const [fetchedLevels, userData] = await Promise.all([fetchLevels(), fetchUserById(userId)]);
+        setLevels(fetchedLevels || []);
+        setUserPoints(userData?.points);
+      } catch (error) {
+        console.error('Error loading levels:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (modalVisible) {
+      loadLevels();
+    }
+  }, [modalVisible]);
   return (
     <Modal
       animationType="slide"
@@ -39,15 +65,16 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
 
                 {/* Scrollable Levels */}
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
-                  <LevelBar levelName={'Decaf'} progress={3000} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Light Roast'} progress={3000} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Latte'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Cappuccino'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Mocha'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Flat White'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Americano'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Espresso'} progress={2500} maxProgress={3000} widthMultiplier={90} />
-                  <LevelBar levelName={'Lungo'} progress={2500} maxProgress={3000} widthMultiplier={90} />
+                  {Array.isArray(levels) && levels.map((level, index) => (
+                    <LevelBar
+                      key={index}
+                      levelName={level.name}
+                      progress={userPoints}
+                      maxProgress={level.requirements}
+                      description={level.description}
+                      widthMultiplier={90}
+                    />
+                  ))}
                 </ScrollView>
               </View>
             </TouchableWithoutFeedback>
@@ -106,6 +133,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   scrollContainer: {
+    flexGrow: 1, // Ensures the ScrollView content expands
     paddingBottom: 20,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: 'gray',
+    textAlign: 'center',
   },
 });
