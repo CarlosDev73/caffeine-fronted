@@ -11,9 +11,11 @@ const SearchBar = (props) => {
         style={[styles.input, props.inputStyle && props.inputStyle]}
         placeholderTextColor={theme.colors.dark}
         ref={props.inputRef && props.inputRef}
+        value={props.searchVal}
+        onChangeText={ props.setSearchVal }
         {...props}
       />
-    <Fontisto name="search" size={26} color="black" />
+    <Fontisto name="search" size={26} color="black" onPress={ props.handleSearch }/>
     </View>
   );
 };

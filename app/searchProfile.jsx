@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, Image, Pressable} from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState } from 'react';
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -8,108 +8,62 @@ import SearchBar from '../components/SearchBar';
 import MainPanel from '../components/MainPanel';
 import SearchPopUp from '../components/SearchPopUp'
 import { useRouter } from 'expo-router';
+import { searchUser } from '../api/users';
 
 const searchProfile = () => {
 
   const router = useRouter();
-  
+
+  const [search, setSearch] = useState('');
+  const [filteredProfiles, setFilteredProfiles] = useState([]);
+
+  const searchProfiles = async (text) => {
+    setSearch(text);
+    setFilteredProfiles(await searchUser(search));
+  };
+
+  const renderProfiles = ({ item }) => (
+    <TouchableOpacity onPress={
+      () => router.push({
+        pathname: 'profile',
+        params: { id: item._id },
+      })}
+    >
+      <View style={styles.itemContainer}>
+        <Image
+          source={{ uri: item.profileImg?.secure_url }}
+          style={styles.imageProfile}
+        />
+        <View>
+          <Text style={styles.textName}>{item.displayName}</Text>
+          <Text style={styles.userName}>@{item.userName}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <ScreenWrapper>
-      <StatusBar style='dark'/>
+      <StatusBar style='dark' />
       <View style={styles.header}>
-        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5)}}>Buscar</Text>
-        <SearchPopUp backgroundColor={theme.colors.primary}/>
+        <Text style={{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(5) }}>Buscar</Text>
+        <SearchPopUp backgroundColor={theme.colors.primary} />
       </View>
       <View style={styles.container}>
-        <SearchBar 
-        placeholder="Buscar Perfil"
+        <SearchBar
+          placeholder="Buscar Perfil" 
+          handleSearch={ () => { searchProfiles(search) }} 
+          searchVal={search} 
+          setSearchVal={setSearch}
         />
-        <ScrollView>
-
-        <Pressable onPress={()=> router.push('messiProfile')}>
-          <View style={styles.itemContainer}>
-            
-            <Image
-              source={require('../assets/images/messi.png')}
-              style={styles.imageProfile}
-            />
-            
-            <View>
-              <Text style={styles.textName}>Lionel Messi</Text>
-              <Text style={styles.userName}>@TheGoat</Text>
-            </View>
-          </View>
-          </Pressable>
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/charlie.jpg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Charli Two</Text>
-              <Text style={styles.userName}>@Charlitos</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/sheldon.jpg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Sheldon Cooper</Text>
-              <Text style={styles.userName}>@Cooper1</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/chan.jpeg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Jackie Chan</Text>
-              <Text style={styles.userName}>@JC1</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/leonard.jpg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Leonard Hofstadter</Text>
-              <Text style={styles.userName}>@Leo</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/bill.jpg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Bill Gates</Text>
-              <Text style={styles.userName}>@Gates</Text>
-            </View>
-          </View>
-
-          <View style={styles.itemContainer}>
-            <Image
-              source={require('../assets/images/bob.jpg')}
-              style={styles.imageProfile}
-            />
-            <View>
-              <Text style={styles.textName}>Bob Esponja</Text>
-              <Text style={styles.userName}>@Esponja</Text>
-            </View>
-          </View>
-
-        </ScrollView>
-
+        <FlatList
+          data={filteredProfiles}
+          keyExtractor={(item) => item._id}
+          renderItem={renderProfiles}
+          ListEmptyComponent={<Text style={{ textAlign: 'center', marginVertical: 7 }}>No hay resultados</Text>}
+        />
         <View style={styles.mainPanel}>
-        <MainPanel />
+          <MainPanel />
         </View>
       </View>
     </ScreenWrapper>
@@ -119,41 +73,41 @@ const searchProfile = () => {
 export default searchProfile
 
 const styles = StyleSheet.create({
-  header:{
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: widthPercentage(4)
   },
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
     justifyContent: 'space-around',
     backgroundColor: 'white',
     paddingHorizontal: widthPercentage(4),
     marginTop: heightPercentage(2)
   },
-  itemContainer:{
+  itemContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginLeft: widthPercentage(2.5),
     marginTop: heightPercentage(4)
   },
-  imageProfile:{
-    width: heightPercentage(7,7),
-    height: heightPercentage(7,7),
-    borderRadius: heightPercentage(7,7)/2,
+  imageProfile: {
+    width: heightPercentage(7, 7),
+    height: heightPercentage(7, 7),
+    borderRadius: heightPercentage(7, 7) / 2,
   },
-  textName:{
-    fontSize:heightPercentage(2.7),
-    marginLeft:heightPercentage(1.2),
+  textName: {
+    fontSize: heightPercentage(2.7),
+    marginLeft: heightPercentage(1.2),
     fontWeight: theme.fonts.bold
   },
-  userName:{
+  userName: {
     fontSize: heightPercentage(2.1),
-    marginLeft:heightPercentage(1.2),
+    marginLeft: heightPercentage(1.2),
     color: "grey"
   },
-  mainPanel:{
+  mainPanel: {
     alignItems: "center",
   }
 })
