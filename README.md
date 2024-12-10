@@ -1,50 +1,161 @@
-# Welcome to your Expo app 👋
+# Caffeine - Mobile App and Backend API ☕
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Caffeine is a platform designed for programmers and tech enthusiasts. The app provides a space to share posts, follow users, interact with content, and manage coding-related resources.
 
-## Get started
+This repository contains the **Node.js-based backend** API.
 
-1. Install dependencies
+## Technologies Used
 
+### Backend
+- **Node.js**: JavaScript runtime for building scalable server-side applications.
+- **Express.js**: Web framework for creating RESTful APIs.
+- **MongoDB (Atlas)**: NoSQL database for data storage.
+- **Mongoose**: MongoDB object modeling for Node.js.
+- **Migration-Mongo**: For database schema and data migrations.
+- **Jest**: Testing framework for unit and integration tests.
+- **Nodemailer**: For handling email communication (password recovery, notifications, etc.).
+
+## Features
+
+
+### Backend API
+- RESTful API: Handles user authentication, post interactions, and data operations.
+- Authentication: Secure JWT-based user authentication.
+- Validation: Ensures data integrity using Mongoose schemas.
+- Email Integration: Send emails for password recovery and notifications using Nodemailer.
+- API Documentation: Fully documented API endpoints in Postman (see below).
+- Database Migrations: Manage incremental changes with Migration-Mongo.
+
+## Postman Documentation
+
+Explore the API endpoints with the provided Postman collection:
+[Postman Collection](https://martian-equinox-636176.postman.co/workspace/Caffeine~f37c04df-2be3-41d9-89ef-3345ceec60df/collection/30633673-da3be000-02f2-4816-b9bb-16c09b8eb191?action=share&creator=30633673)
+
+### Key Endpoints
+#### Auth
+- `POST /api/v1/auth/register`: Register a new user.
+- `POST /api/v1/auth/login`: User login.
+- `POST /api/v1/auth/forgot-password`: Request password reset email.
+- `POST /api/v1/auth/reset-password`: Reset user password.
+
+#### Posts
+- `GET /api/v1/posts`: Get all posts with pagination.
+- `POST /api/v1/post`: Create a new post.
+- `PUT /api/v1/post/:id`: Update a specific post.
+- `DELETE /api/v1/post/:id`: Delete a specific post.
+
+#### Users
+- `GET /api/v1/users/:id`: Fetch user details.
+- `PUT /api/v1/users/update/:id`: Update user details.
+- `POST /api/v1/users/follow/:id`: Follow another user.
+- `POST /api/v1/users/unfollow/:id`: Unfollow another user.
+
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v16+)
+- MongoDB (Atlas or Local Instance)
+- Expo CLI
+- Postman (optional, for testing API endpoints)
+
+### Environment Variables
+
+Create a `.env` file in the root directory and populate it with the following variables:
+
+```env
+MONGODB_URI=
+DATABASE_NAME=Test1
+SECRET_KEY=your_secret_key
+CLOUDINARY_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_password
+RESET_TOKEN_SECRET=reset_token_secret
+RESET_TOKEN_EXPIRATION=3600
+FRONTEND_URL=http://localhost:8081
+```
+
+### Installation
+
+#### Backend
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. Run database migrations:
    ```bash
-    npx expo start
+   npx migrate-mongo up
    ```
 
-In the output, you'll find options to open the app in a
+3. Start the backend server:
+   ```bash
+   npm start
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+4. Run tests:
+   ```bash
+   npm test
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#### Frontend
+1. Navigate to the frontend directory and install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Get a fresh project
+2. Start the app:
+   ```bash
+   npx expo start
+   ```
 
-When you're ready, run:
+### API Usage
 
+Use Postman to test the API or integrate the endpoints directly into your mobile app. See the [Postman Collection](https://martian-equinox-636176.postman.co/workspace/Caffeine~f37c04df-2be3-41d9-89ef-3345ceec60df/collection/30633673-da3be000-02f2-4816-b9bb-16c09b8eb191?action=share&creator=30633673) for examples.
+
+## Database Migrations
+
+### Adding a New Migration
+To create a new migration:
+
+1. Generate a new migration file:
+   ```bash
+   npx migrate-mongo create migration_name
+   ```
+
+2. Implement the `up` and `down` functions in the generated file.
+
+### Running Migrations
+- Apply migrations:
+  ```bash
+  npx migrate-mongo up
+  ```
+- Rollback the last migration:
+  ```bash
+  npx migrate-mongo down
+  ```
+
+## Testing
+
+The project uses Jest for testing. Run tests using:
 ```bash
-npm run reset-project
+npm test
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Contribution Guidelines
 
-## Learn more
+1. Fork the repository and create a new branch.
+2. Make your changes and test thoroughly.
+3. Submit a pull request with a detailed description of the changes.
 
-To learn more about developing your project with Expo, look at the following resources:
+## License
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+Enjoy building and contributing to Caffeine! ☕
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
