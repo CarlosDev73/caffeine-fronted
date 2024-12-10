@@ -30,7 +30,7 @@ export const fetchUserById = async (userId) => {
 
 export const changeUserPassword = async (userId, currentPassword, newPassword) => {
   try {
-    const response = await axios.put(`${API_URL}/users/changePassword/${userId}`, {
+    const response = await axios.put(`${API_URL}/users/${userId}/change-password`, {
       currentPassword,
       newPassword,
     });
@@ -49,7 +49,7 @@ export const updateUser = async (userId, updateData) => {
       formData.append(key, updateData[key]);
     });
 
-    const response = await axios.put(`${API_URL}/users/update/${userId}`, updateData, {
+    const response = await axios.put(`${API_URL}/users/${userId}`, updateData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -72,7 +72,7 @@ export const followUser = async (targetId) => {
     }
 
     const response = await axios.post(
-      `${API_URL}/users/follow/${targetId}`,
+      `${API_URL}/users/${targetId}/follow`,
       {}, 
       {
         headers: { Authorization: `Bearer ${token}` }, 
@@ -96,7 +96,7 @@ export const unfollowUser = async (targetId) => {
     }
 
     const response = await axios.post(
-      `${API_URL}/users/unfollow/${targetId}`,
+      `${API_URL}/users/${targetId}/unfollow/`,
       {}, 
       {
         headers: { Authorization: `Bearer ${token}` }, 
@@ -118,7 +118,7 @@ export const searchUser = async (userString) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.get(`${API_URL}/users/searchUser?query=${userString}`);
+    const response = await axios.get(`${API_URL}/users/search?query=${userString}`);
     const filteredUsers = response.data.data;
 
     return filteredUsers;

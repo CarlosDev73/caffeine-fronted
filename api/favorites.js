@@ -16,7 +16,7 @@ export const markAsFavorite = async (postId) => {
     }
 
     const response = await axios.post(
-      `${API_URL}/${postId}/favorite`,
+      `${API_URL}/posts/${postId}/favorites`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -41,7 +41,7 @@ export const unmarkAsFavorite = async (postId) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.delete(`${API_URL}/${postId}/unfavorite`, {
+    const response = await axios.delete(`${API_URL}/posts/${postId}/favorites`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -61,7 +61,7 @@ export const fetchFavoritePostsByUser = async () => {
     if (!token) {
       throw new Error('Token not found. Please login again.');
     }
-    const response = await axios.get(`${API_URL}/favorites`, {
+    const response = await axios.get(`${API_URL}/users/favorites`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     //console.log('API Response:', response.data);
@@ -82,7 +82,7 @@ export const fetchPostFavorites = async (postId) => {
         throw new Error('Token not found. Please log in again.');
       }
   
-      const response = await axios.get(`${API_URL}/${postId}/favorites`, {
+      const response = await axios.get(`${API_URL}/posts/${postId}/favorites`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   

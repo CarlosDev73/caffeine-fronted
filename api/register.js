@@ -5,7 +5,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const registerUser = async (formData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, formData, {
+    const response = await axios.post(`${API_URL}/auth//register`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
