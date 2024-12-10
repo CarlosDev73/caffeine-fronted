@@ -28,6 +28,7 @@ const LevelModal = ({ modalVisible, setModalVisible }) => {
       try {
         const userId = await SecureStore.getItemAsync('userId');
         const [fetchedLevels, userData] = await Promise.all([fetchLevels(), fetchUserById(userId)]);
+        console.log(fetchedLevels);
 
         setLevels(fetchedLevels || []);
         setUserPoints(userData?.points);

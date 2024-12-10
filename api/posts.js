@@ -38,7 +38,7 @@ export const fetchPostById = async (postId) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.get(`${API_URL}/post/${postId}`, {
+    const response = await axios.get(`${API_URL}/posts/${postId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -57,7 +57,7 @@ export const searchPost = async (postString) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.get(`${API_URL}/posts/searchPost?query=${postString}`);
+    const response = await axios.get(`${API_URL}/posts/search?query=${postString}`);
     const filteredPosts = response.data.data;
 
     return filteredPosts;
@@ -72,7 +72,7 @@ export const fetchUserPosts = async (userId) => {
 
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.get(`${API_URL}/user/${userId}/posts`, {
+    const response = await axios.get(`${API_URL}/users/${userId}/posts`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data.posts;
@@ -93,7 +93,7 @@ export const createPost = async (formData) => {
       throw new Error('Token not found. Please login again.');
     }
     
-    const response = await axios.post(`${API_URL}/post`, formData, {
+    const response = await axios.post(`${API_URL}/posts`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -117,7 +117,7 @@ export const updatePost = async (postId, updateData) => {
       throw new Error('Token not found. Please login again.');
     }
     
-    const response = await axios.put(`${API_URL}/post/${postId}`, updateData, {
+    const response = await axios.put(`${API_URL}/posts/${postId}`, updateData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data", // Asegúrate de usar multipart para datos con imágenes
@@ -140,7 +140,7 @@ export const deletePost = async (postId) => {
       throw new Error('Token no encontrado. Por favor, inicia sesión nuevamente.');
     }
 
-    const response = await axios.delete(`${API_URL}/post/${postId}`, {
+    const response = await axios.delete(`${API_URL}/posts/${postId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log('Respuesta del servidor:', response.data);
@@ -161,7 +161,7 @@ export const fetchComments = async (postId) => {
       throw new Error('Token no encontrado. Por favor, inicia sesión nuevamente.');
     }
 
-    const response = await axios.get(`${API_URL}/post/${postId}/comments`, {
+    const response = await axios.get(`${API_URL}/posts/${postId}/comments`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -189,7 +189,7 @@ export const createComment = async (postId, data) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.post(`${API_URL}/post/${postId}/comment`, data, {
+    const response = await axios.post(`${API_URL}/posts/${postId}/comments`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -208,7 +208,7 @@ export const likePost = async (postId) => {
 
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.post(`${API_URL}/post/${postId}/like`, null, {
+    const response = await axios.post(`${API_URL}/posts/${postId}/likes`, null, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -223,7 +223,7 @@ export const unlikePost = async (postId) => {
 
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.delete(`${API_URL}/post/${postId}/unlike`, {
+    const response = await axios.delete(`${API_URL}/posts/${postId}/likes`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -238,7 +238,7 @@ export const fetchPostLikes = async (postId, currentUserId) => {
 
   try {
     const token = await SecureStore.getItemAsync('token');
-    const response = await axios.get(`${API_URL}/post/${postId}/likes`, {
+    const response = await axios.get(`${API_URL}/posts/${postId}/likes`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const likes = Array.isArray(response.data) ? response.data : []; // Ensure `likes` is always an array
@@ -260,7 +260,7 @@ export const likeComment = async (commentId) => {
       throw new Error('Token no encontrado. Inicia sesión nuevamente.');
     }
     const response = await axios.put(
-      `${API_URL}/like/${commentId}`, 
+      `${API_URL}/comments/${commentId}/likes`, 
       {}, 
       {
         headers: { Authorization: `Bearer ${token}` }, 
@@ -283,7 +283,7 @@ export const markCommentAsCorrect = async (commentId) => {
     }
 
     const response = await axios.put(
-      `${API_URL}/correct/${commentId}`,
+      `${API_URL}/comments/${commentId}/correct`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
