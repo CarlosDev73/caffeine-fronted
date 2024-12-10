@@ -2,9 +2,9 @@ import { StyleSheet, Text, View,TouchableOpacity, Modal, SafeAreaView, Animated,
 import React, { useRef, useState } from 'react'
 import { theme } from '../constants/theme';
 import { heightPercentage, widthPercentage } from '../helpers/common';
-import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 const SearchPopUp = ({
@@ -43,7 +43,7 @@ const SearchPopUp = ({
     <TouchableOpacity style={[styles.button, buttonStyle, { backgroundColor }]} 
     onPress={() => resizeBox(1)}
     >
-      <Feather name="plus" size={20} color="black" ></Feather>
+      <FontAwesome5 name="exchange-alt" size={20} color="black" ></FontAwesome5>
     </TouchableOpacity>
     <Modal transparent visible={visible}>
       <SafeAreaView 
