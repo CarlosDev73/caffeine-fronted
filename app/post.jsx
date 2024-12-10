@@ -22,6 +22,7 @@ import { fetchUserById } from '../api/users';
 import * as SecureStore from 'expo-secure-store';
 import FollowButton from '../components/FollowButton.jsx';
 import VerticalDots from '../components/VerticalDots.jsx';
+
 const Post = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -101,7 +102,7 @@ const Post = () => {
         </View>
         <Animated.View style={[animatedStyle, styles.content]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={ () => router.push({ pathname: 'profile', params: { id: post._userId._id }})}>
               <Image
                 source={
                   post._userId?.profileImg?.secure_url

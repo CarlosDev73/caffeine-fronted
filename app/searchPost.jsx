@@ -10,6 +10,7 @@ import SearchPopUp from '../components/SearchPopUp';
 import SimpleFeedPost from '../components/SimpleFeedPost';
 import FeedPost from '../components/FeedPost.jsx';
 import { useRouter } from 'expo-router';
+import { searchAllPosts } from '../api/posts.js';
 
 const searchPost = () => {
 
@@ -20,7 +21,7 @@ const searchPost = () => {
 
   const searchPosts = async (text) => {
     setSearch(text);
-    setFilteredPosts(await searchUser(search));
+    setFilteredPosts(await searchAllPosts(search));
   };
 
   const renderPosts = ({ item }) => (

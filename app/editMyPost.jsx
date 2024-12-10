@@ -18,7 +18,9 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import SliderButton from '../components/SliderButton.jsx'
 
 import { fetchPostById, updatePost } from '../api/posts';
-
+import { fetchUserById } from '../api/users.js';
+import * as SecureStore from 'expo-secure-store';
+import { Fontisto } from '@expo/vector-icons';
 
 const editMyPost = () => {
     const router = useRouter();
@@ -28,6 +30,7 @@ const editMyPost = () => {
     const handleTag = (tag) => { };
 
     const [post, setPost] = useState({});
+    const [userData, setUserData] = useState({});
     const [postTitle, setPostTitle] = useState('');
     const [postContent, setPostContent] = useState('');
     const [codeContent, setCodeContent] = useState('');
@@ -51,12 +54,16 @@ const editMyPost = () => {
                 if (fetchedPost.media?.secure_url) {
                     setPostImg({ uri: fetchedPost.media.secure_url });
                 }
+
+                const fetchedUserId = await SecureStore.getItemAsync('userId');
+                const user = await fetchUserById(fetchedUserId);
+                setUserData(user);
             } catch (error) {
                 Alert.alert('Error', 'Failed to fetch post data.');
             }
         };
         loadPost();
-    }, [id]);
+    }, [id, userData]);
 
     const handleImagePicker = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -70,7 +77,7 @@ const editMyPost = () => {
         }
     };
     const handleUpdatePost = async () => {
-        if (!postTitle || !postContent || tags.length === 0 || !postImg || (type === 'issue' && !codeContent)) {
+        if (!postTitle || !postContent || tags.length === 0 || (type === 'issue' && !codeContent)) {
             ToastAndroid.show('Title and content are required.', ToastAndroid.SHORT);
             return;
         }
@@ -119,12 +126,19 @@ const editMyPost = () => {
                 <Animated.View style={[animatedStyle, styles.content]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 20 }}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={require('../assets/images/pic.png')} style={{ borderRadius: 100, borderWidth: 10, width: 30, height: 30 }} />
+                            <Image
+                                source={
+                                    userData?.profileImg?.secure_url
+                                    ? { uri: userData?.profileImg.secure_url }
+                                    : require('../assets/images/avatar.png') // Reemplaza con una imagen predeterminada
+                                }
+                                style={styles.avatar}
+                            />
                             <View style={{ marginLeft: 7 }}>
-                                <Text style={[{ fontWeight: theme.fonts.bold }]}>Lamborci Mona</Text>
+                                <Text style={[{ fontWeight: theme.fonts.bold }]}>@{userData?.userName || 'Unknown User'}</Text>
                                 <View style={{ backgroundColor: '#F4F5F7', borderRadius: theme.radius.md, padding: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', width: widthPercentage(24) }}>
-                                    <AntDesign name="star" size={20} color="green" />
-                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>Capuchino</Text>
+                                    <Fontisto name="coffeescript" size={heightPercentage(1.5)} color="black" />
+                                    <Text style={[{ fontWeight: theme.fonts.bold, fontSize: heightPercentage(1.5) }]}>{userData.level?.name || 'N/A'}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -216,6 +230,13 @@ const editMyPost = () => {
 export default editMyPost
 
 const styles = StyleSheet.create({
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: theme.colors.dark,
+    },
     container: {
         flex: 1,
         alignItems: 'center',
