@@ -112,7 +112,7 @@ const Profile = () => {
     <ScreenWrapper style={styles.screenWrapper}>
       <ScrollView contentContainerStyle={styles.scrollContent} style={styles.scrollView}>
         {/* Header Section */}
-        <View style={styles.header}>
+        <View style={[styles.header,  id && styles.otherProfileHeader]}>
           <View style={styles.avatarContainer}>
             <ProfileComponents.CircularAvatar
               avatarSource={{ uri: userData?.profileImg?.secure_url || '../assets/images/pic.png' }}
@@ -215,6 +215,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     position: 'relative',
+  },
+  otherProfileHeader: {
+    backgroundColor: theme.colors.secondary,
   },
   avatarContainer: {
     position: 'relative',
