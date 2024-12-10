@@ -8,14 +8,21 @@ import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as SecureStore from 'expo-secure-store';
 
-import { useRouter, usePathname } from 'expo-router';
+import { useRouter, usePathname, useLocalSearchParams } from 'expo-router';
 
 const MainPanel = () => {
   const router = useRouter();
   const currentPath = usePathname();
+  const { id } = useLocalSearchParams();
 
   const isActive = (path) => currentPath === path;
+
+  const otherProfile = async () => {
+    const userId = await SecureStore.getItemAsync('userId');
+    return id !== userId;
+  }
 
   return (
     <View style={styles.container}>
@@ -28,12 +35,12 @@ const MainPanel = () => {
         <Text style={[styles.text, isActive('/feed') && styles.active]}>Home</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/searchProfile')} style={styles.button}>
-      {isActive('/searchProfile') ? (
+      {(isActive('/searchProfile') || id) ? (
           <Ionicons name="search-sharp" size={28} color="black" />
         ) : (
           <Ionicons name="search-outline" size={23} color="gray" />
         )}
-        <Text style={[styles.text, isActive('/searchProfile') && styles.active]}>Buscar</Text>
+        <Text style={[styles.text, (isActive('/searchProfile') || id) && styles.active]}>Buscar</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/favorites')} style={styles.button}>
       {isActive('/favorites') ? (
@@ -44,12 +51,12 @@ const MainPanel = () => {
         <Text style={[styles.text, isActive('/favorites') && styles.active]}>Favoritos</Text>
       </Pressable>
       <Pressable onPress={() => router.push('/profile')} style={styles.button}>
-      {isActive('/profile') ? (
+      {(isActive('/profile') && !id) ? (
           <Fontawesome name="user" size={28} color="black" />
         ) : (
           <Feather name="user" size={23} color="gray" />
         )}
-        <Text style={[styles.text, isActive('/profile') && styles.active]}>Perfil</Text>
+        <Text style={[styles.text, (isActive('/profile') && !id) && styles.active]}>Perfil</Text>
       </Pressable>
     </View>
   );
