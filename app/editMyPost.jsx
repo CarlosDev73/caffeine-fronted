@@ -43,6 +43,7 @@ const editMyPost = () => {
 
     useEffect(() => {
         translateY.value = withTiming(0, { duration: 600 });
+    
         const loadPost = async () => {
             try {
                 const fetchedPost = await fetchPostById(id); // Fetching the post
@@ -54,16 +55,27 @@ const editMyPost = () => {
                 if (fetchedPost.media?.secure_url) {
                     setPostImg({ uri: fetchedPost.media.secure_url });
                 }
-
-                const fetchedUserId = await SecureStore.getItemAsync('userId');
-                const user = await fetchUserById(fetchedUserId);
-                setUserData(user);
             } catch (error) {
                 Alert.alert('Error', 'Failed to fetch post data.');
             }
         };
+    
         loadPost();
-    }, [id, userData]);
+    }, [id]); // Remove userData as a dependency
+    
+    useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const fetchedUserId = await SecureStore.getItemAsync('userId');
+                const user = await fetchUserById(fetchedUserId);
+                setUserData(user);
+            } catch (error) {
+                Alert.alert('Error', 'Failed to fetch user data.');
+            }
+        };
+    
+        loadUser();
+    }, []); // No dependencies as user data only needs to be fetched once
 
     const handleImagePicker = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
