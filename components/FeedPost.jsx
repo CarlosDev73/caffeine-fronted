@@ -59,7 +59,7 @@ const FeedPost = ({ post }) => {
     <View style={styles.container}>
       {/* Header del Post */}
       <View style={styles.header}>
-        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={ () => router.push({ pathname: 'profile', params: { id: post._userId._id }})}>
           <Image
             source={{ uri: post._userId.profileImg?.secure_url || 'https://via.placeholder.com/100' }}
             style={styles.avatar}

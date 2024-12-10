@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         height: 20,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.LemonChiffon,
         marginHorizontal: widthPercentage(2),
         borderRadius: 30,
         borderWidth: 2,

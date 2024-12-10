@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Pressable, Alert, ToastAndroid } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -11,7 +11,7 @@ import ActionModal from '../components/ActionModal';
 import LogOutModal from '../components/LogOutModal';
 import Feather from '@expo/vector-icons/Feather';
 import { fetchUserPosts } from '../api/posts';
-import { fetchUserById } from '../api/users';
+import { fetchUserById, followUser, unfollowUser } from '../api/users';
 import LevelModal from '../components/LevelModal';
 
 const Profile = () => {
@@ -23,8 +23,16 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
   const { id } = useLocalSearchParams();
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
+    const loadUser = async () => {
+      if(id){
+        const thisUser = await SecureStore.getItemAsync('userId');
+        const user = await fetchUserById(thisUser);
+        setIsFollowing(user.following?.includes(id));
+      }
+    }
     const loadUserData = async () => {
       try {
 
@@ -68,6 +76,7 @@ const Profile = () => {
         Alert.alert('Error', 'No se pudieron cargar los posts.');
       }
     };
+    loadUser();
     loadUserData();
     loadUserPosts();
   }, [userId]);
@@ -99,6 +108,25 @@ const Profile = () => {
       },
     },
   ];
+
+  const handleFollow = async () => {
+    try {
+      if (isFollowing) {
+        await unfollowUser(id);
+        ToastAndroid.show('Dejaste de seguir al usuario.', ToastAndroid.SHORT);
+      } else {
+        await followUser(id);
+        ToastAndroid.show('Has comenzado a seguir al usuario.', ToastAndroid.SHORT);
+      }
+      setIsFollowing(!isFollowing);
+    } catch (error) {
+      console.error('Error handling follow/unfollow:', error);
+      ToastAndroid.show(
+        error.message || 'Error al procesar la acción de seguimiento.',
+        ToastAndroid.SHORT
+      );
+    }
+  };
 
   const generateColor = (index) => {
     const colors = ['#61E4C5', '#FFD465', '#FFC7DE', '#FFF4CC', '#F4F5F7'];
@@ -133,6 +161,9 @@ const Profile = () => {
             maxProgress={nextLevelRequirements}
             widthMultiplier={62}
             onPress={() => setModalVisible(true)} // Handle modal display
+            handleFollow={ () => handleFollow() }
+            following={ isFollowing }
+            isUser={id}
           />
 
           {/* Stats Section */}

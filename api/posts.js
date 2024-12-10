@@ -49,7 +49,7 @@ export const fetchPostById = async (postId) => {
   }
 };
 
-export const searchPost = async (postString) => {
+export const searchAllPosts = async (postString) => {
   try {
     const token = await SecureStore.getItemAsync('token');
 
@@ -57,7 +57,12 @@ export const searchPost = async (postString) => {
       throw new Error('Token not found. Please login again.');
     }
 
-    const response = await axios.get(`${API_URL}/posts/search?query=${postString}`);
+    const response = await axios.get(`${API_URL}/posts/search?query=${postString}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Cache-Control': 'no-cache',
+      },
+    });
     const filteredPosts = response.data.data;
 
     return filteredPosts;

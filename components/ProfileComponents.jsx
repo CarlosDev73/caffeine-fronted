@@ -36,8 +36,8 @@ export const CircularAvatar = ({ avatarSource, size = 150 }) => {
 
 
 // Follow Button Component
-export const FollowButton = ({ following, onPress }) => (
-  <TouchableOpacity style={styles.followButton} onPress={onPress}>
+export const FollowButton = ({ following, onPress, isUser }) => (
+  <TouchableOpacity style={[styles.followButton, !isUser && { display: 'none' } ]} onPress={onPress}>
     {following ? (
       <FontAwesome5 name="user-friends" size={24} color="black" />
     ) :(
@@ -47,13 +47,13 @@ export const FollowButton = ({ following, onPress }) => (
 );
 
 // LevelBar Component with Follow Button Alignment
-export const LevelBarWrapper = ({ levelName, progress, maxProgress, widthMultiplier, onPress }) => {
+export const LevelBarWrapper = ({ levelName, progress, maxProgress, widthMultiplier, onPress, isUser, following, handleFollow }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.levelBarWrapper}>
       <View style={styles.levelContainer}>
         <LevelBar levelName={levelName} progress={progress} maxProgress={maxProgress} widthMultiplier={widthMultiplier}  isNextLevel={true}/>
       </View>
-      <FollowButton following={false} onPress={() => console.log('Follow Button Pressed')} />
+      <FollowButton following={following} onPress={ handleFollow } isUser={ isUser }/>
     </TouchableOpacity>
   );
 };
