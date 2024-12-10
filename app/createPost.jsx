@@ -151,7 +151,7 @@ const CreatePost = () => {
                                     Crear Post
                                 </Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                    <Text>Issue</Text>
+                                    <Text>¿Es un issue?</Text>
                                     <SliderButton onToggle={(isToggled) => setType(isToggled ? 'issue' : 'post')} />
                                 </View>
                             </View>
