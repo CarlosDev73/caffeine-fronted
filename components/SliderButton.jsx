@@ -12,17 +12,19 @@ import { widthPercentage } from '../helpers/common';
 const SliderButton = ({ onToggle }) => {
 
     const width = 40;
-    let isToggled = false;
+    const [isToggled, setIsToggled] = useState(false);
     const translateX = useSharedValue(0);
     const SLIDE_WIDTH = width * 0.8;
     const BUTTON_WIDTH = 23;
 
     const handlePress = () => {
-        isToggled = !isToggled; // Toggle the internal variable
-        translateX.value = withSpring(isToggled ? SLIDE_WIDTH - BUTTON_WIDTH : 0);
+
+        const newState = !isToggled; // Invierte el estado
+        setIsToggled(newState); // Actualiza el estado visual
+        translateX.value = withSpring(newState  ? SLIDE_WIDTH - BUTTON_WIDTH : 0);
 
         if (typeof onToggle === 'function') {
-            onToggle(isToggled); // Notify the parent of the new state
+            onToggle(newState); // Notify the parent of the new state
         }
     };
 
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
     },
     slider: {
         height: 20,
-        backgroundColor: theme.colors.LemonChiffon,
+        backgroundColor: theme.colors.secondary,
         marginHorizontal: widthPercentage(2),
         borderRadius: 30,
         borderWidth: 2,
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     active: {
-        backgroundColor: theme.colors.secondary
+        backgroundColor: theme.colors.LemonChiffon
     },
     button: {
         width: 20,
