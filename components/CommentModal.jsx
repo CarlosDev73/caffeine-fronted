@@ -31,7 +31,7 @@ const CommentModal = ({ visible, onClose, postId, postType, postOwnerId }) => {
             ...comment,
             likesCount: comment.likes?.length || 0,
             likedByUser: comment.likes?.some((like) => like._userId === storedUserId),
-            isCorrect: comment.isCorrect || false, 
+            isCorrect: comment.isCorrect || false,
           }));
 
           setComments(enrichedComments);
@@ -70,13 +70,13 @@ const CommentModal = ({ visible, onClose, postId, postType, postOwnerId }) => {
       setComments((prevComments) =>
         prevComments.map((comment) =>
           comment._id === updatedComment._id
-      ? {
-        ...updatedComment, 
-        likesCount: updatedComment.likes?.length || 0,
-        likedByUser: updatedComment.likes?.some((like) => like._userId === userId),
-      }
-    : comment
-)
+            ? {
+              ...updatedComment,
+              likesCount: updatedComment.likes?.length || 0,
+              likedByUser: updatedComment.likes?.some((like) => like._userId === userId),
+            }
+            : comment
+        )
       );
       setRefreshKey((prevKey) => prevKey + 1);
     } catch (error) {
@@ -129,24 +129,26 @@ const CommentModal = ({ visible, onClose, postId, postType, postOwnerId }) => {
                     </Text>
                     <Text style={styles.commentText}>{item.content}</Text>
                   </View>
-                  <TouchableWithoutFeedback
-                    onPress={() => {
-                      if (postType === 'issue' && postOwnerId?._id === userId) {
-                        handleToggleCorrect(item._id); // Allow owner to mark as correct
-                      } else {
-                        ToastAndroid.show('No eres el autor de este issue', ToastAndroid.SHORT);
-                      }
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.checkIconContainer,
-                        { backgroundColor: item.isCorrect ? '#00C6AE' : 'transparent' },
-                      ]}
+                  {postType === 'issue' && (
+                    <TouchableWithoutFeedback
+                      onPress={() => {
+                        if (postOwnerId?._id === userId) {
+                          handleToggleCorrect(item._id); // Allow owner to mark as correct
+                        } else {
+                          ToastAndroid.show('No eres el autor de este issue', ToastAndroid.SHORT);
+                        }
+                      }}
                     >
-                      <MaterialCommunityIcons name="check" size={20} color="black" />
-                    </View>
-                  </TouchableWithoutFeedback>
+                      <View
+                        style={[
+                          styles.checkIconContainer,
+                          { backgroundColor: item.isCorrect ? '#00C6AE' : 'transparent' },
+                        ]}
+                      >
+                        <MaterialCommunityIcons name="check" size={20} color="black" />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  )}
                 </View>
 
                 {/* Date */}
